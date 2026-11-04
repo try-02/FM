@@ -1,17 +1,21 @@
 package id.manajerberkas.kode.presentation.layar
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.JenisMarkah
 import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
@@ -24,61 +28,75 @@ fun DialogMarkah(
 ) {
     AlertDialog(
         onDismissRequest = aksi::tutupDialogMarkah,
-        title = { Text("Markah lokasi") },
+        shape = RoundedCornerShape(28.dp),
+        title = {
+            Text("Markah Cepat", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        },
         text = {
-            Column {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = aksi::tambahMarkahLokasiAktif,
                     enabled = state.lokasiAktif != null && !state.lokasiAktifSudahMarkah,
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Tambahkan folder saat ini")
+                    Icon(Icons.Default.Add, null)
+                    Spacer(Modifier.width(6.dp))
+                    Text("Tandai Folder Ini")
                 }
+
+                Spacer(Modifier.height(12.dp))
 
                 if (state.daftarMarkah.isEmpty()) {
                     Text(
-                        text = "Belum ada markah.",
-                        modifier = Modifier.padding(top = 8.dp)
+                        text = "Belum ada folder yang ditandai.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 12.dp)
                     )
                 } else {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp)
+                            .heightIn(max = 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(state.daftarMarkah) { markah ->
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
+                            Surface(
+                                shape = RoundedCornerShape(16.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(
-                                    text = if (markah.jenis == JenisMarkah.BERKAS) {
-                                        "📄 ${markah.lokasi.namaTampilan}"
-                                    } else {
-                                        "📁 ${markah.lokasi.namaTampilan}"
-                                    }
-                                )
-
-                                Text(
-                                    text = markah.lokasi.jalurTampilan ?: markah.lokasi.id,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-
                                 Row(
-                                    modifier = Modifier.padding(top = 4.dp)
+                                    modifier = Modifier.padding(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Button(
-                                        onClick = { aksi.bukaMarkah(markah) }
+                                    Icon(
+                                        imageVector = if (markah.jenis == JenisMarkah.FOLDER) Icons.Default.Folder else Icons.Default.InsertDriveFile,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(horizontal = 10.dp)
                                     ) {
-                                        Text("Buka")
+                                        Text(markah.lokasi.namaTampilan, fontWeight = FontWeight.Medium)
+                                        Text(
+                                            markah.lokasi.jalurTampilan ?: markah.lokasi.id,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
-
-                                    Button(
-                                        onClick = { aksi.hapusMarkah(markah) },
-                                        modifier = Modifier.padding(start = 8.dp)
+                                    FilledTonalIconButton(
+                                        onClick = { aksi.bukaMarkah(markah) },
+                                        shape = RoundedCornerShape(10.dp)
                                     ) {
-                                        Text("Hapus")
+                                        Text("Buka", style = MaterialTheme.typography.labelSmall)
+                                    }
+                                    IconButton(onClick = { aksi.hapusMarkah(markah) }) {
+                                        Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
                                     }
                                 }
                             }
@@ -88,7 +106,7 @@ fun DialogMarkah(
             }
         },
         confirmButton = {
-            Button(onClick = aksi::tutupDialogMarkah) {
+            TextButton(onClick = aksi::tutupDialogMarkah) {
                 Text("Tutup")
             }
         }

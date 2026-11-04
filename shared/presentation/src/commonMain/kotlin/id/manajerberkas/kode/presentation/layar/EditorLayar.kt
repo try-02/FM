@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.WrapText
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -93,7 +94,7 @@ fun EditorLayar(
                             )
                             DropdownMenuItem(
                                 text = { Text(if (state.bungkusKata) "Bungkus Kata: ON" else "Bungkus Kata: OFF") },
-                                leadingIcon = { Icon(Icons.Default.WrapText, null) },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.WrapText, null) },
                                 onClick = { menuTerbuka = false; aksi.toggleBungkusKata() }
                             )
                         }
