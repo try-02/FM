@@ -5,7 +5,19 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    android {
+        namespace = "id.manajerberkas.kode.shared.data"
+        compileSdk = 37
+
+        defaultConfig {
+            minSdk = 30
+        }
+
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+        }
+    }
 
     // Aktifkan nanti saat masuk tahap iOS:
     // iosArm64()
@@ -24,20 +36,6 @@ kotlin {
             implementation(libs.androidx.documentfile)
             implementation(libs.sqldelight.android)
         }
-    }
-}
-
-android {
-    namespace = "id.manajerberkas.kode.shared.data"
-    compileSdk = 37
-
-    defaultConfig {
-        minSdk = 30
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
