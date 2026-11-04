@@ -61,5 +61,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
 
+    implementation(libs.sqldelight.android)
+
     implementation(libs.androidx.lifecycle.runtime.compose)
 }
