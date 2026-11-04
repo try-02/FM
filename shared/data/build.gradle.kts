@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -5,8 +7,19 @@ plugins {
 }
 
 kotlin {
-    // 1. Cukup deklarasikan target Android di dalam blok kotlin
-    androidTarget()
+    // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
+    android {
+        namespace = "id.manajerberkas.kode.shared.data"
+        compileSdk = 37
+        
+        // 1. minSdk ditulis langsung tanpa defaultConfig
+        minSdk = 30
+
+        // 2. Pengganti compileOptions/sourceCompatibility di AGP 9 KMP
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
 
     // Aktifkan nanti saat masuk tahap iOS:
     // iosArm64()
@@ -28,22 +41,6 @@ kotlin {
     }
 }
 
-// 2. Blok android milik AGP dipisah ke luar blok kotlin
-android {
-    namespace = "id.manajerberkas.kode.shared.data"
-    compileSdk = 37
-
-    defaultConfig {
-        minSdk = 30
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-}
-
-// 3. Konfigurasi SQLDelight tetap di tingkat paling atas
 sqldelight {
     databases {
         create("DatabaseAplikasi") {
