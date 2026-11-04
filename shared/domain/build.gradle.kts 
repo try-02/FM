@@ -8,7 +8,7 @@ plugins {
 kotlin {
     // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
     android {
-        namespace = "id.manajerberkas.kode.shared.data"
+        namespace = "id.manajerberkas.kode.shared.domain"
         compileSdk = 37
         
         // 1. minSdk ditulis langsung tanpa defaultConfig

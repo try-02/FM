@@ -8,19 +8,14 @@ plugins {
 }
 
 kotlin {
-    // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
     android {
-        namespace = "id.manajerberkas.kode.shared.data"
+        // 1. Sesuaikan namespace khusus presentation
+        namespace = "id.manajerberkas.kode.shared.presentation"
         compileSdk = 37
-        
-        // 1. minSdk ditulis langsung tanpa defaultConfig
         minSdk = 30
 
-        buildFeatures {
-            compose = true
-        }
+        // buildFeatures { compose = true } SUDAH DIHAPUS
 
-        // 2. Pengganti compileOptions/sourceCompatibility di AGP 9 KMP
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
@@ -34,6 +29,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:domain"))
 
+            // Dependensi Compose Multiplatform
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
