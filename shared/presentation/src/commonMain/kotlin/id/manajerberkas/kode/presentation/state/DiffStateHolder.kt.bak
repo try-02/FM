@@ -1,7 +1,10 @@
 package id.manajerberkas.kode.presentation.state
 
-import id.manajerberkas.kode.domain.model.JenisOperasiDiff
 import id.manajerberkas.kode.domain.model.LokasiBerkas
+import id.manajerberkas.kode.domain.model.ModeDiff
+import id.manajerberkas.kode.domain.model.ekstrakBlokUnified
+import id.manajerberkas.kode.domain.model.ekstrakBlokBerdampingan
+import id.manajerberkas.kode.domain.model.keBerdampingan
 import id.manajerberkas.kode.domain.usecase.BacaTeksUseCase
 import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -19,30 +22,16 @@ class DiffStateHolder(
     private val scope: CoroutineScope
 ) : DiffAksi {
 
-    private val _state = MutableStateFlow(
-        DiffState(lokasiA = lokasiA, lokasiB = lokasiB)
-    )
+    private val _state = MutableStateFlow(DiffState(lokasiA = lokasiA, lokasiB = lokasiB))
     val state: StateFlow<DiffState> = _state
-
     private var pekerjaan: Job? = null
 
-    init {
-        bandingkan()
-    }
+    init { bandingkan() }
 
     override fun bandingkan() {
         pekerjaan?.cancel()
         pekerjaan = scope.launch {
-            _state.update { 
-                it.copy(
-                    memuat = true, 
-                    pesan = null, 
-                    hasil = null, 
-                    indeksPerubahanAktif = -1, 
-                    daftarIndeksPerubahan = emptyList()
-                ) 
-            }
-
+            _state.update { it.copy(memuat = true, pesan = null, hasil = null, indeksBlokAktif = -1) }
             val hasilA = bacaTeks(lokasiA)
             val hasilB = bacaTeks(lokasiB)
 
@@ -57,15 +46,16 @@ class DiffStateHolder(
 
             try {
                 val hasilDiff = bandingkanIsi(hasilA.konten.teks, hasilB.konten.teks)
-                val indeksPerubahan = hasilDiff.baris.mapIndexedNotNull { index, baris ->
-                    if (baris.jenis != JenisOperasiDiff.SAMA) index else null
-                }
+                val barisBerdampingan = hasilDiff.keBerdampingan()
+                val blokUnified = hasilDiff.baris.ekstrakBlokUnified()
 
                 _state.update {
                     it.copy(
                         memuat = false,
                         hasil = hasilDiff,
-                        daftarIndeksPerubahan = indeksPerubahan,
+                        barisBerdampingan = barisBerdampingan,
+                        blokPerubahan = blokUnified,
+                        mode = ModeDiff.UNIFIED,
                         pesan = if (hasilDiff.identik) "Kedua file identik." else "Ditemukan ${hasilDiff.jumlahPerubahan} perubahan."
                     )
                 }
@@ -75,25 +65,28 @@ class DiffStateHolder(
         }
     }
 
+    override fun ubahMode(mode: ModeDiff) {
+        val kondisi = state.value
+        val blokBaru = when (mode) {
+            ModeDiff.UNIFIED -> kondisi.hasil?.baris?.ekstrakBlokUnified() ?: emptyList()
+            ModeDiff.BERDAMPINGAN -> kondisi.barisBerdampingan.ekstrakBlokBerdampingan()
+        }
+        _state.update { it.copy(mode = mode, blokPerubahan = blokBaru, indeksBlokAktif = -1) }
+    }
+
     override fun perubahanBerikutnya() {
         val kondisi = state.value
-        val daftar = kondisi.daftarIndeksPerubahan
-        if (daftar.isEmpty()) return
-
-        val selanjutnya = daftar.firstOrNull { it > kondisi.indeksPerubahanAktif } ?: daftar.first()
-        _state.update { it.copy(indeksPerubahanAktif = selanjutnya) }
+        if (kondisi.blokPerubahan.isEmpty()) return
+        val selanjutnya = (kondisi.indeksBlokAktif + 1).coerceAtMost(kondisi.blokPerubahan.lastIndex)
+        _state.update { it.copy(indeksBlokAktif = selanjutnya) }
     }
 
     override fun perubahanSebelumnya() {
         val kondisi = state.value
-        val daftar = kondisi.daftarIndeksPerubahan
-        if (daftar.isEmpty()) return
-
-        val sebelumnya = daftar.lastOrNull { it < kondisi.indeksPerubahanAktif } ?: daftar.last()
-        _state.update { it.copy(indeksPerubahanAktif = sebelumnya) }
+        if (kondisi.blokPerubahan.isEmpty()) return
+        val sebelumnya = (kondisi.indeksBlokAktif - 1).coerceAtLeast(0)
+        _state.update { it.copy(indeksBlokAktif = sebelumnya) }
     }
 
-    override fun batal() {
-        pekerjaan?.cancel()
-    }
+    override fun batal() { pekerjaan?.cancel() }
 }

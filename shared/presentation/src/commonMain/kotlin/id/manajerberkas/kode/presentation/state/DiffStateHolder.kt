@@ -5,6 +5,7 @@ import id.manajerberkas.kode.domain.model.ModeDiff
 import id.manajerberkas.kode.domain.model.ekstrakBlokUnified
 import id.manajerberkas.kode.domain.model.ekstrakBlokBerdampingan
 import id.manajerberkas.kode.domain.model.keBerdampingan
+import id.manajerberkas.kode.domain.model.KontenTeks
 import id.manajerberkas.kode.domain.usecase.BacaTeksUseCase
 import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +45,12 @@ class DiffStateHolder(
                 return@launch
             }
 
-            try {
-                val hasilDiff = bandingkanIsi(hasilA.konten.teks, hasilB.konten.teks)
+        try {
+            val kontenA = hasilA.konten
+            val kontenB = hasilB.konten
+
+            if (kontenA is KontenTeks && kontenB is KontenTeks) {
+                val hasilDiff = bandingkanIsi(kontenA.teks, kontenB.teks)
                 val barisBerdampingan = hasilDiff.keBerdampingan()
                 val blokUnified = hasilDiff.baris.ekstrakBlokUnified()
 
@@ -59,9 +64,14 @@ class DiffStateHolder(
                         pesan = if (hasilDiff.identik) "Kedua file identik." else "Ditemukan ${hasilDiff.jumlahPerubahan} perubahan."
                     )
                 }
-            } catch (e: Exception) {
-                _state.update { it.copy(memuat = false, pesan = "Gagal membandingkan: ${e.message}") }
+            } else {
+                _state.update {
+                    it.copy(memuat = false, pesan = "Berkas bukan merupakan format teks yang didukung.")
+                }
             }
+        } catch (e: Exception) {
+            _state.update { it.copy(memuat = false, pesan = "Gagal membandingkan: ${e.message}") }
+        }
         }
     }
 
