@@ -1190,7 +1190,11 @@ private fun terdeteksiBiner(bytes: ByteArray): Boolean {
         return if (lokasiSaf.documentId == treeDocumentId) {
             root
         } else {
-            root.findDocumentById(lokasiSaf.documentId)
+            val uri = DocumentsContract.buildDocumentUriUsingTree(
+                lokasiSaf.treeUri,
+                lokasiSaf.documentId
+            )
+            DocumentFile.fromSingleUri(context, uri)
         }
     }
 

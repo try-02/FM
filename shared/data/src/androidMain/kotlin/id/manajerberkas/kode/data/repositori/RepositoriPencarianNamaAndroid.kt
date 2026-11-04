@@ -158,12 +158,13 @@ class RepositoriPencarianNamaAndroid(
         ukuran: Long,
         kueri: KueriPencarianNama
     ): Boolean {
-        if (kueri.hanyaFolder != null) {
-            if (kueri.hanyaFolder && jenis != JenisItem.FOLDER) {
+        val hanyaFolder = kueri.hanyaFolder
+        if (hanyaFolder != null) {
+            if (hanyaFolder && jenis != JenisItem.FOLDER) {
                 return false
             }
 
-            if (!kueri.hanyaFolder && jenis != JenisItem.BERKAS) {
+            if (!hanyaFolder && jenis != JenisItem.BERKAS) {
                 return false
             }
         }
@@ -176,11 +177,12 @@ class RepositoriPencarianNamaAndroid(
 
         if (!cocokNama) return false
 
-        if (kueri.ekstensi != null && jenis == JenisItem.BERKAS) {
+        val ekstensiDicari = kueri.ekstensi
+        if (ekstensiDicari != null && jenis == JenisItem.BERKAS) {
             val ekstensiFile = nama.substringAfterLast('.', "")
-            val ekstensiDicari = kueri.ekstensi.removePrefix(".")
+            val target = ekstensiDicari.removePrefix(".")
 
-            if (!ekstensiFile.equals(ekstensiDicari, ignoreCase = true)) {
+            if (!ekstensiFile.equals(target, ignoreCase = true)) {
                 return false
             }
         }
