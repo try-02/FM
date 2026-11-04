@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.21"
 agp = "9.0.0"
-composeMultiplatform = "1.8.2"
+composeMultiplatform = "1.13.0-alpha02"
 coroutines = "1.10.1"
 serialization = "1.8.1"
 koin = "4.2.2"
