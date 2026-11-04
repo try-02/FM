@@ -673,7 +673,7 @@ class DaftarBerkasStateHolder(
         }
     }
 
-    fun selesaiBandingkan() {
+    override fun selesaiBandingkan() {
         _state.update { it.copy(tujuanDiff = null) }
     }
 
@@ -718,12 +718,12 @@ class DaftarBerkasStateHolder(
         }
     }
 
-    fun selesaiGantiNamaMassal() {
+    override fun selesaiGantiNamaMassal() {
         _state.update { it.copy(tujuanGantiNamaMassal = null) }
         muatLokasiAktif()
     }
 
-    fun selesaiBukaArsip() {
+    override fun selesaiBukaArsip() {
         _state.update { it.copy(tujuanArsip = null) }
     }
 }

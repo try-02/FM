@@ -15,6 +15,11 @@ import id.manajerberkas.kode.domain.usecase.PindahkanBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.SalinBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanBerandaUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanMarkahUseCase
+import id.manajerberkas.kode.domain.usecase.CariIsiBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.EksekusiGantiNamaMassalUseCase
+import id.manajerberkas.kode.domain.usecase.DaftarIsiArsipUseCase
+import id.manajerberkas.kode.domain.usecase.EkstrakItemArsipUseCase
+import id.manajerberkas.kode.domain.usecase.EkstrakSemuaArsipUseCase
 
 class DependensiPenjelajah(
     val daftarIsiFolder: DaftarIsiFolderUseCase,

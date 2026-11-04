@@ -118,12 +118,14 @@ class DaftarBerkasStateHolder(
             }
 
             else -> {
-                _state.update {
-                    it.copy(
-                        editorTujuan = TujuanEditor(
-                            lokasi = item.lokasi
+                if (id.manajerberkas.kode.domain.model.PendeteksiArsip.didukungUntukDibuka(item.nama)) {
+                    _state.update { it.copy(tujuanArsip = item.lokasi) }
+                } else {
+                    _state.update {
+                        it.copy(
+                            editorTujuan = TujuanEditor(lokasi = item.lokasi)
                         )
-                    )
+                    }
                 }
             }
         }
@@ -719,5 +721,9 @@ class DaftarBerkasStateHolder(
     fun selesaiGantiNamaMassal() {
         _state.update { it.copy(tujuanGantiNamaMassal = null) }
         muatLokasiAktif()
+    }
+
+    fun selesaiBukaArsip() {
+        _state.update { it.copy(tujuanArsip = null) }
     }
 }

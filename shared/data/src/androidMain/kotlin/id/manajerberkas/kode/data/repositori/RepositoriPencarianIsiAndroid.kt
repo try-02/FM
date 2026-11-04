@@ -82,11 +82,15 @@ class RepositoriPencarianIsiAndroid(
                         prosesFolder(anak, jalurAnak)
                     }
                 } else if (anak.isFile) {
-                    if (kueri.ukuranMin != null && anak.length() < kueri.ukuranMin) continue
-                    if (kueri.ukuranMax != null && anak.length() > kueri.ukuranMax) continue
-                    if (kueri.ekstensi != null) {
+                    val ukuranMin = kueri.ukuranMin
+                    val ukuranMax = kueri.ukuranMax
+                    val ekstensiTarget = kueri.ekstensi
+
+                    if (ukuranMin != null && anak.length() < ukuranMin) continue
+                    if (ukuranMax != null && anak.length() > ukuranMax) continue
+                    if (ekstensiTarget != null) {
                         val ekstensiFile = anak.name.substringAfterLast('.', "")
-                        val target = kueri.ekstensi.removePrefix(".")
+                        val target = ekstensiTarget.removePrefix(".")
                         if (!ekstensiFile.equals(target, ignoreCase = true)) continue
                     }
                     if (anak.length() > kueri.batasUkuranPerFile) {

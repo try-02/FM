@@ -37,13 +37,13 @@ data class DaftarBerkasState(
     val dialogMarkah: Boolean = false,
     val beranda: LokasiBerkas? = null,
 
-    val pencarianTerbuka: Boolean = false
+    val pencarianTerbuka: Boolean = false,
 
-    val tujuanDiff: TujuanDiff? = null
+    val tujuanDiff: TujuanDiff? = null,
 
-    val pencarianIsiTerbuka: Boolean = false
+    val pencarianIsiTerbuka: Boolean = false,
 
-    val tujuanGantiNamaMassal: List<id.manajerberkas.kode.domain.model.ItemGantiNama>? = null
+    val tujuanGantiNamaMassal: List<id.manajerberkas.kode.domain.model.ItemGantiNama>? = null,
 
     val tujuanArsip: LokasiBerkas? = null
 ) {
