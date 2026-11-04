@@ -1,0 +1,485 @@
+package id.manajerberkas.kode.presentation.layar
+
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import id.manajerberkas.kode.domain.model.ItemBerkas
+import id.manajerberkas.kode.domain.model.JenisItem
+import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
+import id.manajerberkas.kode.presentation.state.DaftarBerkasState
+import id.manajerberkas.kode.presentation.state.ModePilihTujuan
+import id.manajerberkas.kode.presentation.layar.DialogMarkah
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun DaftarBerkasLayar(
+    state: DaftarBerkasState,
+    aksi: DaftarBerkasAksi,
+    onBukaPrivat: () -> Unit,
+    onBukaSaf: () -> Unit
+) {
+    val idTerpilih = state.itemTerpilih
+        .map { it.lokasi.id }
+        .toSet()
+
+    MaterialTheme {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            if (state.modePilihTujuan != null) {
+                BarisPilihTujuan(state, aksi)
+            } else if (state.modePilih) {
+                BarisModePilih(state, aksi)
+            } else {
+                BarisNavigasi(state, aksi, onBukaPrivat, onBukaSaf)
+            }
+
+            Text(
+                text = state.lokasiAktif?.namaTampilan ?: "Belum ada lokasi",
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+
+            Text(
+                text = state.lokasiAktif?.jalurTampilan ?: "Path tidak tersedia",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+
+            if (state.sedangOperasi) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            state.pesan?.let { pesan ->
+                Text(
+                    text = pesan,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+            if (state.memuat) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.daftar) { item ->
+                        val terpilih = idTerpilih.contains(item.lokasi.id)
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = { aksi.klikItem(item) },
+                                    onLongClick = { aksi.tekanLama(item) }
+                                )
+                                .padding(12.dp)
+                        ) {
+                            if (state.modePilih || state.modePilihTujuan != null) {
+                                Checkbox(
+                                    checked = terpilih,
+                                    onCheckedChange = {
+                                        if (state.modePilih) {
+                                            aksi.klikItem(item)
+                                        }
+                                    }
+                                )
+                            }
+
+                            Text(
+                                text = if (item.jenis == JenisItem.FOLDER) "📁" else "📄",
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+
+                            Column {
+                                Text(item.nama)
+
+                                Text(
+                                    text = item.lokasi.jalurTampilan ?: item.lokasi.id,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (state.dialogBuatBerkas) {
+        DialogNama(
+            judul = "Buat file",
+            nilaiAwal = "",
+            onTutup = aksi::tutupDialogBuatBerkas,
+            onKonfirmasi = aksi::buatBerkas
+        )
+    }
+
+    if (state.dialogBuatFolder) {
+        DialogNama(
+            judul = "Buat folder",
+            nilaiAwal = "",
+            onTutup = aksi::tutupDialogBuatFolder,
+            onKonfirmasi = aksi::buatFolder
+        )
+    }
+
+    state.dialogGantiNama?.let { item ->
+        key(item.lokasi.id) {
+            DialogNama(
+                judul = "Ganti nama",
+                nilaiAwal = item.nama,
+                onTutup = aksi::tutupDialogGantiNama,
+                onKonfirmasi = aksi::gantiNama
+            )
+        }
+    }
+
+    if (state.dialogMarkah) {
+        DialogMarkah(
+            state = state,
+            aksi = aksi
+        )
+    }
+
+    if (state.konfirmasiHapusTerpilih) {
+        AlertDialog(
+            onDismissRequest = aksi::batalHapus,
+            title = {
+                Text("Hapus ${state.itemTerpilih.size} item?")
+            },
+            text = {
+                Text("Item yang dihapus tidak selalu dapat dipulihkan.")
+            },
+            confirmButton = {
+                Button(onClick = aksi::konfirmasiHapus) {
+                    Text("Hapus")
+                }
+            },
+            dismissButton = {
+                Button(onClick = aksi::batalHapus) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
+
+    state.menuUntukItem?.let { item ->
+        DialogMenuKonteks(state, aksi, item)
+    }
+}
+
+@Composable
+private fun BarisNavigasi(
+    state: DaftarBerkasState,
+    aksi: DaftarBerkasAksi,
+    onBukaPrivat: () -> Unit,
+    onBukaSaf: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Button(
+            onClick = aksi::kembali,
+            enabled = state.bisaKembali
+        ) {
+            Text("Kembali")
+        }
+
+        Button(
+            onClick = onBukaPrivat,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Privat")
+        }
+
+        Button(
+            onClick = onBukaSaf,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("SAF")
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+    ) {
+        Button(
+            onClick = aksi::bukaDialogBuatBerkas,
+            enabled = state.kemampuan?.bisaBuatBerkas == true
+        ) {
+            Text("File")
+        }
+
+        Button(
+            onClick = aksi::bukaDialogBuatFolder,
+            enabled = state.kemampuan?.bisaBuatFolder == true,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Folder")
+        }
+
+        Button(
+            onClick = aksi::bukaPencarian,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Cari")
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Button(onClick = aksi::bukaDialogMarkah) {
+            Text("Markah")
+        }
+
+        Button(
+            onClick = aksi::jadikanBeranda,
+            enabled = state.lokasiAktif != null && !state.lokasiAktifAdalahBeranda,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Jadikan beranda")
+        }
+
+        Button(
+            onClick = aksi::hapusBeranda,
+            enabled = state.beranda != null,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Hapus beranda")
+        }
+    }
+}
+
+@Composable
+private fun BarisModePilih(
+    state: DaftarBerkasState,
+    aksi: DaftarBerkasAksi
+) {
+    Text(
+        text = "${state.itemTerpilih.size} item dipilih",
+        modifier = Modifier.padding(8.dp)
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+    ) {
+        Button(onClick = aksi::pilihSemua) {
+            Text("Semua")
+        }
+
+        Button(
+            onClick = aksi::batalkanPilih,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Batal")
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Button(
+            onClick = aksi::mulaiSalin,
+            enabled = state.kemampuan?.bisaSalin == true
+        ) {
+            Text("Salin")
+        }
+
+        Button(
+            onClick = aksi::mulaiPindah,
+            enabled = state.kemampuan?.bisaPindah == true,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Pindah")
+        }
+
+        Button(
+            onClick = aksi::mintaHapusTerpilih,
+            enabled = state.kemampuan?.bisaHapus == true,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Hapus")
+        }
+    }
+}
+
+@Composable
+private fun BarisPilihTujuan(
+    state: DaftarBerkasState,
+    aksi: DaftarBerkasAksi
+) {
+    val judul = when (state.modePilihTujuan) {
+        ModePilihTujuan.SALIN -> "Pilih folder tujuan salin"
+        ModePilihTujuan.PINDAH -> "Pilih folder tujuan pindah"
+        null -> ""
+    }
+
+    Text(
+        text = judul,
+        modifier = Modifier.padding(8.dp)
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+    ) {
+        Button(onClick = aksi::konfirmasiTujuan) {
+            Text("Gunakan folder ini")
+        }
+
+        Button(
+            onClick = aksi::batalPilihTujuan,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Text("Batal")
+        }
+    }
+}
+
+@Composable
+private fun DialogMenuKonteks(
+    state: DaftarBerkasState,
+    aksi: DaftarBerkasAksi,
+    item: ItemBerkas
+) {
+    val satuItem = state.itemTerpilih.size == 1
+
+    AlertDialog(
+        onDismissRequest = aksi::tutupMenu,
+        title = {
+            Text(
+                if (state.itemTerpilih.size > 1) {
+                    "${state.itemTerpilih.size} item dipilih"
+                } else {
+                    item.nama
+                }
+            )
+        },
+        text = {
+            Column {
+                Button(
+                    onClick = { aksi.bukaItemDariMenu(item) }
+                ) {
+                    Text("Buka")
+                }
+
+                Button(
+                    onClick = aksi::mulaiSalin,
+                    enabled = state.kemampuan?.bisaSalin == true && state.itemTerpilih.isNotEmpty(),
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Salin")
+                }
+
+                Button(
+                    onClick = aksi::mulaiPindah,
+                    enabled = state.kemampuan?.bisaPindah == true && state.itemTerpilih.isNotEmpty(),
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Pindah")
+                }
+
+                Button(
+                    onClick = aksi::bukaDialogGantiNama,
+                    enabled = satuItem && state.kemampuan?.bisaGantiNama == true,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Ganti nama")
+                }
+
+                Button(
+                    onClick = { aksi.tambahMarkahItem(item) },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Tambah markah")
+                }
+
+                Button(
+                    onClick = aksi::mintaHapusTerpilih,
+                    enabled = state.itemTerpilih.isNotEmpty() && state.kemampuan?.bisaHapus == true,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Hapus")
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            Button(onClick = aksi::tutupMenu) {
+                Text("Tutup")
+            }
+        }
+    )
+}
+
+@Composable
+private fun DialogNama(
+    judul: String,
+    nilaiAwal: String,
+    onTutup: () -> Unit,
+    onKonfirmasi: (String) -> Unit
+) {
+    var teks by remember { mutableStateOf(nilaiAwal) }
+
+    AlertDialog(
+        onDismissRequest = onTutup,
+        title = {
+            Text(judul)
+        },
+        text = {
+            TextField(
+                value = teks,
+                onValueChange = { teks = it }
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { onKonfirmasi(teks) }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onTutup) {
+                Text("Batal")
+            }
+        }
+    )
+}

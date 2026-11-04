@@ -1,0 +1,13 @@
+CREATE TABLE preferensi_editor (
+    kunci TEXT PRIMARY KEY,
+    nilai TEXT NOT NULL
+);
+
+pilihNilai:
+SELECT nilai
+FROM preferensi_editor
+WHERE kunci = :kunci;
+
+simpan:
+INSERT OR REPLACE INTO preferensi_editor(kunci, nilai)
+VALUES (:kunci, :nilai);

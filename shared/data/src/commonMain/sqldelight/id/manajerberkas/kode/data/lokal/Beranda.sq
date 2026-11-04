@@ -1,0 +1,32 @@
+CREATE TABLE beranda (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    id_lokasi TEXT NOT NULL,
+    nama_tampilan TEXT NOT NULL,
+    jalur_tampilan TEXT,
+    jenis_penyimpanan TEXT NOT NULL
+);
+
+ambil:
+SELECT *
+FROM beranda
+WHERE id = 1;
+
+simpan:
+INSERT OR REPLACE INTO beranda(
+    id,
+    id_lokasi,
+    nama_tampilan,
+    jalur_tampilan,
+    jenis_penyimpanan
+)
+VALUES (
+    1,
+    :id_lokasi,
+    :nama_tampilan,
+    :jalur_tampilan,
+    :jenis_penyimpanan
+);
+
+hapus:
+DELETE FROM beranda
+WHERE id = 1;

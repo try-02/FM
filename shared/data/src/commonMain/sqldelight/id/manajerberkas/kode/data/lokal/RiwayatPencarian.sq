@@ -1,0 +1,30 @@
+CREATE TABLE riwayat_pencarian (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nilai TEXT NOT NULL UNIQUE
+);
+
+pilihSemua:
+SELECT nilai
+FROM riwayat_pencarian
+ORDER BY id DESC
+LIMIT :batas;
+
+hapusNilai:
+DELETE FROM riwayat_pencarian
+WHERE nilai = :nilai;
+
+simpan:
+INSERT INTO riwayat_pencarian(nilai)
+VALUES (:nilai);
+
+hapusKelebihan:
+DELETE FROM riwayat_pencarian
+WHERE id NOT IN (
+    SELECT id
+    FROM riwayat_pencarian
+    ORDER BY id DESC
+    LIMIT :batas
+);
+
+hapusSemua:
+DELETE FROM riwayat_pencarian;

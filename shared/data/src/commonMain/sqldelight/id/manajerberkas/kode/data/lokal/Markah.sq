@@ -1,0 +1,38 @@
+CREATE TABLE markah (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_lokasi TEXT NOT NULL UNIQUE,
+    nama_tampilan TEXT NOT NULL,
+    jalur_tampilan TEXT,
+    jenis_penyimpanan TEXT NOT NULL,
+    jenis_markah TEXT NOT NULL
+);
+
+pilihSemua:
+SELECT *
+FROM markah
+ORDER BY id DESC;
+
+ada:
+SELECT COUNT(*)
+FROM markah
+WHERE id_lokasi = :id_lokasi;
+
+simpan:
+INSERT OR REPLACE INTO markah(
+    id_lokasi,
+    nama_tampilan,
+    jalur_tampilan,
+    jenis_penyimpanan,
+    jenis_markah
+)
+VALUES (
+    :id_lokasi,
+    :nama_tampilan,
+    :jalur_tampilan,
+    :jenis_penyimpanan,
+    :jenis_markah
+);
+
+hapus:
+DELETE FROM markah
+WHERE id_lokasi = :id_lokasi;
