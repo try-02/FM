@@ -154,6 +154,33 @@ fun AplikasiUtamaAndroid(
                     onBukaSaf = onBukaSaf
                 )
             }
+
+            state.tujuanArsip != null -> {
+                val arsipStateHolder = remember(state.tujuanArsip) {
+                    ArsipStateHolder(
+                        lokasiArsip = state.tujuanArsip!!,
+                        lokasiTujuanEkstrak = state.lokasiAktif ?: state.tujuanArsip!!,
+                        daftarIsiArsip = dependensiPenjelajah.daftarIsiArsip,
+                        ekstrakItemArsip = dependensiPenjelajah.ekstrakItemArsip,
+                        ekstrakSemuaArsip = dependensiPenjelajah.ekstrakSemuaArsip,
+                        scope = scope,
+                        onTutup = { stateHolder.selesaiBukaArsip() }
+                    )
+                }
+
+                val stateArsip by arsipStateHolder.state.collectAsStateWithLifecycle()
+
+                ArsipLayar(
+                    state = stateArsip,
+                    onKlikItem = arsipStateHolder::klikItem,
+                    onTekanLama = arsipStateHolder::tekanLama,
+                    onKembali = arsipStateHolder::kembali,
+                    onEkstrakTerpilih = arsipStateHolder::ekstrakTerpilih,
+                    onEkstrakSemua = arsipStateHolder::ekstrakSemua,
+                    onBatalkanPilih = arsipStateHolder::batalkanPilih,
+                    onTutup = arsipStateHolder::tutup
+                )
+            }
         }
     }
 }

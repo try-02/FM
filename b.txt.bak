@@ -1,0 +1,461 @@
+﻿##[group]Run chmod +x ./gradlew
+[36;1mchmod +x ./gradlew[0m
+[36;1m[0m
+[36;1m# Hapus 'clean' agar build cache & configuration cache optimal[0m
+[36;1m./gradlew assembleDebug \[0m
+[36;1m  --no-daemon \[0m
+[36;1m  --non-interactive \[0m
+[36;1m  --stacktrace \[0m
+[36;1m  --console=plain[0m
+shell: /usr/bin/bash -e {0}
+env:
+  JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+  JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+  MAVEN_ARGS: -ntp
+  GRADLE_ACTION_ID: gradle/actions/setup-gradle
+  GRADLE_USER_HOME: /home/runner/.gradle
+  GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+  GRADLE_ENCRYPTION_KEY: ***
+  DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+  DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+  GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+  NO_COLOR: 1
+  ORG_GRADLE_PROJECT_android_native_build_output_ignore_errors: true
+##[endgroup]
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Parallel Configuration Cache is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: assembleDebug
+
+> Configure project :shared:data
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Configure project :shared:domain
+WARNING: The 'commonTest' source directory exists, but android host tests are not enabled. To enable android host tests, add `withHostTest {}` to your android target configuration in the Gradle build file.
+Add android.sync.suppressAgpWarnings=GENERIC to the gradle.properties file to suppress this warning.
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Configure project :shared:presentation
+w: ⚠️ Unused Kotlin Source Sets
+The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+Solution: You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+
+
+> Task :shared:domain:androidPreBuild UP-TO-DATE
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :shared:presentation:androidPreBuild UP-TO-DATE
+> Task :shared:data:androidPreBuild UP-TO-DATE
+> Task :shared:domain:preAndroidMainBuild UP-TO-DATE
+> Task :shared:presentation:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:preDebugBuild UP-TO-DATE
+> Task :shared:data:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :androidApp:generateDebugResources FROM-CACHE
+> Task :shared:domain:generateAndroidMainEmptyResourceFiles
+> Task :shared:presentation:generateAndroidMainEmptyResourceFiles
+> Task :shared:data:generateAndroidMainEmptyResourceFiles
+> Task :shared:data:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:data:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:domain:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :androidApp:packageDebugResources FROM-CACHE
+> Task :shared:presentation:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:presentation:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:presentation:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:presentation:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:presentation:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:presentation:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:presentation:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:presentation:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:presentation:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :shared:presentation:generateResourceAccessorsForCommonMain NO-SOURCE
+> Task :shared:data:generateCommonMainDatabaseAplikasiInterface FROM-CACHE
+> Task :shared:presentation:generateActualResourceCollectorsForAndroidMain
+> Task :shared:presentation:generateComposeResClass
+> Task :shared:presentation:generateExpectResourceCollectorsForCommonMain
+> Task :androidApp:generateDebugAssets UP-TO-DATE
+> Task :androidApp:javaPreCompileDebug FROM-CACHE
+> Task :androidApp:processDebugNavigationResources FROM-CACHE
+> Task :androidApp:mergeDebugAssets
+> Task :androidApp:compressDebugAssets FROM-CACHE
+> Task :androidApp:checkDebugDuplicateClasses
+> Task :androidApp:extractProguardFiles
+> Task :shared:data:writeAndroidMainAarMetadata
+> Task :shared:domain:writeAndroidMainAarMetadata
+> Task :shared:presentation:writeAndroidMainAarMetadata
+> Task :androidApp:mapDebugSourceSetPaths
+> Task :androidApp:compileDebugNavigationResources FROM-CACHE
+> Task :shared:domain:compileAndroidMain FROM-CACHE
+> Task :androidApp:checkDebugAarMetadata
+> Task :shared:domain:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:domain:exportAndroidMainConsumerProguardFiles
+> Task :shared:domain:bundleAndroidMainClassesToCompileJar
+> Task :androidApp:createDebugCompatibleScreenManifests
+> Task :androidApp:parseDebugLocalResources FROM-CACHE
+> Task :androidApp:mergeDebugResources FROM-CACHE
+> Task :androidApp:extractDeepLinksDebug FROM-CACHE
+> Task :shared:data:processAndroidMainManifest FROM-CACHE
+> Task :shared:domain:processAndroidMainManifest FROM-CACHE
+> Task :shared:presentation:processAndroidMainManifest FROM-CACHE
+> Task :androidApp:generateDebugRFile FROM-CACHE
+> Task :shared:domain:compressAndroidMainJavaRes FROM-CACHE
+> Task :shared:data:compileAndroidMain FROM-CACHE
+> Task :androidApp:processDebugMainManifest FROM-CACHE
+> Task :shared:data:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:data:exportAndroidMainConsumerProguardFiles
+> Task :shared:data:bundleAndroidMainClassesToCompileJar
+> Task :androidApp:processDebugManifest FROM-CACHE
+> Task :shared:domain:bundleAndroidMainClassesToRuntimeJar
+> Task :androidApp:processDebugManifestForPackage FROM-CACHE
+> Task :shared:data:bundleAndroidMainClassesToRuntimeJar
+> Task :androidApp:mergeDebugJniLibFolders
+> Task :shared:data:mergeAndroidMainJniLibFolders
+> Task :shared:data:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:data:compressAndroidMainJavaRes
+> Task :shared:data:copyAndroidMainJniLibsProjectOnly
+> Task :shared:domain:mergeAndroidMainJniLibFolders
+> Task :shared:domain:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:domain:copyAndroidMainJniLibsProjectOnly
+> Task :shared:presentation:mergeAndroidMainJniLibFolders
+> Task :androidApp:processDebugResources FROM-CACHE
+> Task :shared:presentation:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :androidApp:writeDebugAppMetadata
+> Task :shared:presentation:copyAndroidMainJniLibsProjectOnly
+> Task :androidApp:writeDebugSigningConfigVersions
+> Task :androidApp:mergeDebugNativeLibs
+
+> Task :androidApp:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :androidApp:validateSigningDebug
+
+> Task :shared:presentation:compileAndroidMain
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/ArsipLayar.kt:171:132 'val Icons.Filled.InsertDriveFile: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.InsertDriveFile.
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/DaftarBerkasLayar.kt:200:48 'val Icons.Filled.DriveFileMove: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.DriveFileMove.
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/DialogMarkah.kt:75:135 'val Icons.Filled.InsertDriveFile: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.InsertDriveFile.
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/EditorLayar.kt:96:68 'val Icons.Filled.WrapText: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.WrapText.
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/PencarianNamaLayar.kt:160:123 'val Icons.Filled.InsertDriveFile: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.InsertDriveFile.
+
+> Task :shared:presentation:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:presentation:compressAndroidMainJavaRes
+> Task :shared:presentation:exportAndroidMainConsumerProguardFiles
+> Task :shared:presentation:bundleAndroidMainClassesToRuntimeJar
+> Task :shared:presentation:bundleAndroidMainClassesToCompileJar
+
+> Task :androidApp:compileDebugKotlin
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:42:50 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:42:61 Unresolved reference 'BandingkanIsiBerkasUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:91:47 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:92:21 Unresolved reference 'PencarianIsiStateHolder'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:99:45 Unresolved reference 'tetapkanLokasi'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:102:39 Property delegate must have a 'getValue(Nothing?, KProperty0<??? (Unknown type for type parameter T)>)' method. None of the following functions is applicable:
+fun <T> State<T>.getValue(thisObj: Any?, property: KProperty<*>): T
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:102:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:102:66 Unresolved reference 'state'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:102:72 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:104:17 Unresolved reference 'PencarianIsiLayar'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:106:59 Unresolved reference 'ubahTeks'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:107:59 Unresolved reference 'ubahMode'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:108:66 Unresolved reference 'togglePekaHuruf'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:109:65 Unresolved reference 'toggleKataUtuh'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:110:62 Unresolved reference 'toggleRegex'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:111:63 Unresolved reference 'ubahEkstensi'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:112:64 Unresolved reference 'ubahUkuranMin'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:113:64 Unresolved reference 'ubahUkuranMax'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:114:56 Unresolved reference 'mulai'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:115:56 Unresolved reference 'batal'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:117:49 Unresolved reference 'batal'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:120:37 Cannot infer type for value parameter 'item'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:127:44 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:128:21 Unresolved reference 'GantiNamaMassalStateHolder'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:130:43 Unresolved reference 'HitungPratinjauGantiNamaUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:137:36 Property delegate must have a 'getValue(Nothing?, KProperty0<??? (Unknown type for type parameter T)>)' method. None of the following functions is applicable:
+fun <T> State<T>.getValue(thisObj: Any?, property: KProperty<*>): T
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:137:39 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:137:60 Unresolved reference 'state'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:137:66 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:139:17 Unresolved reference 'GantiNamaMassalLayar'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:141:56 Unresolved reference 'ubahPola'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:142:61 Unresolved reference 'ubahNomorAwal'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:143:56 Unresolved reference 'eksekusi'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:149:13 'else' entry must be the last one in a 'when' expression.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:159:40 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:160:21 Unresolved reference 'ArsipStateHolder'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:171:32 Property delegate must have a 'getValue(Nothing?, KProperty0<??? (Unknown type for type parameter T)>)' method. None of the following functions is applicable:
+fun <T> State<T>.getValue(thisObj: Any?, property: KProperty<*>): T
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:171:35 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:171:52 Unresolved reference 'state'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:171:58 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:173:17 Unresolved reference 'ArsipLayar'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:175:52 Unresolved reference 'klikItem'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:176:53 Unresolved reference 'tekanLama'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:177:51 Unresolved reference 'kembali'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:178:59 Unresolved reference 'ekstrakTerpilih'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:179:56 Unresolved reference 'ekstrakSemua'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:180:57 Unresolved reference 'batalkanPilih'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:181:49 Unresolved reference 'tutup'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:86:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:87:17 Unresolved reference 'RepositoriPencarianIsiAndroid'.
+> Task :androidApp:compileDebugKotlin FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793816619042.json
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:90:35 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:91:17 Unresolved reference 'RepositoriArsipZipAndroid'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:111:37 Unresolved reference 'CariIsiBerkasUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:112:47 Unresolved reference 'EksekusiGantiNamaMassalUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:113:38 Unresolved reference 'DaftarIsiArsipUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:114:40 Unresolved reference 'EkstrakItemArsipUseCase'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/MainActivity.kt:115:41 Unresolved reference 'EkstrakSemuaArsipUseCase'.
+
+[Incubating] Problems report is available at: file:///home/runner/work/***/***/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':androidApp:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Kotlin compiler: CANNOT_INFER_PARAMETER_TYPE
+       Kotlin compiler error
+         Cannot infer type for type parameter 'T'. Specify it explicitly.
+         Location: /home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/AplikasiUtamaAndroid.kt:42
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':androidApp:compileDebugKotlin' (registered by plugin 'com.android.internal.application').
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.lambda$doExecute$1(DefaultTaskNodeExecutor.java:367)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:365)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeTrackingTaskIdentity(DefaultTaskNodeExecutor.java:332)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeFinalizingProperties(DefaultTaskNodeExecutor.java:318)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingWithNoActions(DefaultTaskNodeExecutor.java:289)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingOnlyIf(DefaultTaskNodeExecutor.java:272)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeCatchingFailures(DefaultTaskNodeExecutor.java:228)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithFallbackOperationId(DefaultTaskNodeExecutor.java:197)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithLifecycle(DefaultTaskNodeExecutor.java:171)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.access$000(DefaultTaskNodeExecutor.java:67)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor$1.run(DefaultTaskNodeExecutor.java:136)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.execute(DefaultTaskNodeExecutor.java:133)
+	at org.gradle.execution.plan.LocalTaskNode.execute(LocalTaskNode.java:229)
+	at org.gradle.execution.DefaultBuildWorkExecutor.lambda$executePlan$0(DefaultBuildWorkExecutor.java:153)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.lambda$execute$0(DefaultPlanExecutor.java:476)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:475)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:392)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:118)
+	at org.gradle.execution.DefaultBuildWorkExecutor.executePlan(DefaultBuildWorkExecutor.java:143)
+	at org.gradle.execution.DefaultBuildWorkExecutor.displayOrExecutePlan(DefaultBuildWorkExecutor.java:128)
+	at org.gradle.execution.DefaultBuildWorkExecutor$1.call(DefaultBuildWorkExecutor.java:79)
+	at org.gradle.execution.DefaultBuildWorkExecutor$1.call(DefaultBuildWorkExecutor.java:75)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.execution.DefaultBuildWorkExecutor.execute(DefaultBuildWorkExecutor.java:75)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$0(DefaultBuildLifecycleController.java:323)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:324)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$0(StateTransitionController.java:235)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:45)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:235)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:314)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:207)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:296)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:294)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:290)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:282)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:182)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:199)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:199)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:273)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:132)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocksBlocking$0(DefaultWorkerLeaseService.java:406)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocksBlocking(DefaultWorkerLeaseService.java:401)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:261)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:243)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$1(DefaultAsyncWorkTracker.java:128)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.resources.AbstractResourceLockRegistry.whileDisallowingLockChanges(AbstractResourceLockRegistry.java:51)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.whileDisallowingProjectLockChanges(DefaultWorkerLeaseService.java:266)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:127)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:93)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:79)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:67)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:276)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:253)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:236)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:219)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:185)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:145)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$3(BuildCacheStep.java:104)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$1(BuildCacheStep.java:104)
+	at org.gradle.internal.Try$Success.map(Try.java:170)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:88)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Left.fold(Either.java:116)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:32)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:105)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBeforeExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.java:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:90)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.java:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:314)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:364)
+	... 55 more
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Cannot infer type for type parameter 'T'. Specify it explicitly.
+	at org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultCompilerDiagnosticsProblemsReporter.reportCompilerMessage(CompilerDiagnosticsProblemsReporter.kt:63)
+	at org.jetbrains.kotlin.compilerRunner.btapi.ProblemsApiCompilerMessageRenderer.replayTo(ProblemsApiCompilerMessageRenderer.kt:88)
+	at org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork.execute(BuildToolsApiCompilationWork.kt:251)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:103)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$1(DefaultWorkerExecutor.java:169)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:191)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$600(DefaultConditionalExecutionQueue.java:112)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:168)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:296)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:294)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:290)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:282)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:138)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:163)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:125)
+	... 2 more
+
+
+BUILD FAILED in 32s
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+67 actionable tasks: 46 executed, 21 from cache
+Configuration cache entry stored.
+##[error]Process completed with exit code 1.

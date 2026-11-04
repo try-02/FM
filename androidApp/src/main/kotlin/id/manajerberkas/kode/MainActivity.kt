@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+
 import id.manajerberkas.kode.data.adapter.PabrikLokasiAndroid
 import id.manajerberkas.kode.data.lokal.DatabaseAplikasi
 import id.manajerberkas.kode.data.repositori.RepositoriBerandaSql
@@ -20,6 +21,12 @@ import id.manajerberkas.kode.data.repositori.RepositoriMarkahSql
 import id.manajerberkas.kode.data.repositori.RepositoriPencarianNamaAndroid
 import id.manajerberkas.kode.data.repositori.RepositoriPreferensiEditorSql
 import id.manajerberkas.kode.data.repositori.RepositoriRiwayatPencarianSql
+
+// PERBAIKAN: Import Repository yang hilang
+import id.manajerberkas.kode.data.repositori.RepositoriPencarianIsiAndroid
+import id.manajerberkas.kode.data.repositori.RepositoriArsipZipAndroid
+
+// PERBAIKAN: Import seluruh UseCase lengkap dari domain
 import id.manajerberkas.kode.domain.usecase.AmbilBerandaUseCase
 import id.manajerberkas.kode.domain.usecase.AmbilMarkahUseCase
 import id.manajerberkas.kode.domain.usecase.AmbilPreferensiEditorUseCase
@@ -27,10 +34,15 @@ import id.manajerberkas.kode.domain.usecase.AmbilRiwayatPencarianUseCase
 import id.manajerberkas.kode.domain.usecase.BacaTeksUseCase
 import id.manajerberkas.kode.domain.usecase.BuatBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.BuatFolderUseCase
+import id.manajerberkas.kode.domain.usecase.CariIsiBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.CariNamaBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.DaftarIsiArsipUseCase
 import id.manajerberkas.kode.domain.usecase.DaftarIsiFolderUseCase
 import id.manajerberkas.kode.domain.usecase.DapatkanKemampuanPenyimpananUseCase
 import id.manajerberkas.kode.domain.usecase.DapatkanMetadataBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.EksekusiGantiNamaMassalUseCase
+import id.manajerberkas.kode.domain.usecase.EkstrakItemArsipUseCase
+import id.manajerberkas.kode.domain.usecase.EkstrakSemuaArsipUseCase
 import id.manajerberkas.kode.domain.usecase.GantiNamaBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.HapusBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.HapusBerandaUseCase
@@ -44,6 +56,7 @@ import id.manajerberkas.kode.domain.usecase.SimpanMarkahUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanPreferensiEditorUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanRiwayatPencarianUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanTeksUseCase
+
 import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
 import id.manajerberkas.kode.presentation.state.DependensiEditor
 import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
@@ -171,8 +184,12 @@ class MainActivity : ComponentActivity() {
                 stateHolder = stateHolder,
                 dependensiPenjelajah = dependensiPenjelajah,
                 dependensiEditor = dependensiEditor,
-                onBukaPrivat = { stateHolder.bukaAwal(PabrikLokasiAndroid.privatRoot()) },
-                onBukaSaf = { peluncurSaf.launch(null) }
+                onBukaPrivat = {
+                    stateHolder.bukaAwal(PabrikLokasiAndroid.privatRoot())
+                },
+                onBukaSaf = {
+                    peluncurSaf.launch(null)
+                }
             )
         }
     }
