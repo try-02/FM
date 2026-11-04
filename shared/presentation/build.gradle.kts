@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -6,7 +8,23 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
+    android {
+        namespace = "id.manajerberkas.kode.shared.data"
+        compileSdk = 37
+        
+        // 1. minSdk ditulis langsung tanpa defaultConfig
+        minSdk = 30
+
+        buildFeatures {
+            compose = true
+        }
+
+        // 2. Pengganti compileOptions/sourceCompatibility di AGP 9 KMP
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
 
     // Aktifkan nanti saat masuk tahap iOS:
     // iosArm64()
@@ -23,23 +41,5 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.core)
         }
-    }
-}
-
-android {
-    namespace = "id.manajerberkas.kode.shared.data"
-    compileSdk = 37
-
-    defaultConfig {
-        minSdk = 30
-    }
-
-    buildFeatures {
-        compose = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
     }
 }
