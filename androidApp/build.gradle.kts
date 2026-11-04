@@ -16,13 +16,28 @@ android {
         versionName = "1.0"
     }
 
+    buildTypes {
+        debug {
+            // Membantu resolusi varian ke modul KMP AGP 9 yang bersifat single-variant
+            matchingFallbacks += listOf("release")
+        }
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
     buildFeatures {
         compose = true
     }
 
+    // 1. UBAH KE VERSION_21 agar serasi dengan JVM_21 di shared modules
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {
