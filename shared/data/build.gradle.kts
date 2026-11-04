@@ -5,19 +5,8 @@ plugins {
 }
 
 kotlin {
-    android {
-        namespace = "id.manajerberkas.kode.shared.data"
-        compileSdk = 37
-
-        defaultConfig {
-            minSdk = 30
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
-        }
-    }
+    // 1. Cukup deklarasikan target Android di dalam blok kotlin
+    androidTarget()
 
     // Aktifkan nanti saat masuk tahap iOS:
     // iosArm64()
@@ -31,7 +20,7 @@ kotlin {
             implementation(libs.sqldelight.runtime)
         }
 
-    androidMain.dependencies {
+        androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.documentfile)
             implementation(libs.sqldelight.android)
@@ -39,6 +28,22 @@ kotlin {
     }
 }
 
+// 2. Blok android milik AGP dipisah ke luar blok kotlin
+android {
+    namespace = "id.manajerberkas.kode.shared.data"
+    compileSdk = 37
+
+    defaultConfig {
+        minSdk = 30
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+// 3. Konfigurasi SQLDelight tetap di tingkat paling atas
 sqldelight {
     databases {
         create("DatabaseAplikasi") {

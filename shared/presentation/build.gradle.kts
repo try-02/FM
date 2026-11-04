@@ -6,23 +6,7 @@ plugins {
 }
 
 kotlin {
-    android {
-        namespace = "id.manajerberkas.kode.shared.data"
-        compileSdk = 37
-
-        defaultConfig {
-            minSdk = 30
-        }
-
-        buildFeatures {
-            compose = true
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
-        }
-    }
+    androidTarget()
 
     // Aktifkan nanti saat masuk tahap iOS:
     // iosArm64()
@@ -39,5 +23,23 @@ kotlin {
 
             implementation(libs.kotlinx.coroutines.core)
         }
+    }
+}
+
+android {
+    namespace = "id.manajerberkas.kode.shared.data"
+    compileSdk = 37
+
+    defaultConfig {
+        minSdk = 30
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
