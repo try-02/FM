@@ -2,20 +2,19 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    // HAPUS: alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
-    // 1. Cukup gunakan target JVM murni untuk konsumsi di Android & Desktop
-    jvm {
+    android {
+        namespace = "id.manajerberkas.kode.shared.domain"
+        compileSdk = 37
+        minSdk = 30
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-
-    // Nanti saat masuk tahap iOS, cukup aktifkan target native-nya:
-    // iosArm64()
-    // iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
