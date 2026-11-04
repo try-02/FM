@@ -1,0 +1,37 @@
+package id.manajerberkas.kode.presentation.state
+
+import id.manajerberkas.kode.domain.usecase.AmbilBerandaUseCase
+import id.manajerberkas.kode.domain.usecase.AmbilMarkahUseCase
+import id.manajerberkas.kode.domain.usecase.BuatBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.BuatFolderUseCase
+import id.manajerberkas.kode.domain.usecase.CariNamaBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.DaftarIsiFolderUseCase
+import id.manajerberkas.kode.domain.usecase.DapatkanKemampuanPenyimpananUseCase
+import id.manajerberkas.kode.domain.usecase.GantiNamaBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.HapusBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.HapusBerandaUseCase
+import id.manajerberkas.kode.domain.usecase.HapusMarkahUseCase
+import id.manajerberkas.kode.domain.usecase.PindahkanBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.SalinBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.SimpanBerandaUseCase
+import id.manajerberkas.kode.domain.usecase.SimpanMarkahUseCase
+
+class DependensiPenjelajah(
+    val daftarIsiFolder: DaftarIsiFolderUseCase,
+    val dapatkanKemampuan: DapatkanKemampuanPenyimpananUseCase,
+    val buatBerkas: BuatBerkasUseCase,
+    val buatFolder: BuatFolderUseCase,
+    val gantiNama: GantiNamaBerkasUseCase,
+    val hapusBerkas: HapusBerkasUseCase,
+    val salinBerkas: SalinBerkasUseCase,
+    val pindahkanBerkas: PindahkanBerkasUseCase,
+    val ambilMarkah: AmbilMarkahUseCase,
+    val simpanMarkah: SimpanMarkahUseCase,
+    val hapusMarkah: HapusMarkahUseCase,
+    val ambilBeranda: AmbilBerandaUseCase,
+    val simpanBeranda: SimpanBerandaUseCase,
+    val hapusBeranda: HapusBerandaUseCase,
+    val cariNamaBerkas: CariNamaBerkasUseCase,
+    val cariIsiBerkas: CariIsiBerkasUseCase,
+    val eksekusiGantiNamaMassal: EksekusiGantiNamaMassalUseCase
+)

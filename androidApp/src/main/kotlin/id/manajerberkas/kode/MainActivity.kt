@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -81,6 +83,14 @@ class MainActivity : ComponentActivity() {
             val repositoriRiwayat = remember { RepositoriRiwayatPencarianSql(database) }
             val repositoriPreferensi = remember { RepositoriPreferensiEditorSql(database) }
 
+            val repositoriPencarianIsi = remember {
+                RepositoriPencarianIsiAndroid(context.applicationContext)
+            }
+
+            val repositoriArsip = remember {
+                RepositoriArsipZipAndroid(context.applicationContext)
+            }
+
             val dependensiPenjelajah = remember {
                 DependensiPenjelajah(
                     daftarIsiFolder = DaftarIsiFolderUseCase(repositoriBerkas),
@@ -97,7 +107,12 @@ class MainActivity : ComponentActivity() {
                     ambilBeranda = AmbilBerandaUseCase(repositoriBeranda),
                     simpanBeranda = SimpanBerandaUseCase(repositoriBeranda),
                     hapusBeranda = HapusBerandaUseCase(repositoriBeranda),
-                    cariNamaBerkas = CariNamaBerkasUseCase(repositoriPencarianNama)
+                    cariNamaBerkas = CariNamaBerkasUseCase(repositoriPencarianNama),
+                    cariIsiBerkas = CariIsiBerkasUseCase(repositoriPencarianIsi),
+                    eksekusiGantiNamaMassal = EksekusiGantiNamaMassalUseCase(repositoriBerkas),
+                    daftarIsiArsip = DaftarIsiArsipUseCase(repositoriArsip),
+                    ekstrakItemArsip = EkstrakItemArsipUseCase(repositoriArsip),
+                    ekstrakSemuaArsip = EkstrakSemuaArsipUseCase(repositoriArsip)
                 )
             }
 
@@ -156,12 +171,8 @@ class MainActivity : ComponentActivity() {
                 stateHolder = stateHolder,
                 dependensiPenjelajah = dependensiPenjelajah,
                 dependensiEditor = dependensiEditor,
-                onBukaPrivat = {
-                    stateHolder.bukaAwal(PabrikLokasiAndroid.privatRoot())
-                },
-                onBukaSaf = {
-                    peluncurSaf.launch(null)
-                }
+                onBukaPrivat = { stateHolder.bukaAwal(PabrikLokasiAndroid.privatRoot()) },
+                onBukaSaf = { peluncurSaf.launch(null) }
             )
         }
     }

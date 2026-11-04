@@ -9,16 +9,14 @@ plugins {
 
 kotlin {
     android {
-        // 1. Sesuaikan namespace khusus presentation
+        // 1. Namespace khusus modul presentation
         namespace = "id.manajerberkas.kode.shared.presentation"
         compileSdk {
             version = release(37) {
-            minorApiLevel = 1
+                minorApiLevel = 1
             }
         }
         minSdk = 30
-
-        // buildFeatures { compose = true } SUDAH DIHAPUS
 
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
@@ -36,10 +34,21 @@ kotlin {
             // Dependensi Compose Multiplatform
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.material3)
 
+            // 1. Wajib untuk transisi ekspresif (AnimatedVisibility, expand/shrink, dsb)
+            implementation(compose.animation)
+
+            // 2. Wajib untuk ikon berkas lengkap (FolderZip, Code, AudioFile, VideoFile, SdCard, dsb)
+            implementation(compose.materialIconsExtended)
+
+            // 3. Resource KMP (string, drawable, font multiplatform)
+            implementation(compose.components.resources)
+
+            // Coroutines & Lifecycle State Collection
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.androidx.lifecycle.runtime.compose)
         }
     }
 }

@@ -50,4 +50,15 @@ interface DaftarBerkasAksi {
 
     fun bukaPencarian()
     fun tutupPencarian()
+
+    fun mulaiBandingkan()
+    fun selesaiBandingkan()
+
+    fun bukaPencarianIsi()
+    fun tutupPencarianIsi()
+
+    fun mulaiGantiNamaMassal()
+    fun selesaiGantiNamaMassal()
+
+    fun selesaiBukaArsip()
 }

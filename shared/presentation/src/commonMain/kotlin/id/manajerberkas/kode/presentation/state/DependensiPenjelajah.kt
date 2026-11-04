@@ -31,5 +31,10 @@ class DependensiPenjelajah(
     val ambilBeranda: AmbilBerandaUseCase,
     val simpanBeranda: SimpanBerandaUseCase,
     val hapusBeranda: HapusBerandaUseCase,
-    val cariNamaBerkas: CariNamaBerkasUseCase
+    val cariNamaBerkas: CariNamaBerkasUseCase,
+    val cariIsiBerkas: CariIsiBerkasUseCase,
+    val eksekusiGantiNamaMassal: EksekusiGantiNamaMassalUseCase,
+    val daftarIsiArsip: DaftarIsiArsipUseCase,
+    val ekstrakItemArsip: EkstrakItemArsipUseCase,
+    val ekstrakSemuaArsip: EkstrakSemuaArsipUseCase
 )

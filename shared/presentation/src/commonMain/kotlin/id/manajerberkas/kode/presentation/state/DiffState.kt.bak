@@ -1,0 +1,14 @@
+package id.manajerberkas.kode.presentation.state
+
+import id.manajerberkas.kode.domain.model.HasilDiff
+import id.manajerberkas.kode.domain.model.LokasiBerkas
+
+data class DiffState(
+    val memuat: Boolean = false,
+    val lokasiA: LokasiBerkas? = null,
+    val lokasiB: LokasiBerkas? = null,
+    val hasil: HasilDiff? = null,
+    val pesan: String? = null,
+    val indeksPerubahanAktif: Int = -1,
+    val daftarIndeksPerubahan: List<Int> = emptyList()
+)

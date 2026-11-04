@@ -118,12 +118,14 @@ class DaftarBerkasStateHolder(
             }
 
             else -> {
-                _state.update {
-                    it.copy(
-                        editorTujuan = TujuanEditor(
-                            lokasi = item.lokasi
+                if (id.manajerberkas.kode.domain.model.PendeteksiArsip.didukungUntukDibuka(item.nama)) {
+                    _state.update { it.copy(tujuanArsip = item.lokasi) }
+                } else {
+                    _state.update {
+                        it.copy(
+                            editorTujuan = TujuanEditor(lokasi = item.lokasi)
                         )
-                    )
+                    }
                 }
             }
         }
@@ -651,5 +653,77 @@ class DaftarBerkasStateHolder(
                 )
             }
         }
+    }
+
+    override fun mulaiBandingkan() {
+        val terpilih = state.value.itemTerpilih.toList()
+        if (terpilih.size != 2) return
+        if (terpilih.any { it.jenis != JenisItem.BERKAS }) {
+            _state.update { it.copy(pesan = "Pilih tepat dua file untuk dibandingkan.") }
+            return
+        }
+        
+        _state.update {
+            it.copy(
+                tujuanDiff = TujuanDiff(terpilih[0].lokasi, terpilih[1].lokasi),
+                modePilih = false,
+                itemTerpilih = emptySet(),
+                menuUntukItem = null
+            )
+        }
+    }
+
+    fun selesaiBandingkan() {
+        _state.update { it.copy(tujuanDiff = null) }
+    }
+
+    override fun bukaPencarianIsi() {
+        _state.update {
+            it.copy(
+                pencarianIsiTerbuka = true,
+                pencarianTerbuka = false,
+                menuUntukItem = null,
+                modePilih = false,
+                itemTerpilih = emptySet()
+            )
+        }
+    }
+
+    override fun tutupPencarianIsi() {
+        _state.update { it.copy(pencarianIsiTerbuka = false) }
+    }
+
+    fun bukaHasilPencarianIsi(kecocokan: id.manajerberkas.kode.domain.model.KecocokanIsiFile) {
+        _state.update {
+            it.copy(
+                editorTujuan = TujuanEditor(
+                    lokasi = kecocokan.lokasi,
+                    nomorBaris = kecocokan.nomorBaris
+                )
+            )
+        }
+    }
+
+    override fun mulaiGantiNamaMassal() {
+        val terpilih = state.value.itemTerpilih.toList()
+        if (terpilih.isEmpty()) return
+        val items = terpilih.map { id.manajerberkas.kode.domain.model.ItemGantiNama(it.lokasi, it.nama) }
+        _state.update {
+            it.copy(
+                tujuanGantiNamaMassal = items,
+                modePilih = false,
+                itemTerpilih = emptySet(),
+                menuUntukItem = null
+            )
+        }
+    }
+
+    fun selesaiGantiNamaMassal() {
+        _state.update { it.copy(tujuanGantiNamaMassal = null) }
+        muatLokasiAktif()
+    }
+
+    fun selesaiBukaArsip() {
+        _state.update { it.copy(tujuanArsip = null) }
     }
 }

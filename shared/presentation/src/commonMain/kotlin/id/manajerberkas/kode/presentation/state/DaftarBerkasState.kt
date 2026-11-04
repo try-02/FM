@@ -38,6 +38,14 @@ data class DaftarBerkasState(
     val beranda: LokasiBerkas? = null,
 
     val pencarianTerbuka: Boolean = false
+
+    val tujuanDiff: TujuanDiff? = null
+
+    val pencarianIsiTerbuka: Boolean = false
+
+    val tujuanGantiNamaMassal: List<id.manajerberkas.kode.domain.model.ItemGantiNama>? = null
+
+    val tujuanArsip: LokasiBerkas? = null
 ) {
     val jumlahTerpilih: Int
         get() = itemTerpilih.size

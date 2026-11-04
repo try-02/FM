@@ -24,6 +24,12 @@ android {
         debug {
             // Membantu resolusi varian ke modul KMP AGP 9 yang bersifat single-variant
             matchingFallbacks += listOf("release")
+            ndk {
+                abiFilters += listOf("arm64-v8a", "x86_64")
+            }
+            optimization {
+                enable = true
+            }
         }
         release {
             isMinifyEnabled = false

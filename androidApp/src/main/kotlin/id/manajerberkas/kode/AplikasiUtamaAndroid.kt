@@ -34,8 +34,22 @@ fun AplikasiUtamaAndroid(
 
     val tujuanEditor = state.editorTujuan
 
+    val tujuanDiff = state.tujuanDiff
+
     MaterialTheme {
         when {
+            tujuanDiff != null -> {
+                val bandingkanIsiBerkasUseCase = remember { BandingkanIsiBerkasUseCase() }
+                
+                DiffAndroid(
+                    lokasiA = tujuanDiff.lokasiA,
+                    lokasiB = tujuanDiff.lokasiB,
+                    bacaTeksUseCase = dependensiEditor.bacaTeks,
+                    bandingkanIsiBerkasUseCase = bandingkanIsiBerkasUseCase,
+                    onTutup = { stateHolder.selesaiBandingkan() }
+                )
+            }
+
             tujuanEditor != null -> {
                 EditorAndroid(
                     lokasi = tujuanEditor.lokasi,
@@ -73,12 +87,98 @@ fun AplikasiUtamaAndroid(
                 )
             }
 
+            state.pencarianIsiTerbuka -> {
+                val pencarianIsiStateHolder = remember {
+                    PencarianIsiStateHolder(
+                        cariIsiBerkas = dependensiPenjelajah.cariIsiBerkas,
+                        scope = scope
+                    )
+                }
+
+                LaunchedEffect(state.lokasiAktif?.id) {
+                    pencarianIsiStateHolder.tetapkanLokasi(state.lokasiAktif)
+                }
+
+                val statePencarianIsi by pencarianIsiStateHolder.state.collectAsStateWithLifecycle()
+
+                PencarianIsiLayar(
+                    state = statePencarianIsi,
+                    onUbahTeks = pencarianIsiStateHolder::ubahTeks,
+                    onUbahMode = pencarianIsiStateHolder::ubahMode,
+                    onTogglePekaHuruf = pencarianIsiStateHolder::togglePekaHuruf,
+                    onToggleKataUtuh = pencarianIsiStateHolder::toggleKataUtuh,
+                    onToggleRegex = pencarianIsiStateHolder::toggleRegex,
+                    onUbahEkstensi = pencarianIsiStateHolder::ubahEkstensi,
+                    onUbahUkuranMin = pencarianIsiStateHolder::ubahUkuranMin,
+                    onUbahUkuranMax = pencarianIsiStateHolder::ubahUkuranMax,
+                    onMulai = pencarianIsiStateHolder::mulai,
+                    onBatal = pencarianIsiStateHolder::batal,
+                    onTutup = {
+                        pencarianIsiStateHolder.batal()
+                        stateHolder.tutupPencarianIsi()
+                    },
+                    onKlikHasil = { item ->
+                        stateHolder.bukaHasilPencarianIsi(item)
+                    }
+                )
+            }
+
+            state.tujuanGantiNamaMassal != null -> {
+                val gantiNamaStateHolder = remember(state.tujuanGantiNamaMassal) {
+                    GantiNamaMassalStateHolder(
+                        items = state.tujuanGantiNamaMassal!!,
+                        hitungPratinjau = HitungPratinjauGantiNamaUseCase(),
+                        eksekusiGantiNama = dependensiPenjelajah.eksekusiGantiNamaMassal,
+                        scope = scope,
+                        onSelesai = { stateHolder.selesaiGantiNamaMassal() }
+                    )
+                }
+
+                val stateGantiNama by gantiNamaStateHolder.state.collectAsStateWithLifecycle()
+
+                GantiNamaMassalLayar(
+                    state = stateGantiNama,
+                    onUbahPola = gantiNamaStateHolder::ubahPola,
+                    onUbahNomorAwal = gantiNamaStateHolder::ubahNomorAwal,
+                    onEksekusi = gantiNamaStateHolder::eksekusi,
+                    onTutup = { stateHolder.selesaiGantiNamaMassal() },
+                    onTutupSetelahEksekusi = { stateHolder.selesaiGantiNamaMassal() }
+                )
+            }
+
             else -> {
                 DaftarBerkasLayar(
                     state = state,
                     aksi = stateHolder,
                     onBukaPrivat = onBukaPrivat,
                     onBukaSaf = onBukaSaf
+                )
+            }
+
+            state.tujuanArsip != null -> {
+                val arsipStateHolder = remember(state.tujuanArsip) {
+                    ArsipStateHolder(
+                        lokasiArsip = state.tujuanArsip!!,
+                        lokasiTujuanEkstrak = state.lokasiAktif ?: state.tujuanArsip!!,
+                        daftarIsiArsip = dependensiPenjelajah.daftarIsiArsip,
+                        ekstrakItemArsip = dependensiPenjelajah.ekstrakItemArsip,
+                        ekstrakSemuaArsip = dependensiPenjelajah.ekstrakSemuaArsip,
+                        scope = scope,
+                        onTutup = { stateHolder.selesaiBukaArsip() }
+                    )
+                }
+
+                val stateArsip by arsipStateHolder.state.collectAsStateWithLifecycle()
+
+                ArsipLayar(
+                    state = stateArsip,
+                    onKlikItem = arsipStateHolder::klikItem,
+                    onTekanLama = arsipStateHolder::tekanLama,
+                    onKembali = arsipStateHolder::kembali,
+                    onEkstrakTerpilih = arsipStateHolder::ekstrakTerpilih,
+                    onEkstrakSemua = arsipStateHolder::ekstrakSemua,
+                    onBatalkanPilih = arsipStateHolder::batalkanPilih,
+                    onTutup = arsipStateHolder::tutup
                 )
             }
         }

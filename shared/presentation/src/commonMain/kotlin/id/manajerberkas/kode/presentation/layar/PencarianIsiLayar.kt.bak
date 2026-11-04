@@ -1,0 +1,153 @@
+package id.manajerberkas.kode.presentation.layar
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import id.manajerberkas.kode.domain.model.KecocokanIsiFile
+import id.manajerberkas.kode.domain.model.ModePencarianIsi
+import id.manajerberkas.kode.presentation.state.PencarianIsiState
+
+@Composable
+fun PencarianIsiLayar(
+    state: PencarianIsiState,
+    onUbahTeks: (String) -> Unit,
+    onUbahMode: (ModePencarianIsi) -> Unit,
+    onTogglePekaHuruf: () -> Unit,
+    onToggleKataUtuh: () -> Unit,
+    onToggleRegex: () -> Unit,
+    onUbahEkstensi: (String) -> Unit,
+    onUbahUkuranMin: (String) -> Unit,
+    onUbahUkuranMax: (String) -> Unit,
+    onMulai: () -> Unit,
+    onBatal: () -> Unit,
+    onTutup: () -> Unit,
+    onKlikHasil: (KecocokanIsiFile) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Button(onClick = onTutup) { Text("Tutup") }
+            Button(
+                onClick = onMulai,
+                enabled = !state.sedangMencari,
+                modifier = Modifier.padding(start = 8.dp)
+            ) { Text("Cari") }
+            Button(
+                onClick = onBatal,
+                enabled = state.sedangMencari,
+                modifier = Modifier.padding(start = 8.dp)
+            ) { Text("Batal") }
+        }
+
+        Text(
+            text = "Lokasi: ${state.lokasiPencarian?.namaTampilan ?: "-"}",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+
+        TextField(
+            value = state.teks,
+            onValueChange = onUbahTeks,
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            placeholder = { Text("Teks yang dicari") }
+        )
+
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+            Button(
+                onClick = { onUbahMode(ModePencarianIsi.FOLDER_SAAT_INI) },
+                enabled = state.mode != ModePencarianIsi.FOLDER_SAAT_INI
+            ) { Text("Folder ini") }
+            Button(
+                onClick = { onUbahMode(ModePencarianIsi.REKURSIF) },
+                enabled = state.mode != ModePencarianIsi.REKURSIF,
+                modifier = Modifier.padding(start = 8.dp)
+            ) { Text("Rekursif") }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
+            Checkbox(checked = state.pekaHuruf, onCheckedChange = { onTogglePekaHuruf() })
+            Text("Peka huruf", modifier = Modifier.padding(end = 8.dp))
+            Checkbox(checked = state.kataUtuh, onCheckedChange = { onToggleKataUtuh() })
+            Text("Kata utuh", modifier = Modifier.padding(end = 8.dp))
+            Checkbox(checked = state.gunakanRegex, onCheckedChange = { onToggleRegex() })
+            Text("Regex")
+        }
+
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+            TextField(
+                value = state.ekstensi,
+                onValueChange = onUbahEkstensi,
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Ekstensi") }
+            )
+            TextField(
+                value = state.ukuranMinKb,
+                onValueChange = onUbahUkuranMin,
+                modifier = Modifier.weight(1f).padding(start = 8.dp),
+                placeholder = { Text("Min KB") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+            TextField(
+                value = state.ukuranMaxKb,
+                onValueChange = onUbahUkuranMax,
+                modifier = Modifier.weight(1f).padding(start = 8.dp),
+                placeholder = { Text("Maks KB") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        }
+
+        if (state.sedangMencari) {
+            CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+        }
+
+        Text(
+            text = if (state.pernahMencari) {
+                "File diproses: ${state.jumlahFileDiproses}, Kecocokan: ${state.jumlahKecocokanTotal}, Hasil: ${state.hasil.size}"
+            } else {
+                "Belum ada pencarian."
+            },
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+
+        state.pesan?.let {
+            Text(text = it, modifier = Modifier.padding(horizontal = 8.dp))
+        }
+
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(state.hasil) { item ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onKlikHasil(item) }
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "${item.namaFile} : ${item.nomorBaris}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = item.potonganTeks,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 2
+                    )
+                }
+            }
+        }
+    }
+}
