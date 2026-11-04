@@ -6,7 +6,11 @@ plugins {
 
 android {
     namespace = "id.manajerberkas.kode"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "id.manajerberkas.kode"

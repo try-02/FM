@@ -8,7 +8,11 @@ plugins {
 kotlin {
     android {
         namespace = "id.manajerberkas.kode.shared.domain"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+            minorApiLevel = 1
+            }
+        }
         minSdk = 30
 
         compilerOptions {

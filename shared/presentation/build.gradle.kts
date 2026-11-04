@@ -11,7 +11,11 @@ kotlin {
     android {
         // 1. Sesuaikan namespace khusus presentation
         namespace = "id.manajerberkas.kode.shared.presentation"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+            minorApiLevel = 1
+            }
+        }
         minSdk = 30
 
         // buildFeatures { compose = true } SUDAH DIHAPUS

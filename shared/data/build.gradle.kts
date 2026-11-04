@@ -10,7 +10,11 @@ kotlin {
     // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
     android {
         namespace = "id.manajerberkas.kode.shared.data"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+            minorApiLevel = 1
+            }
+        }
         
         // 1. minSdk ditulis langsung tanpa defaultConfig
         minSdk = 30
