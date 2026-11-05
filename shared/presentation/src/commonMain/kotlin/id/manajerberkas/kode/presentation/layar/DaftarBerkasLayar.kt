@@ -283,6 +283,11 @@ fun DaftarBerkasLayar(
             // Baris Pemilih Penyimpanan (Hanya ditampilkan jika BUKAN mode pilih)
             if (!state.modePilih && state.modePilihTujuan == null) {
                 val isPrivat = state.lokasiAktif?.id?.contains("privat", ignoreCase = true) == true
+                val idAktif = state.lokasiAktif?.id ?: ""
+                val adalahEksternal = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_EKSTERNAL)
+                val adalahPrivat = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_PRIVAT)
+                val adalahSaf = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_SAF)
+
 
                 Row(
                     modifier = Modifier
@@ -293,33 +298,30 @@ fun DaftarBerkasLayar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     FilterChip(
-                        selected = isPrivat,
-                        onClick = onBukaPrivat,
-                        label = { Text("Penyimpanan Privat") },
-                        leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
+                        selected = adalahEksternal,
+                        onClick = { stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot()) },
+                        label = { Text("Penyimpanan Utama") },
+                        leadingIcon = { Icon(Icons.Default.PhoneAndroid, null, modifier = Modifier.size(16.dp)) },
                         shape = RoundedCornerShape(14.dp)
                     )
 
+    // 2. Chip Penyimpanan Privat
                     FilterChip(
-                        selected = !isPrivat && state.lokasiAktif != null,
-                        onClick = {
-                            // Jika sudah di SAF, klik ini akan membuka pemilih folder SAF baru
-                            if (!isPrivat) onBukaSaf()
-                        },
-                        label = { Text("SAF Eksternal") },
-                        leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
-                        shape = RoundedCornerShape(14.dp)
+                       selected = adalahPrivat,
+                       onClick = onBukaPrivat,
+                       label = { Text("Privat") },
+                       leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
+                       shape = RoundedCornerShape(14.dp)
                     )
 
-                    // Tombol cepat pilih folder SAF baru
-                    AssistChip(
-                        onClick = onBukaSaf,
-                        label = { Text("Pilih Folder...") },
-                        leadingIcon = {
-                            Icon(Icons.Default.FolderOpen, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
-                        },
-                        shape = RoundedCornerShape(14.dp)
-                    )
+    // 3. Chip SAF (Folder Khusus Eksternal)
+                   FilterChip(
+                      selected = adalahSaf,
+                      onClick = onBukaSaf,
+                      label = { Text("SAF Eksternal") },
+                      leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
+                      shape = RoundedCornerShape(14.dp)
+                   )
                 }
             }
 

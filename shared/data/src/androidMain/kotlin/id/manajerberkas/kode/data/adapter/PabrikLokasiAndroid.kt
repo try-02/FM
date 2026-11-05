@@ -1,6 +1,7 @@
 package id.manajerberkas.kode.data.adapter
 
 import android.net.Uri
+import android.os.Environment
 import android.provider.DocumentsContract
 import id.manajerberkas.kode.domain.model.JenisPenyimpanan
 import id.manajerberkas.kode.domain.model.LokasiBerkas
@@ -9,6 +10,7 @@ object PabrikLokasiAndroid {
 
     const val SKEMA_PRIVAT = "privat:"
     const val SKEMA_SAF = "saf:"
+    const val SKEMA_EKSTERNAL = "eksternal:"
 
     fun privatRoot(): LokasiBerkas {
         return LokasiBerkas(
@@ -21,18 +23,37 @@ object PabrikLokasiAndroid {
 
     fun privat(jalur: String): LokasiBerkas {
         val jalurBersih = jalur.trim('/')
-
-        val nama = if (jalurBersih.isBlank()) {
-            "Penyimpanan Privat"
-        } else {
-            jalurBersih.substringAfterLast('/')
-        }
+        val nama = if (jalurBersih.isBlank()) "Penyimpanan Privat" else jalurBersih.substringAfterLast('/')
 
         return LokasiBerkas(
             id = SKEMA_PRIVAT + jalurBersih,
             namaTampilan = nama,
             jalurTampilan = "/$jalurBersih",
             jenisPenyimpanan = JenisPenyimpanan.PRIVAT_APLIKASI
+        )
+    }
+
+    // --- DUKUNGAN PENYIMPANAN UTAMA (/storage/emulated/0) ---
+    fun eksternalRoot(): LokasiBerkas {
+        val path = Environment.getExternalStorageDirectory().absolutePath
+        return LokasiBerkas(
+            id = SKEMA_EKSTERNAL,
+            namaTampilan = "Penyimpanan Utama",
+            jalurTampilan = path,
+            jenisPenyimpanan = JenisPenyimpanan.EKSTERNAL
+        )
+    }
+
+    fun eksternal(jalur: String): LokasiBerkas {
+        val jalurBersih = jalur.trim('/')
+        val nama = if (jalurBersih.isBlank()) "Penyimpanan Utama" else jalurBersih.substringAfterLast('/')
+        val rootPath = Environment.getExternalStorageDirectory().absolutePath
+
+        return LokasiBerkas(
+            id = SKEMA_EKSTERNAL + jalurBersih,
+            namaTampilan = nama,
+            jalurTampilan = "$rootPath/$jalurBersih",
+            jenisPenyimpanan = JenisPenyimpanan.EKSTERNAL
         )
     }
 

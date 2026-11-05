@@ -5,7 +5,8 @@ enum class JenisPenyimpanan {
     SAF_ANDROID,
     DOKUMEN_IOS,
     ARSIP,
-    TIDAK_DIKENAL
+    TIDAK_DIKENAL,
+    EKSTERNAL
 }
 
 data class LokasiBerkas(

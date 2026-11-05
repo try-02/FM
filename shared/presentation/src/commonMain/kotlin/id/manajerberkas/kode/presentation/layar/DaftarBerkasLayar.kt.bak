@@ -13,9 +13,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import id.manajerberkas.kode.domain.model.JenisItem
 import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
 import id.manajerberkas.kode.presentation.state.DaftarBerkasState
 import id.manajerberkas.kode.presentation.state.ModePilihTujuan
+import java.net.URLDecoder
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +110,7 @@ fun DaftarBerkasLayar(
                                     overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
-                                    text = state.lokasiAktif?.jalurTampilan ?: "/",
+                                    text = rapihkanJalur(state.lokasiAktif?.jalurTampilan ?: "/"),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 1,
@@ -141,6 +143,11 @@ fun DaftarBerkasLayar(
                                     shape = RoundedCornerShape(16.dp)
                                 ) {
                                     DropdownMenuItem(
+                                        text = { Text("Pilih Folder Eksternal (SAF)") },
+                                        leadingIcon = { Icon(Icons.Default.FolderOpen, null) },
+                                        onClick = { menuOpsiTerbuka = false; onBukaSaf() }
+                                    )
+                                    DropdownMenuItem(
                                         text = { Text("Pencarian Isi Teks") },
                                         leadingIcon = { Icon(Icons.Default.FindInPage, null) },
                                         onClick = { menuOpsiTerbuka = false; aksi.bukaPencarianIsi() }
@@ -172,17 +179,20 @@ fun DaftarBerkasLayar(
         },
         bottomBar = {
             if (state.modePilih) {
+                // Perbaikan: navigationBarsPadding() agar tidak tertutup tombol navigasi Android
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                    tonalElevation = 6.dp
+                    tonalElevation = 8.dp,
+                    modifier = Modifier.navigationBarsPadding()
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         FilledTonalButton(
                             onClick = aksi::mulaiSalin,
@@ -270,28 +280,47 @@ fun DaftarBerkasLayar(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Chip Lokasi Cepat
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            // Baris Pemilih Penyimpanan (Hanya ditampilkan jika BUKAN mode pilih)
+            if (!state.modePilih && state.modePilihTujuan == null) {
                 val isPrivat = state.lokasiAktif?.id?.contains("privat", ignoreCase = true) == true
-                FilterChip(
-                    selected = isPrivat,
-                    onClick = onBukaPrivat,
-                    label = { Text("Privat") },
-                    leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
-                    shape = RoundedCornerShape(14.dp)
-                )
-                FilterChip(
-                    selected = !isPrivat && state.lokasiAktif != null,
-                    onClick = onBukaSaf,
-                    label = { Text("SAF Eksternal") },
-                    leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
-                    shape = RoundedCornerShape(14.dp)
-                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FilterChip(
+                        selected = isPrivat,
+                        onClick = onBukaPrivat,
+                        label = { Text("Penyimpanan Privat") },
+                        leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    FilterChip(
+                        selected = !isPrivat && state.lokasiAktif != null,
+                        onClick = {
+                            // Jika sudah di SAF, klik ini akan membuka pemilih folder SAF baru
+                            if (!isPrivat) onBukaSaf()
+                        },
+                        label = { Text("SAF Eksternal") },
+                        leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    // Tombol cepat pilih folder SAF baru
+                    AssistChip(
+                        onClick = onBukaSaf,
+                        label = { Text("Pilih Folder...") },
+                        leadingIcon = {
+                            Icon(Icons.Default.FolderOpen, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
+                        },
+                        shape = RoundedCornerShape(14.dp)
+                    )
+                }
             }
 
             AnimatedVisibility(visible = state.sedangOperasi || state.memuat) {
@@ -302,15 +331,18 @@ fun DaftarBerkasLayar(
                 )
             }
 
+            // Pesan banner (hanya jika ada pesan dan bukan path URI mentah)
             state.pesan?.let { pesan ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(pesan, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodySmall)
+                if (!pesan.startsWith("saf:") && !pesan.startsWith("content:")) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(pesan, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
 
@@ -351,7 +383,6 @@ fun DaftarBerkasLayar(
         }
     }
 
-    // Dialog Tambah/Ganti Nama & Konfirmasi
     if (state.dialogBuatBerkas) {
         DialogNamaExpressive("Buat File", "", aksi::tutupDialogBuatBerkas, aksi::buatBerkas)
     }
@@ -451,7 +482,7 @@ private fun ItemBerkasCardExpressive(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = item.lokasi.jalurTampilan ?: item.lokasi.id,
+                    text = rapihkanJalur(item.lokasi.jalurTampilan ?: item.lokasi.id),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -462,16 +493,41 @@ private fun ItemBerkasCardExpressive(
     }
 }
 
+/**
+ * Merapihkan tampilan path URI SAF yang panjang/ter-encode
+ */
+private fun rapihkanJalur(jalurMentah: String): String {
+    return try {
+        val decoded = URLDecoder.decode(jalurMentah, "UTF-8")
+        when {
+            decoded.contains("primary:") -> {
+                val sub = decoded.substringAfter("primary:")
+                if (sub.isBlank()) "Penyimpanan Internal" else "Internal > ${sub.replace('/', '>')}"
+            }
+            decoded.contains("tree/") -> {
+                val sub = decoded.substringAfter("tree/")
+                "SAF > ${sub.substringAfterLast(':').replace('/', '>')}"
+            }
+            decoded.startsWith("privat:") -> {
+                "Privat ${decoded.removePrefix("privat:")}"
+            }
+            else -> decoded
+        }
+    } catch (e: Exception) {
+        jalurMentah
+    }
+}
+
 private fun dapatkanIkonBerkas(nama: String): ImageVector {
     val n = nama.lowercase()
     return when {
         n.endsWith(".zip") || n.endsWith(".tar") || n.endsWith(".gz") || n.endsWith(".7z") -> Icons.Default.FolderZip
-        n.endsWith(".kt") || n.endsWith(".java") || n.endsWith(".py") || n.endsWith(".js") || n.endsWith(".json") || n.endsWith(".xml") -> Icons.Default.Code
+        n.endsWith(".kt") || n.endsWith(".java") || n.endsWith(".py") || n.endsWith(".js") || n.endsWith(".json") || n.endsWith(".xml") || n.endsWith(".rs") -> Icons.Default.Code
         n.endsWith(".png") || n.endsWith(".jpg") || n.endsWith(".jpeg") || n.endsWith(".webp") -> Icons.Default.Image
         n.endsWith(".mp3") || n.endsWith(".wav") || n.endsWith(".m4a") -> Icons.Default.AudioFile
         n.endsWith(".mp4") || n.endsWith(".mkv") -> Icons.Default.VideoFile
         n.endsWith(".pdf") -> Icons.Default.PictureAsPdf
-        else -> Icons.Default.Description
+        else -> Icons.AutoMirrored.Filled.InsertDriveFile
     }
 }
 
