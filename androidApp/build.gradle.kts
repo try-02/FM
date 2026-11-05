@@ -28,11 +28,12 @@ android {
             }
         }
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            ndk {
+                abiFilters += listOf("arm64-v8a")
+            }
+            optimization {
+                enable = true
+            }
         }
     }
     buildFeatures {

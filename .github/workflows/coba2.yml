@@ -34,7 +34,7 @@ jobs:
           ./gradlew :shared:domain:allTests
 
           # Hapus 'clean' agar build cache & configuration cache optimal
-          ./gradlew assembleDebug \
+          ./gradlew assembleRelease \
             --no-daemon \
             --non-interactive \
             --stacktrace \
@@ -49,7 +49,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
         with:
-          releaseDirectory: androidApp/build/outputs/apk/debug
+          releaseDirectory: androidApp/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
