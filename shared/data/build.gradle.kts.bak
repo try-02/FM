@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.documentfile)
             implementation(libs.sqldelight.android)
-            implementation("org.apache.commons:commons-compress:1.28.0")
+            implementation(libs.commons-compress)
         }
     }
 }
