@@ -50,10 +50,6 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonscompress" }
 
-
-[libraries]
-# ... dependensi yang sudah ada sebelumnya ...
-
 # Dependensi Compose Multiplatform langsung (menggantikan compose.* DSL)
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
