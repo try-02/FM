@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.domain.model
-
 data class KemampuanPenyimpanan(
     val bisaBaca: Boolean,
     val bisaTulis: Boolean,

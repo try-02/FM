@@ -1,15 +1,12 @@
 package id.manajerberkas.kode.domain.model
-
 data class ItemGantiNama(
     val lokasi: LokasiBerkas,
     val namaLama: String
 )
-
 data class KueriGantiNamaMassal(
     val pola: String,
     val nomorAwal: Int = 1
 )
-
 data class HasilPratinjauGantiNama(
     val lokasi: LokasiBerkas,
     val namaLama: String,

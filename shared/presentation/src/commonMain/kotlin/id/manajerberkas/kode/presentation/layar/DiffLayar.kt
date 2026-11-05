@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +26,6 @@ import id.manajerberkas.kode.domain.model.JenisOperasiDiff
 import id.manajerberkas.kode.domain.model.ModeDiff
 import id.manajerberkas.kode.presentation.state.DiffAksi
 import id.manajerberkas.kode.presentation.state.DiffState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiffLayar(
@@ -36,13 +34,10 @@ fun DiffLayar(
     onTutup: () -> Unit
 ) {
     val listState = rememberLazyListState()
-
     LaunchedEffect(state.indeksBarisAktif) {
         state.indeksBarisAktif?.let { listState.animateScrollToItem(it) }
     }
-
     DisposableEffect(Unit) { onDispose { aksi.batal() } }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -78,7 +73,6 @@ fun DiffLayar(
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text("A: ${state.lokasiA?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall)
                     Text("B: ${state.lokasiB?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall)
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -100,11 +94,9 @@ fun DiffLayar(
                     }
                 }
             }
-
             if (state.memuat) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
-
             state.hasil?.let {
                 LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     if (state.mode == ModeDiff.UNIFIED) {
@@ -127,7 +119,6 @@ fun DiffLayar(
         }
     }
 }
-
 @Composable
 private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) {
     val bgColor = when {
@@ -136,7 +127,6 @@ private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) 
         baris.jenis == JenisOperasiDiff.TAMBAH -> Color(0xFF2E7D32).copy(alpha = 0.2f)
         else -> Color.Transparent
     }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -154,7 +144,6 @@ private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) 
         )
     }
 }
-
 @Composable
 private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, isActiveBlock: Boolean) {
     Row(modifier = Modifier.fillMaxWidth()) {

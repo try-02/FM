@@ -1,42 +1,30 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.ItemBerkas
 import id.manajerberkas.kode.domain.model.MarkahLokasi
-
 interface DaftarBerkasAksi {
     fun kembali()
-
     fun klikItem(item: ItemBerkas)
     fun tekanLama(item: ItemBerkas)
-
     fun pilihSemua()
     fun batalkanPilih()
-
     fun bukaDialogBuatBerkas()
     fun bukaDialogBuatFolder()
-
     fun tutupDialogBuatBerkas()
     fun tutupDialogBuatFolder()
-
     fun buatBerkas(nama: String)
     fun buatFolder(nama: String)
-
     fun bukaDialogGantiNama()
     fun tutupDialogGantiNama()
     fun gantiNama(namaBaru: String)
-
     fun mintaHapusTerpilih()
     fun batalHapus()
     fun konfirmasiHapus()
-
     fun mulaiSalin()
     fun mulaiPindah()
     fun batalPilihTujuan()
     fun konfirmasiTujuan()
-
     fun tutupMenu()
     fun bukaItemDariMenu(item: ItemBerkas)
-
     fun muatMarkah()
     fun bukaDialogMarkah()
     fun tutupDialogMarkah()
@@ -44,21 +32,15 @@ interface DaftarBerkasAksi {
     fun tambahMarkahItem(item: ItemBerkas)
     fun hapusMarkah(markah: MarkahLokasi)
     fun bukaMarkah(markah: MarkahLokasi)
-
     fun jadikanBeranda()
     fun hapusBeranda()
-
     fun bukaPencarian()
     fun tutupPencarian()
-
     fun mulaiBandingkan()
     fun selesaiBandingkan()
-
     fun bukaPencarianIsi()
     fun tutupPencarianIsi()
-
     fun mulaiGantiNamaMassal()
     fun selesaiGantiNamaMassal()
-
     fun selesaiBukaArsip()
 }

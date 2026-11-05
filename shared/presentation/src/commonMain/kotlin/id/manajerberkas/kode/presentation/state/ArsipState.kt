@@ -1,9 +1,7 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.ItemArsip
 import id.manajerberkas.kode.domain.model.KemampuanFormatArsip
 import id.manajerberkas.kode.domain.model.LokasiBerkas
-
 data class ArsipState(
     val memuat: Boolean = false,
     val lokasiArsip: LokasiBerkas? = null,

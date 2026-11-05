@@ -1,13 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
 }
-
 kotlin {
-    // Pada AGP 9.0+, blok android berada di DALAM blok kotlin:
     android {
         namespace = "id.manajerberkas.kode.shared.data"
         compileSdk {
@@ -15,22 +12,12 @@ kotlin {
             minorApiLevel = 1
             }
         }
-        
-        // 1. minSdk ditulis langsung tanpa defaultConfig
         minSdk = 30
-
         withHostTest {}
-
-        // 2. Pengganti compileOptions/sourceCompatibility di AGP 9 KMP
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-
-    // Aktifkan nanti saat masuk tahap iOS:
-    // iosArm64()
-    // iosSimulatorArm64()
-
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:domain"))
@@ -38,7 +25,6 @@ kotlin {
             implementation(libs.okio)
             implementation(libs.sqldelight.runtime)
         }
-
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.documentfile)
@@ -47,7 +33,6 @@ kotlin {
         }
     }
 }
-
 sqldelight {
     databases {
         create("DatabaseAplikasi") {

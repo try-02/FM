@@ -1,9 +1,7 @@
 package id.manajerberkas.kode.domain.usecase
-
 import id.manajerberkas.kode.domain.kontrak.RepositoriBerkas
 import id.manajerberkas.kode.domain.model.HasilOperasi
 import id.manajerberkas.kode.domain.model.HasilPratinjauGantiNama
-
 class EksekusiGantiNamaMassalUseCase(
     private val repositori: RepositoriBerkas
 ) {
@@ -11,7 +9,6 @@ class EksekusiGantiNamaMassalUseCase(
         pratinjau: List<HasilPratinjauGantiNama>
     ): List<HasilOperasi> {
         val hasil = mutableListOf<HasilOperasi>()
-
         for (item in pratinjau) {
             if (!item.valid || item.namaBaru == null) {
                 hasil.add(
@@ -22,11 +19,9 @@ class EksekusiGantiNamaMassalUseCase(
                 )
                 continue
             }
-
             val operasi = repositori.gantiNama(item.lokasi, item.namaBaru)
             hasil.add(operasi)
         }
-
         return hasil
     }
 }

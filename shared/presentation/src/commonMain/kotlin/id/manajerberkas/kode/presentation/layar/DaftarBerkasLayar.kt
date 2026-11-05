@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -33,7 +32,6 @@ import id.manajerberkas.kode.presentation.state.DaftarBerkasState
 import id.manajerberkas.kode.presentation.state.ModePilihTujuan
 import id.manajerberkas.kode.domain.model.JenisPenyimpanan
 import java.net.URLDecoder
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DaftarBerkasLayar(
@@ -47,7 +45,6 @@ fun DaftarBerkasLayar(
         state.itemTerpilih.map { it.lokasi.id }.toSet()
     }
     var menuOpsiTerbuka by remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             when {
@@ -181,7 +178,6 @@ fun DaftarBerkasLayar(
         },
         bottomBar = {
             if (state.modePilih) {
-                // Perbaikan: navigationBarsPadding() agar tidak tertutup tombol navigasi Android
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
@@ -282,16 +278,12 @@ fun DaftarBerkasLayar(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Baris Pemilih Penyimpanan (Hanya ditampilkan jika BUKAN mode pilih)
             if (!state.modePilih && state.modePilihTujuan == null) {
                 val jenis = state.lokasiAktif?.jenisPenyimpanan
                 val idAktif = state.lokasiAktif?.id ?: ""
-
-        // Mengecek jenis penyimpanan aktif secara murni domain tanpa modul data
                 val adalahEksternal = jenis == JenisPenyimpanan.EKSTERNAL || idAktif.startsWith("eksternal:")
                 val adalahPrivat = jenis == JenisPenyimpanan.PRIVAT_APLIKASI || idAktif.startsWith("privat:")
                 val adalahSaf = jenis == JenisPenyimpanan.SAF_ANDROID || idAktif.startsWith("saf:")
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -300,16 +292,13 @@ fun DaftarBerkasLayar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 1. Chip Penyimpanan Utama (/storage/emulated/0)
             FilterChip(
                 selected = adalahEksternal,
-                onClick = onBukaEksternal, // <-- Panggil lambda callback
+                onClick = onBukaEksternal, 
                 label = { Text("Penyimpanan Utama") },
                 leadingIcon = { Icon(Icons.Default.PhoneAndroid, null, modifier = Modifier.size(16.dp)) },
                 shape = RoundedCornerShape(14.dp)
             )
-
-            // 2. Chip Penyimpanan Privat
             FilterChip(
                 selected = adalahPrivat,
                 onClick = onBukaPrivat,
@@ -317,8 +306,6 @@ fun DaftarBerkasLayar(
                 leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
                 shape = RoundedCornerShape(14.dp)
             )
-
-            // 3. Chip SAF Eksternal
             FilterChip(
                 selected = adalahSaf,
                 onClick = {
@@ -328,8 +315,6 @@ fun DaftarBerkasLayar(
                 leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
                 shape = RoundedCornerShape(14.dp)
             )
-
-            // 4. Tombol Cepat Pilih Folder SAF Baru
             AssistChip(
                 onClick = onBukaSaf,
                 label = { Text("Pilih Folder...") },
@@ -340,8 +325,6 @@ fun DaftarBerkasLayar(
             )
         }
     }
-
-
             AnimatedVisibility(visible = state.sedangOperasi || state.memuat) {
                 LinearProgressIndicator(
                     modifier = Modifier
@@ -349,8 +332,6 @@ fun DaftarBerkasLayar(
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
-
-            // Pesan banner (hanya jika ada pesan dan bukan path URI mentah)
             state.pesan?.let { pesan ->
                 if (!pesan.startsWith("saf:") && !pesan.startsWith("content:")) {
                     Card(
@@ -364,7 +345,6 @@ fun DaftarBerkasLayar(
                     }
                 }
             }
-
             if (state.daftar.isEmpty() && !state.memuat) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -401,7 +381,6 @@ fun DaftarBerkasLayar(
             }
         }
     }
-
     if (state.dialogBuatBerkas) {
         DialogNamaExpressive("Buat File", "", aksi::tutupDialogBuatBerkas, aksi::buatBerkas)
     }
@@ -438,7 +417,6 @@ fun DaftarBerkasLayar(
         DialogMenuKonteksExpressive(state, aksi, item)
     }
 }
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ItemBerkasCardExpressive(
@@ -468,7 +446,6 @@ private fun ItemBerkasCardExpressive(
                     modifier = Modifier.padding(end = 8.dp)
                 )
             }
-
             val isFolder = item.jenis == JenisItem.FOLDER
             Box(
                 modifier = Modifier
@@ -487,7 +464,6 @@ private fun ItemBerkasCardExpressive(
                     modifier = Modifier.size(24.dp)
                 )
             }
-
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -511,10 +487,6 @@ private fun ItemBerkasCardExpressive(
         }
     }
 }
-
-/**
- * Merapihkan tampilan path URI SAF yang panjang/ter-encode
- */
 private fun rapihkanJalur(jalurMentah: String): String {
     return try {
         val decoded = URLDecoder.decode(jalurMentah, "UTF-8")
@@ -536,7 +508,6 @@ private fun rapihkanJalur(jalurMentah: String): String {
         jalurMentah
     }
 }
-
 private fun dapatkanIkonBerkas(nama: String): ImageVector {
     val n = nama.lowercase()
     return when {
@@ -549,7 +520,6 @@ private fun dapatkanIkonBerkas(nama: String): ImageVector {
         else -> Icons.AutoMirrored.Filled.InsertDriveFile
     }
 }
-
 @Composable
 private fun DialogNamaExpressive(
     judul: String,
@@ -582,7 +552,6 @@ private fun DialogNamaExpressive(
         }
     )
 }
-
 @Composable
 private fun DialogMenuKonteksExpressive(
     state: DaftarBerkasState,
@@ -601,7 +570,6 @@ private fun DialogMenuKonteksExpressive(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) { Text("Buka") }
-
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilledTonalButton(
                         onClick = aksi::mulaiSalin,
@@ -616,7 +584,6 @@ private fun DialogMenuKonteksExpressive(
                         shape = RoundedCornerShape(12.dp)
                     ) { Text("Pindah") }
                 }
-
                 if (satuItem && state.kemampuan?.bisaGantiNama == true) {
                     OutlinedButton(
                         onClick = aksi::bukaDialogGantiNama,
@@ -624,13 +591,11 @@ private fun DialogMenuKonteksExpressive(
                         shape = RoundedCornerShape(12.dp)
                     ) { Text("Ganti Nama") }
                 }
-
                 OutlinedButton(
                     onClick = { aksi.tambahMarkahItem(item) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) { Text("Tambah ke Markah") }
-
                 Button(
                     onClick = aksi::mintaHapusTerpilih,
                     enabled = state.kemampuan?.bisaHapus == true,

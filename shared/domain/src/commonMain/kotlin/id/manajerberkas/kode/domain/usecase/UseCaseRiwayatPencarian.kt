@@ -1,7 +1,5 @@
 package id.manajerberkas.kode.domain.usecase
-
 import id.manajerberkas.kode.domain.kontrak.RepositoriRiwayatPencarian
-
 class AmbilRiwayatPencarianUseCase(
     private val repositori: RepositoriRiwayatPencarian
 ) {
@@ -9,7 +7,6 @@ class AmbilRiwayatPencarianUseCase(
         return repositori.ambilSemua(batas)
     }
 }
-
 class SimpanRiwayatPencarianUseCase(
     private val repositori: RepositoriRiwayatPencarian
 ) {
@@ -18,11 +15,9 @@ class SimpanRiwayatPencarianUseCase(
         batas: Int = 20
     ) {
         if (nilai.isBlank()) return
-
         repositori.simpan(nilai, batas)
     }
 }
-
 class HapusRiwayatPencarianUseCase(
     private val repositori: RepositoriRiwayatPencarian
 ) {

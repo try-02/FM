@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +22,6 @@ import id.manajerberkas.kode.domain.model.ItemBerkas
 import id.manajerberkas.kode.domain.model.JenisItem
 import id.manajerberkas.kode.domain.model.ModePencarian
 import id.manajerberkas.kode.presentation.state.PencarianNamaState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PencarianNamaLayar(
@@ -88,7 +86,6 @@ fun PencarianNamaLayar(
                         placeholder = { Text("Ketik nama file / folder...") },
                         singleLine = true
                     )
-
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
                             selected = state.mode == ModePencarian.FOLDER_SAAT_INI,
@@ -109,7 +106,6 @@ fun PencarianNamaLayar(
                             shape = RoundedCornerShape(10.dp)
                         )
                     }
-
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
                             selected = state.hanyaFolder == true,
@@ -126,18 +122,15 @@ fun PencarianNamaLayar(
                     }
                 }
             }
-
             if (state.sedangMencari) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
-
             Text(
                 text = if (state.pernahMencari) "Ditemukan ${state.hasil.size} hasil" else "Siap mencari.",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),

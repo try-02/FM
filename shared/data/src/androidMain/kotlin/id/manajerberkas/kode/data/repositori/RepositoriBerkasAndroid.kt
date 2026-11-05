@@ -10,7 +10,7 @@ import id.manajerberkas.kode.domain.kontrak.RepositoriBerkas
 import id.manajerberkas.kode.domain.model.*
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.InputStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import kotlinx.coroutines.Dispatchers
@@ -19,13 +19,13 @@ import kotlinx.coroutines.withContext
 class RepositoriBerkasAndroid(
     private val context: Context
 ) : RepositoriBerkas {
-
     private val akarPrivat = context.filesDir
     private val akarEksternal: File
         get() = Environment.getExternalStorageDirectory()
 
     private companion object {
-        const val BATAS_EDITOR = 1_048_576L
+        const val BATAS_EDITOR = 1_048_576L // 1 MB
+        const val UKURAN_PROBE_BINER = 8192
     }
 
     override suspend fun daftarIsi(lokasi: LokasiBerkas): HasilDaftarBerkas = withContext(Dispatchers.IO) {
@@ -100,9 +100,8 @@ class RepositoriBerkasAndroid(
     override suspend fun salinKe(sumber: LokasiBerkas, lokasiIndukTujuan: LokasiBerkas): HasilOperasi = withContext(Dispatchers.IO) {
         val fileSumber = ambilBerkas(sumber)
         val fileTujuan = ambilBerkas(lokasiIndukTujuan)
-
         if (fileSumber != null && fileTujuan != null) {
-            salinFile(fileSumber, fileTujuan, lokasiIndukTujuan)
+            salinFile(fileSumber, fileTujuan)
         } else {
             HasilOperasi(false, "Salin antar format penyimpanan ini belum didukung.")
         }
@@ -111,9 +110,8 @@ class RepositoriBerkasAndroid(
     override suspend fun pindahkanKe(sumber: LokasiBerkas, lokasiIndukTujuan: LokasiBerkas): HasilOperasi = withContext(Dispatchers.IO) {
         val fileSumber = ambilBerkas(sumber)
         val fileTujuan = ambilBerkas(lokasiIndukTujuan)
-
         if (fileSumber != null && fileTujuan != null) {
-            pindahFile(fileSumber, fileTujuan, lokasiIndukTujuan)
+            pindahFile(fileSumber, fileTujuan)
         } else {
             HasilOperasi(false, "Pindah antar format penyimpanan ini belum didukung.")
         }
@@ -152,7 +150,6 @@ class RepositoriBerkasAndroid(
         }
     }
 
-    // --- HELPER UNTUK PENYIMPANAN BERBASIS FILE (PRIVAT & EKSTERNAL) ---
     private fun ambilBerkas(lokasi: LokasiBerkas): File? {
         return try {
             when {
@@ -173,7 +170,9 @@ class RepositoriBerkasAndroid(
         val target = if (jalurRelatif.isBlank()) akar else File(akar, jalurRelatif)
         val akarKanonik = akar.canonicalPath
         val targetKanonik = target.canonicalPath
-        if (!targetKanonik.startsWith(akarKanonik)) throw SecurityException("Akses di luar folder diizinkan.")
+        if (!(targetKanonik == akarKanonik || targetKanonik.startsWith(akarKanonik + File.separator))) {
+            throw SecurityException("Akses di luar folder diizinkan.")
+        }
         return target
     }
 
@@ -181,13 +180,11 @@ class RepositoriBerkasAndroid(
         return try {
             val jalurRelatif = lokasi.id.removePrefix(skema).trim('/')
             val folder = berkasDariRoot(jalurRelatif, akar)
-
             if (!folder.isDirectory) return HasilDaftarBerkas(false, "Lokasi bukan folder.")
-
-            val daftar = folder.listFiles()?.map { anak ->
+            val berkasAnak = folder.listFiles() ?: return HasilDaftarBerkas(false, "Gagal mengakses isi folder (periksa izin penyimpanan).")
+            val daftar = berkasAnak.map { anak ->
                 val jalurAnak = if (jalurRelatif.isBlank()) anak.name else "$jalurRelatif/${anak.name}"
                 val lokasiAnak = if (skema == PabrikLokasiAndroid.SKEMA_PRIVAT) PabrikLokasiAndroid.privat(jalurAnak) else PabrikLokasiAndroid.eksternal(jalurAnak)
-
                 ItemBerkas(
                     nama = anak.name,
                     lokasi = lokasiAnak,
@@ -195,8 +192,7 @@ class RepositoriBerkasAndroid(
                     ukuranByte = if (anak.isFile) anak.length() else null,
                     waktuModifikasi = anak.lastModified()
                 )
-            }?.sortedWith(compareByDescending<ItemBerkas> { it.jenis }.thenBy { it.nama.lowercase() }) ?: emptyList()
-
+            }.sortedWith(compareByDescending<ItemBerkas> { it.jenis }.thenBy { it.nama.lowercase() })
             HasilDaftarBerkas(true, daftar = daftar)
         } catch (e: Exception) {
             HasilDaftarBerkas(false, e.message ?: "Gagal membaca direktori.")
@@ -210,7 +206,6 @@ class RepositoriBerkasAndroid(
             val berkasBaru = File(induk, nama)
             if (berkasBaru.exists()) return HasilOperasi(false, "Berkas sudah ada.")
             if (!berkasBaru.createNewFile()) return HasilOperasi(false, "Gagal membuat berkas.")
-
             val rel = berkasBaru.relativeTo(akar).path.replace(File.separatorChar, '/')
             val lokHasil = if (skema == PabrikLokasiAndroid.SKEMA_PRIVAT) PabrikLokasiAndroid.privat(rel) else PabrikLokasiAndroid.eksternal(rel)
             HasilOperasi(true, "Berkas dibuat.", lokasiHasil = lokHasil)
@@ -226,7 +221,6 @@ class RepositoriBerkasAndroid(
             val folderBaru = File(induk, nama)
             if (folderBaru.exists()) return HasilOperasi(false, "Folder sudah ada.")
             if (!folderBaru.mkdirs()) return HasilOperasi(false, "Gagal membuat folder.")
-
             val rel = folderBaru.relativeTo(akar).path.replace(File.separatorChar, '/')
             val lokHasil = if (skema == PabrikLokasiAndroid.SKEMA_PRIVAT) PabrikLokasiAndroid.privat(rel) else PabrikLokasiAndroid.eksternal(rel)
             HasilOperasi(true, "Folder dibuat.", lokasiHasil = lokHasil)
@@ -242,7 +236,6 @@ class RepositoriBerkasAndroid(
             val target = File(file.parentFile, namaBaru)
             if (target.exists()) return HasilOperasi(false, "Nama sudah digunakan.")
             if (!file.renameTo(target)) return HasilOperasi(false, "Gagal mengganti nama.")
-
             val rel = target.relativeTo(akar).path.replace(File.separatorChar, '/')
             val lokHasil = if (skema == PabrikLokasiAndroid.SKEMA_PRIVAT) PabrikLokasiAndroid.privat(rel) else PabrikLokasiAndroid.eksternal(rel)
             HasilOperasi(true, "Nama diganti.", lokasiHasil = lokHasil)
@@ -256,45 +249,90 @@ class RepositoriBerkasAndroid(
             if (lokasi.id == skema) return HasilOperasi(false, "Root tidak dapat dihapus.")
             val jalur = lokasi.id.removePrefix(skema).trim('/')
             val file = berkasDariRoot(jalur, akar)
-            file.deleteRecursively()
-            HasilOperasi(true, "Item dihapus.")
+            val sukses = file.deleteRecursively()
+            HasilOperasi(sukses, if (sukses) "Item dihapus." else "Gagal menghapus beberapa item.")
         } catch (e: Exception) {
             HasilOperasi(false, e.message ?: "Gagal menghapus.")
         }
     }
 
-    private fun salinFile(sumber: File, tujuan: File, lokasiIndukTujuan: LokasiBerkas): HasilOperasi {
+    private fun salinFile(sumber: File, tujuan: File): HasilOperasi {
         return try {
+            if (!tujuan.isDirectory) return HasilOperasi(false, "Tujuan bukan folder.")
             val target = File(tujuan, sumber.name)
-            if (sumber.isDirectory) sumber.copyRecursively(target, overwrite = false)
-            else sumber.copyTo(target, overwrite = false)
+            if (target.exists()) return HasilOperasi(false, "Item '${sumber.name}' sudah ada di folder tujuan.")
+
+            val sumberKanonik = sumber.canonicalPath
+            val targetKanonik = target.canonicalPath
+            if (sumber.isDirectory && (targetKanonik == sumberKanonik || targetKanonik.startsWith(sumberKanonik + File.separator))) {
+                return HasilOperasi(false, "Tidak dapat menyalin folder ke dalam dirinya sendiri.")
+            }
+
+            if (sumber.isDirectory) {
+                sumber.copyRecursively(target, overwrite = false)
+            } else {
+                sumber.copyTo(target, overwrite = false)
+            }
             HasilOperasi(true, "Item disalin.")
         } catch (e: Exception) {
             HasilOperasi(false, e.message ?: "Gagal menyalin.")
         }
     }
 
-    private fun pindahFile(sumber: File, tujuan: File, lokasiIndukTujuan: LokasiBerkas): HasilOperasi {
+    private fun pindahFile(sumber: File, tujuan: File): HasilOperasi {
         return try {
+            if (!tujuan.isDirectory) return HasilOperasi(false, "Tujuan bukan folder.")
             val target = File(tujuan, sumber.name)
+            if (target.exists()) return HasilOperasi(false, "Item '${sumber.name}' sudah ada di folder tujuan.")
+
+            val sumberKanonik = sumber.canonicalPath
+            val targetKanonik = target.canonicalPath
+            if (sumber.isDirectory && (targetKanonik == sumberKanonik || targetKanonik.startsWith(sumberKanonik + File.separator))) {
+                return HasilOperasi(false, "Tidak dapat memindahkan folder ke dalam dirinya sendiri.")
+            }
+
             if (sumber.renameTo(target)) {
                 HasilOperasi(true, "Item dipindahkan.")
             } else {
-                if (sumber.isDirectory) sumber.copyRecursively(target) else sumber.copyTo(target)
-                sumber.deleteRecursively()
-                HasilOperasi(true, "Item dipindahkan.")
+                val suksesSalin = if (sumber.isDirectory) {
+                    sumber.copyRecursively(target, overwrite = false)
+                } else {
+                    sumber.copyTo(target, overwrite = false).exists()
+                }
+                if (suksesSalin) {
+                    val terhapus = sumber.deleteRecursively()
+                    if (terhapus) {
+                        HasilOperasi(true, "Item dipindahkan.")
+                    } else {
+                        HasilOperasi(true, "Item disalin, namun berkas sumber belum terhapus sepenuhnya.")
+                    }
+                } else {
+                    HasilOperasi(false, "Gagal memindahkan item.")
+                }
             }
         } catch (e: Exception) {
             HasilOperasi(false, e.message ?: "Gagal memindahkan.")
         }
     }
 
+    private fun apakahBiner(bytes: ByteArray): Boolean {
+        val batas = minOf(bytes.size, UKURAN_PROBE_BINER)
+        for (i in 0 until batas) {
+            if (bytes[i].toInt() == 0) return true
+        }
+        return false
+    }
+
     private fun bacaTeksDariFile(file: File): HasilBacaTeks {
         return try {
             if (!file.isFile) return HasilBacaTeks(false, "Bukan file.")
-            if (file.length() > BATAS_EDITOR) return HasilBacaTeks(false, "File terlalu besar.", terlaluBesar = true, ukuranByte = file.length())
-
+            if (file.length() > BATAS_EDITOR) {
+                return HasilBacaTeks(false, "File terlalu besar untuk editor (maksimal 1 MB).", terlaluBesar = true, ukuranByte = file.length())
+            }
             val bytes = file.readBytes()
+            if (apakahBiner(bytes)) {
+                return HasilBacaTeks(false, "Berkas terdeteksi sebagai berkas biner dan tidak dapat diedit sebagai teks.")
+            }
             val konten = decodeKonten(bytes)
             HasilBacaTeks(true, konten = konten, hanyaBaca = !file.canWrite(), ukuranByte = file.length())
         } catch (e: Exception) {
@@ -303,15 +341,32 @@ class RepositoriBerkasAndroid(
     }
 
     private fun simpanTeksKeFile(file: File, konten: KontenTeks): HasilSimpanTeks {
+        val parent = file.parentFile ?: return HasilSimpanTeks(false, "Direktori induk tidak ditemukan.")
+        val charset = try { Charset.forName(konten.encoding) } catch (e: Exception) { Charsets.UTF_8 }
+        val tempFile = try {
+            File.createTempFile(".tmp_mbk_", ".tmp", parent)
+        } catch (e: Exception) {
+            File(parent, ".tmp_mbk_${System.currentTimeMillis()}_${file.name}")
+        }
         return try {
-            file.writeText(konten.teks)
+            tempFile.outputStream().use { output ->
+                output.write(konten.teks.toByteArray(charset))
+                output.flush()
+            }
+            val targetPath = file.toPath()
+            val tempPath = tempFile.toPath()
+            try {
+                Files.move(tempPath, targetPath, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: Exception) {
+                Files.move(tempPath, targetPath, StandardCopyOption.REPLACE_EXISTING)
+            }
             HasilSimpanTeks(true, "Perubahan disimpan.")
         } catch (e: Exception) {
-            HasilSimpanTeks(false, e.message ?: "Gagal menyimpan teks.")
+            if (tempFile.exists()) tempFile.delete()
+            HasilSimpanTeks(false, e.message ?: "Gagal menyimpan teks secara atomik.")
         }
     }
 
-    // --- OPERASI SAF ---
     private fun daftarIsiSaf(lokasi: LokasiBerkas): HasilDaftarBerkas {
         return try {
             val lokasiSaf = PabrikLokasiAndroid.parseSaf(lokasi.id) ?: return HasilDaftarBerkas(false, "Lokasi SAF tidak valid.")
@@ -324,20 +379,17 @@ class RepositoriBerkasAndroid(
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED
             )
             val daftar = mutableListOf<ItemBerkas>()
-
             context.contentResolver.query(childrenUri, kolom, null, null, null)?.use { cursor ->
                 val idIdx = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
                 val namaIdx = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
                 val mimeIdx = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
                 val sizeIdx = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_SIZE)
                 val modIdx = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
-
                 while (cursor.moveToNext()) {
                     val docId = cursor.getString(idIdx) ?: continue
                     val nama = cursor.getString(namaIdx) ?: continue
                     val mime = cursor.getString(mimeIdx) ?: continue
                     val isDir = mime == DocumentsContract.Document.MIME_TYPE_DIR
-
                     daftar.add(
                         ItemBerkas(
                             nama = nama,
@@ -366,7 +418,6 @@ class RepositoriBerkasAndroid(
             val uri = DocumentsContract.buildDocumentUriUsingTree(lokasiSaf.treeUri, lokasiSaf.documentId)
             val doc = DocumentFile.fromSingleUri(context, uri) ?: return KemampuanPenyimpanan.kosong()
             val tulis = doc.canWrite()
-
             KemampuanPenyimpanan(
                 bisaBaca = doc.canRead(),
                 bisaTulis = tulis,
@@ -403,7 +454,8 @@ class RepositoriBerkasAndroid(
         return try {
             val lokasiSaf = PabrikLokasiAndroid.parseSaf(lokasi.id) ?: return HasilOperasi(false, "SAF tidak valid.")
             val docUri = DocumentsContract.buildDocumentUriUsingTree(lokasiSaf.treeUri, lokasiSaf.documentId)
-            val hasil = DocumentsContract.renameDocument(context.contentResolver, docUri, namaBaru) ?: docUri
+            val hasil = DocumentsContract.renameDocument(context.contentResolver, docUri, namaBaru)
+                ?: return HasilOperasi(false, "Gagal mengganti nama di penyimpanan SAF.")
             val docId = try { DocumentsContract.getDocumentId(hasil) } catch (e: Exception) { lokasiSaf.documentId }
             HasilOperasi(true, "Nama diganti.", lokasiHasil = LokasiBerkas(PabrikLokasiAndroid.buatIdSaf(lokasiSaf.treeUri.toString(), docId), namaBaru, null, JenisPenyimpanan.SAF_ANDROID))
         } catch (e: Exception) {
@@ -426,7 +478,33 @@ class RepositoriBerkasAndroid(
         return try {
             val lokasiSaf = PabrikLokasiAndroid.parseSaf(lokasi.id) ?: return HasilBacaTeks(false, "SAF tidak valid.")
             val docUri = DocumentsContract.buildDocumentUriUsingTree(lokasiSaf.treeUri, lokasiSaf.documentId)
-            val bytes = context.contentResolver.openInputStream(docUri)?.use { it.readBytes() } ?: return HasilBacaTeks(false, "Gagal membaca.")
+
+            val doc = DocumentFile.fromSingleUri(context, docUri)
+            val ukuranMetadata = doc?.length() ?: -1L
+            if (ukuranMetadata > BATAS_EDITOR) {
+                return HasilBacaTeks(false, "File SAF terlalu besar untuk editor (maksimal 1 MB).", terlaluBesar = true, ukuranByte = ukuranMetadata)
+            }
+
+            val buffer = ByteArrayOutputStream()
+            val temp = ByteArray(8192)
+            var totalRead = 0L
+
+            context.contentResolver.openInputStream(docUri)?.use { input ->
+                var read: Int
+                while (input.read(temp).also { read = it } != -1) {
+                    totalRead += read
+                    if (totalRead > BATAS_EDITOR) {
+                        return HasilBacaTeks(false, "File SAF melebihi batas 1 MB saat dibaca.", terlaluBesar = true, ukuranByte = totalRead)
+                    }
+                    buffer.write(temp, 0, read)
+                }
+            } ?: return HasilBacaTeks(false, "Gagal membuka stream berkas SAF.")
+
+            val bytes = buffer.toByteArray()
+            if (apakahBiner(bytes)) {
+                return HasilBacaTeks(false, "Berkas SAF terdeteksi sebagai biner dan tidak dapat diedit sebagai teks.")
+            }
+
             HasilBacaTeks(true, konten = decodeKonten(bytes), ukuranByte = bytes.size.toLong())
         } catch (e: Exception) {
             HasilBacaTeks(false, e.message ?: "Gagal membaca SAF.")
@@ -437,7 +515,11 @@ class RepositoriBerkasAndroid(
         return try {
             val lokasiSaf = PabrikLokasiAndroid.parseSaf(lokasi.id) ?: return HasilSimpanTeks(false, "SAF tidak valid.")
             val docUri = DocumentsContract.buildDocumentUriUsingTree(lokasiSaf.treeUri, lokasiSaf.documentId)
-            context.contentResolver.openOutputStream(docUri, "wt")?.use { it.write(konten.teks.encodeToByteArray()) }
+            val charset = try { Charset.forName(konten.encoding) } catch (e: Exception) { Charsets.UTF_8 }
+            context.contentResolver.openOutputStream(docUri, "wt")?.use { output ->
+                output.write(konten.teks.toByteArray(charset))
+                output.flush()
+            } ?: return HasilSimpanTeks(false, "Gagal membuka output stream SAF.")
             HasilSimpanTeks(true, "Perubahan disimpan.")
         } catch (e: Exception) {
             HasilSimpanTeks(false, e.message ?: "Gagal simpan SAF.")

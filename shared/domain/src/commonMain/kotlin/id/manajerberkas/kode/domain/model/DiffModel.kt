@@ -1,46 +1,37 @@
 package id.manajerberkas.kode.domain.model
-
 enum class JenisOperasiDiff {
     SAMA,
     HAPUS,
     TAMBAH
 }
-
 enum class ModeDiff {
     UNIFIED,
     BERDAMPINGAN
 }
-
 data class BarisDiff(
     val jenis: JenisOperasiDiff,
     val isi: String,
     val nomorBarisA: Int?,
     val nomorBarisB: Int?
 )
-
 data class HasilDiff(
     val baris: List<BarisDiff>,
     val jumlahPerubahan: Int,
     val identik: Boolean
 )
-
 data class BarisDiffBerdampingan(
     val teksA: String?,
     val nomorA: Int?,
-    val jenisA: JenisOperasiDiff?, // HAPUS atau SAMA. null berarti penyeimbang (padding)
-    
+    val jenisA: JenisOperasiDiff?, 
     val teksB: String?,
     val nomorB: Int?,
-    val jenisB: JenisOperasiDiff?, // TAMBAH atau SAMA. null berarti penyeimbang (padding)
-    
+    val jenisB: JenisOperasiDiff?, 
     val blokPerubahan: Boolean
 )
-
 data class BlokPerubahan(
     val indeksAwal: Int,
     val indeksAkhir: Int
 )
-
 fun HasilDiff.keBerdampingan(): List<BarisDiffBerdampingan> {
     val hasil = mutableListOf<BarisDiffBerdampingan>()
     var i = 0
@@ -79,7 +70,6 @@ fun HasilDiff.keBerdampingan(): List<BarisDiffBerdampingan> {
     }
     return hasil
 }
-
 fun List<BarisDiff>.ekstrakBlokUnified(): List<BlokPerubahan> {
     val blok = mutableListOf<BlokPerubahan>()
     var start = -1
@@ -93,7 +83,6 @@ fun List<BarisDiff>.ekstrakBlokUnified(): List<BlokPerubahan> {
     if (start != -1) blok.add(BlokPerubahan(start, lastIndex))
     return blok
 }
-
 fun List<BarisDiffBerdampingan>.ekstrakBlokBerdampingan(): List<BlokPerubahan> {
     val blok = mutableListOf<BlokPerubahan>()
     var start = -1

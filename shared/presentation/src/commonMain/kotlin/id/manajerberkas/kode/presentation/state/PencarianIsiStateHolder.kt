@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.KueriPencarianIsi
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.model.ModePencarianIsi
@@ -11,22 +10,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 class PencarianIsiStateHolder(
     private val cariIsiBerkas: CariIsiBerkasUseCase,
     private val scope: CoroutineScope
 ) {
     private val _state = MutableStateFlow(PencarianIsiState())
     val state: StateFlow<PencarianIsiState> = _state
-
     private var pekerjaan: Job? = null
-
     fun tetapkanLokasi(lokasi: LokasiBerkas?) {
         if (lokasi == null) return
         if (_state.value.lokasiPencarian?.id == lokasi.id) return
-
         pekerjaan?.cancel()
-
         _state.update {
             it.copy(
                 lokasiPencarian = lokasi,
@@ -39,61 +33,47 @@ class PencarianIsiStateHolder(
             )
         }
     }
-
     fun ubahTeks(nilai: String) {
         _state.update { it.copy(teks = nilai) }
     }
-
     fun ubahMode(mode: ModePencarianIsi) {
         _state.update { it.copy(mode = mode) }
     }
-
     fun togglePekaHuruf() {
         _state.update { it.copy(pekaHuruf = !it.pekaHuruf) }
     }
-
     fun toggleKataUtuh() {
         _state.update { it.copy(kataUtuh = !it.kataUtuh) }
     }
-
     fun toggleRegex() {
         _state.update { it.copy(gunakanRegex = !it.gunakanRegex) }
     }
-
     fun ubahEkstensi(nilai: String) {
         _state.update { it.copy(ekstensi = nilai) }
     }
-
     fun ubahUkuranMin(nilai: String) {
         _state.update { it.copy(ukuranMinKb = nilai.filter { c -> c.isDigit() }) }
     }
-
     fun ubahUkuranMax(nilai: String) {
         _state.update { it.copy(ukuranMaxKb = nilai.filter { c -> c.isDigit() }) }
     }
-
     fun mulai() {
         val kondisi = _state.value
         val lokasi = kondisi.lokasiPencarian
-
         if (lokasi == null) {
             _state.update { it.copy(pesan = "Lokasi pencarian belum tersedia.") }
             return
         }
-
         if (kondisi.teks.isBlank() && !kondisi.gunakanRegex) {
             _state.update { it.copy(pesan = "Kata kunci pencarian kosong.") }
             return
         }
-
         val minByte = kondisi.ukuranMinKb.toLongOrNull()?.times(1024)
         val maxByte = kondisi.ukuranMaxKb.toLongOrNull()?.times(1024)
-
         if (minByte != null && maxByte != null && minByte > maxByte) {
             _state.update { it.copy(pesan = "Ukuran minimum lebih besar dari maksimum.") }
             return
         }
-
         val kueri = KueriPencarianIsi(
             teks = kondisi.teks.trim(),
             mode = kondisi.mode,
@@ -104,9 +84,7 @@ class PencarianIsiStateHolder(
             ukuranMin = minByte,
             ukuranMax = maxByte
         )
-
         pekerjaan?.cancel()
-
         pekerjaan = scope.launch {
             _state.update {
                 it.copy(
@@ -118,7 +96,6 @@ class PencarianIsiStateHolder(
                     jumlahKecocokanTotal = 0
                 )
             }
-
             cariIsiBerkas(lokasi, kueri)
                 .catch { e ->
                     _state.update {
@@ -141,12 +118,10 @@ class PencarianIsiStateHolder(
                 }
         }
     }
-
     fun batal() {
         pekerjaan?.cancel()
         _state.update { it.copy(sedangMencari = false, pesan = "Pencarian dibatalkan.") }
     }
-
     fun bersihkanHasil() {
         pekerjaan?.cancel()
         _state.update {

@@ -1,11 +1,9 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.BlokPerubahan
 import id.manajerberkas.kode.domain.model.BarisDiffBerdampingan
 import id.manajerberkas.kode.domain.model.HasilDiff
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.model.ModeDiff
-
 data class DiffState(
     val memuat: Boolean = false,
     val lokasiA: LokasiBerkas? = null,

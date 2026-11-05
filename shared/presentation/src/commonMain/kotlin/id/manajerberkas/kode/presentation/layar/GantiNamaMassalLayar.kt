@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,7 +16,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.HasilPratinjauGantiNama
 import id.manajerberkas.kode.presentation.state.GantiNamaMassalState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GantiNamaMassalLayar(
@@ -82,11 +80,9 @@ fun GantiNamaMassalLayar(
                     )
                 }
             }
-
             if (state.sedangMemproses) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
@@ -98,7 +94,6 @@ fun GantiNamaMassalLayar(
             }
         }
     }
-
     state.hasilEksekusi?.let { hasil ->
         AlertDialog(
             onDismissRequest = onTutupSetelahEksekusi,
@@ -118,7 +113,6 @@ fun GantiNamaMassalLayar(
         )
     }
 }
-
 @Composable
 private fun ItemPratinjauExpressive(item: HasilPratinjauGantiNama) {
     val warnaStatus = when {
@@ -126,7 +120,6 @@ private fun ItemPratinjauExpressive(item: HasilPratinjauGantiNama) {
         item.namaBaru != null -> Color(0xFF2E7D32)
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
-
     Surface(
         shape = RoundedCornerShape(14.dp),
         color = MaterialTheme.colorScheme.surfaceContainer,

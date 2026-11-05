@@ -1,8 +1,6 @@
 package id.manajerberkas.kode.domain.usecase
-
 import id.manajerberkas.kode.domain.kontrak.RepositoriBeranda
 import id.manajerberkas.kode.domain.model.LokasiBerkas
-
 class AmbilBerandaUseCase(
     private val repositori: RepositoriBeranda
 ) {
@@ -10,7 +8,6 @@ class AmbilBerandaUseCase(
         return repositori.ambil()
     }
 }
-
 class SimpanBerandaUseCase(
     private val repositori: RepositoriBeranda
 ) {
@@ -18,7 +15,6 @@ class SimpanBerandaUseCase(
         repositori.simpan(lokasi)
     }
 }
-
 class HapusBerandaUseCase(
     private val repositori: RepositoriBeranda
 ) {

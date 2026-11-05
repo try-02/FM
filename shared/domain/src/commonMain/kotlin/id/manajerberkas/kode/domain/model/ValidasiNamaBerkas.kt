@@ -1,7 +1,5 @@
 package id.manajerberkas.kode.domain.model
-
 object ValidasiNamaBerkas {
-
     private val karakterTerlarang = listOf(
         "/",
         "\\",
@@ -13,7 +11,6 @@ object ValidasiNamaBerkas {
         ">",
         "|"
     )
-
     fun periksa(nama: String): HasilValidasi {
         if (nama.isBlank()) {
             return HasilValidasi(
@@ -21,28 +18,24 @@ object ValidasiNamaBerkas {
                 pesan = "Nama tidak boleh kosong."
             )
         }
-
         if (nama == "." || nama == "..") {
             return HasilValidasi(
                 sukses = false,
                 pesan = "Nama tidak valid."
             )
         }
-
         if (nama.length > 255) {
             return HasilValidasi(
                 sukses = false,
                 pesan = "Nama terlalu panjang."
             )
         }
-
         if (nama.any { it.isISOControl() }) {
             return HasilValidasi(
                 sukses = false,
                 pesan = "Nama mengandung karakter kontrol."
             )
         }
-
         karakterTerlarang.forEach { karakter ->
             if (nama.contains(karakter)) {
                 return HasilValidasi(
@@ -51,7 +44,6 @@ object ValidasiNamaBerkas {
                 )
             }
         }
-
         return HasilValidasi(sukses = true)
     }
 }

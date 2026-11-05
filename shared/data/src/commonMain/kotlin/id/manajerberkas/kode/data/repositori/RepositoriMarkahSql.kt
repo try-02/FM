@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.data.repositori
-
 import id.manajerberkas.kode.data.lokal.DatabaseAplikasi
 import id.manajerberkas.kode.data.lokal.Markah
 import id.manajerberkas.kode.domain.kontrak.RepositoriMarkah
@@ -9,11 +8,9 @@ import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.model.MarkahLokasi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 class RepositoriMarkahSql(
     private val database: DatabaseAplikasi
 ) : RepositoriMarkah {
-
     override suspend fun ambilSemua(): List<MarkahLokasi> =
         withContext(Dispatchers.Default) {
             database.markahQueries
@@ -21,7 +18,6 @@ class RepositoriMarkahSql(
                 .executeAsList()
                 .map { it.keDomain() }
         }
-
     override suspend fun simpan(markah: MarkahLokasi): Unit =
         withContext(Dispatchers.Default) {
             database.markahQueries.simpan(
@@ -32,19 +28,16 @@ class RepositoriMarkahSql(
                 jenis_markah = markah.jenis.name
             )
         }
-
     override suspend fun hapus(idLokasi: String): Unit =
         withContext(Dispatchers.Default) {
             database.markahQueries.hapus(idLokasi)
         }
-
     override suspend fun ada(idLokasi: String): Boolean =
         withContext(Dispatchers.Default) {
             database.markahQueries
                 .ada(idLokasi)
                 .executeAsOne() > 0
         }
-
     private fun Markah.keDomain(): MarkahLokasi {
         return MarkahLokasi(
             lokasi = LokasiBerkas(
@@ -56,12 +49,10 @@ class RepositoriMarkahSql(
             jenis = jenisMarkahDariDb(jenis_markah)
         )
     }
-
     private fun jenisPenyimpananDariDb(nilai: String): JenisPenyimpanan {
         return JenisPenyimpanan.entries.firstOrNull { it.name == nilai }
             ?: JenisPenyimpanan.TIDAK_DIKENAL
     }
-
     private fun jenisMarkahDariDb(nilai: String): JenisMarkah {
         return JenisMarkah.entries.firstOrNull { it.name == nilai }
             ?: JenisMarkah.LOKASI_KERJA

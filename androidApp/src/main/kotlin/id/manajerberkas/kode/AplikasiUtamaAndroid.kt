@@ -1,5 +1,6 @@
 package id.manajerberkas.kode
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -7,15 +8,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
-// Import Semua Layar
+import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.HitungPratinjauGantiNamaUseCase
 import id.manajerberkas.kode.presentation.layar.ArsipLayar
 import id.manajerberkas.kode.presentation.layar.DaftarBerkasLayar
 import id.manajerberkas.kode.presentation.layar.GantiNamaMassalLayar
 import id.manajerberkas.kode.presentation.layar.PencarianIsiLayar
 import id.manajerberkas.kode.presentation.layar.PencarianNamaLayar
-
-// Import Semua StateHolder & Dependensi
 import id.manajerberkas.kode.presentation.state.ArsipStateHolder
 import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
 import id.manajerberkas.kode.presentation.state.DependensiEditor
@@ -23,10 +22,6 @@ import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
 import id.manajerberkas.kode.presentation.state.GantiNamaMassalStateHolder
 import id.manajerberkas.kode.presentation.state.PencarianIsiStateHolder
 import id.manajerberkas.kode.presentation.state.PencarianNamaStateHolder
-
-// Import UseCase yang dibutuhkan
-import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
-import id.manajerberkas.kode.domain.usecase.HitungPratinjauGantiNamaUseCase
 
 @Composable
 fun AplikasiUtamaAndroid(
@@ -39,22 +34,49 @@ fun AplikasiUtamaAndroid(
 ) {
     val state by stateHolder.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-
     val pencarianStateHolder = remember {
         PencarianNamaStateHolder(
             cariNamaBerkas = dependensiPenjelajah.cariNamaBerkas,
             scope = scope
         )
     }
-
     val tujuanEditor = state.editorTujuan
     val tujuanDiff = state.tujuanDiff
+
+    // Penanganan Back tombol/gesture sistem Android
+    val penangananBackAktif = tujuanDiff != null ||
+        state.pencarianTerbuka ||
+        state.pencarianIsiTerbuka ||
+        state.tujuanGantiNamaMassal != null ||
+        state.tujuanArsip != null ||
+        state.modePilihTujuan != null ||
+        state.modePilih ||
+        state.menuUntukItem != null ||
+        state.dialogBuatBerkas ||
+        state.dialogBuatFolder ||
+        state.dialogGantiNama != null ||
+        state.konfirmasiHapusTerpilih ||
+        state.dialogMarkah ||
+        state.bisaKembali
+
+    BackHandler(enabled = penangananBackAktif && tujuanEditor == null) {
+        when {
+            tujuanDiff != null -> stateHolder.selesaiBandingkan()
+            state.pencarianTerbuka -> {
+                pencarianStateHolder.batal()
+                stateHolder.tutupPencarian()
+            }
+            state.pencarianIsiTerbuka -> stateHolder.tutupPencarianIsi()
+            state.tujuanGantiNamaMassal != null -> stateHolder.selesaiGantiNamaMassal()
+            state.tujuanArsip != null -> stateHolder.selesaiBukaArsip()
+            else -> stateHolder.kembali()
+        }
+    }
 
     MaterialTheme {
         when {
             tujuanDiff != null -> {
                 val bandingkanIsiBerkasUseCase = remember { BandingkanIsiBerkasUseCase() }
-                
                 DiffAndroid(
                     lokasiA = tujuanDiff.lokasiA,
                     lokasiB = tujuanDiff.lokasiB,
@@ -63,7 +85,6 @@ fun AplikasiUtamaAndroid(
                     onTutup = { stateHolder.selesaiBandingkan() }
                 )
             }
-
             tujuanEditor != null -> {
                 EditorAndroid(
                     lokasi = tujuanEditor.lokasi,
@@ -72,14 +93,11 @@ fun AplikasiUtamaAndroid(
                     onTutup = { stateHolder.selesaiBukaEditor() }
                 )
             }
-
             state.pencarianTerbuka -> {
                 LaunchedEffect(state.lokasiAktif?.id) {
                     pencarianStateHolder.tetapkanLokasi(state.lokasiAktif)
                 }
-
                 val statePencarian by pencarianStateHolder.state.collectAsStateWithLifecycle()
-
                 PencarianNamaLayar(
                     state = statePencarian,
                     onUbahTeks = pencarianStateHolder::ubahTeks,
@@ -100,7 +118,6 @@ fun AplikasiUtamaAndroid(
                     }
                 )
             }
-
             state.pencarianIsiTerbuka -> {
                 val pencarianIsiStateHolder = remember {
                     PencarianIsiStateHolder(
@@ -108,13 +125,10 @@ fun AplikasiUtamaAndroid(
                         scope = scope
                     )
                 }
-
                 LaunchedEffect(state.lokasiAktif?.id) {
                     pencarianIsiStateHolder.tetapkanLokasi(state.lokasiAktif)
                 }
-
                 val statePencarianIsi by pencarianIsiStateHolder.state.collectAsStateWithLifecycle()
-
                 PencarianIsiLayar(
                     state = statePencarianIsi,
                     onUbahTeks = pencarianIsiStateHolder::ubahTeks,
@@ -136,7 +150,6 @@ fun AplikasiUtamaAndroid(
                     }
                 )
             }
-
             state.tujuanGantiNamaMassal != null -> {
                 val gantiNamaStateHolder = remember(state.tujuanGantiNamaMassal) {
                     GantiNamaMassalStateHolder(
@@ -147,9 +160,7 @@ fun AplikasiUtamaAndroid(
                         onSelesai = { stateHolder.selesaiGantiNamaMassal() }
                     )
                 }
-
                 val stateGantiNama by gantiNamaStateHolder.state.collectAsStateWithLifecycle()
-
                 GantiNamaMassalLayar(
                     state = stateGantiNama,
                     onUbahPola = gantiNamaStateHolder::ubahPola,
@@ -159,8 +170,6 @@ fun AplikasiUtamaAndroid(
                     onTutupSetelahEksekusi = { stateHolder.selesaiGantiNamaMassal() }
                 )
             }
-
-            // PERBAIKAN: state.tujuanArsip dipindah SEBELUM cabang else
             state.tujuanArsip != null -> {
                 val arsipStateHolder = remember(state.tujuanArsip) {
                     ArsipStateHolder(
@@ -173,9 +182,7 @@ fun AplikasiUtamaAndroid(
                         onTutup = { stateHolder.selesaiBukaArsip() }
                     )
                 }
-
                 val stateArsip by arsipStateHolder.state.collectAsStateWithLifecycle()
-
                 ArsipLayar(
                     state = stateArsip,
                     onKlikItem = arsipStateHolder::klikItem,
@@ -187,8 +194,6 @@ fun AplikasiUtamaAndroid(
                     onTutup = arsipStateHolder::tutup
                 )
             }
-
-            // PERBAIKAN: else sekarang berada di urutan TERAKHIR
             else -> {
                 DaftarBerkasLayar(
                     state = state,

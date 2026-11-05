@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -21,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.ItemArsip
 import id.manajerberkas.kode.domain.model.JenisItemArsip
 import id.manajerberkas.kode.presentation.state.ArsipState
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ArsipLayar(
@@ -119,7 +117,6 @@ fun ArsipLayar(
             if (state.sedangEkstrak || state.memuat) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
-
             state.pesan?.let {
                 Text(
                     text = it,
@@ -128,7 +125,6 @@ fun ArsipLayar(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
             }
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
@@ -174,7 +170,6 @@ fun ArsipLayar(
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
-
                             Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
                                 Text(item.nama, fontWeight = FontWeight.Medium)
                                 if (item.jenis == JenisItemArsip.BERKAS) {
@@ -192,7 +187,6 @@ fun ArsipLayar(
         }
     }
 }
-
 private fun formatUkuranArsip(byte: Long): String {
     if (byte < 1024) return "$byte B"
     val kb = byte / 1024

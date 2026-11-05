@@ -1,12 +1,10 @@
 package id.manajerberkas.kode.domain.model
-
 enum class JenisAkhirBaris {
     LF,
     CRLF,
     CR,
     CAMPURAN
 }
-
 data class StatistikTeks(
     val ukuranByte: Long?,
     val encoding: String?,

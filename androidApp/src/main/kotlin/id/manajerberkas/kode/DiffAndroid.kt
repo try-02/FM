@@ -1,5 +1,4 @@
 package id.manajerberkas.kode
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -10,7 +9,6 @@ import id.manajerberkas.kode.domain.usecase.BacaTeksUseCase
 import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
 import id.manajerberkas.kode.presentation.layar.DiffLayar
 import id.manajerberkas.kode.presentation.state.DiffStateHolder
-
 @Composable
 fun DiffAndroid(
     lokasiA: LokasiBerkas,
@@ -20,7 +18,6 @@ fun DiffAndroid(
     onTutup: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-
     val stateHolder = remember(lokasiA.id, lokasiB.id) {
         DiffStateHolder(
             lokasiA = lokasiA,
@@ -30,9 +27,7 @@ fun DiffAndroid(
             scope = scope
         )
     }
-
     val state by stateHolder.state.collectAsStateWithLifecycle()
-
     DiffLayar(
         state = state,
         aksi = stateHolder,

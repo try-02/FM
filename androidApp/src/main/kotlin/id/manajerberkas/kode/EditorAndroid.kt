@@ -1,5 +1,6 @@
 package id.manajerberkas.kode
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,7 +19,6 @@ fun EditorAndroid(
     onTutup: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-
     val stateHolder = remember(lokasi.id, barisAwal) {
         EditorStateHolder(
             lokasi = lokasi,
@@ -28,8 +28,11 @@ fun EditorAndroid(
             barisAwal = barisAwal
         )
     }
-
     val state by stateHolder.state.collectAsStateWithLifecycle()
+
+    BackHandler {
+        stateHolder.mintaTutup()
+    }
 
     EditorLayar(
         state = state,

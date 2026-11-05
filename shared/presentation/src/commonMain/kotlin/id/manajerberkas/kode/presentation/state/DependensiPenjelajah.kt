@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.usecase.AmbilBerandaUseCase
 import id.manajerberkas.kode.domain.usecase.AmbilMarkahUseCase
 import id.manajerberkas.kode.domain.usecase.BuatBerkasUseCase
@@ -20,7 +19,6 @@ import id.manajerberkas.kode.domain.usecase.EksekusiGantiNamaMassalUseCase
 import id.manajerberkas.kode.domain.usecase.DaftarIsiArsipUseCase
 import id.manajerberkas.kode.domain.usecase.EkstrakItemArsipUseCase
 import id.manajerberkas.kode.domain.usecase.EkstrakSemuaArsipUseCase
-
 class DependensiPenjelajah(
     val daftarIsiFolder: DaftarIsiFolderUseCase,
     val dapatkanKemampuan: DapatkanKemampuanPenyimpananUseCase,

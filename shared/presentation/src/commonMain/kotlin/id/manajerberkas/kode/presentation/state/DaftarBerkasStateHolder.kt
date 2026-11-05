@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.HasilOperasi
 import id.manajerberkas.kode.domain.model.ItemBerkas
 import id.manajerberkas.kode.domain.model.JenisItem
@@ -12,38 +11,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 class DaftarBerkasStateHolder(
     private val dependensi: DependensiPenjelajah,
     private val scope: CoroutineScope
 ) : DaftarBerkasAksi {
-
     private val _state = MutableStateFlow(DaftarBerkasState())
     val state: StateFlow<DaftarBerkasState> = _state
-
     private val tumpukanLokasi = ArrayDeque<LokasiBerkas>()
     private var pekerjaanMuat: Job? = null
-
     init {
         muatMarkah()
     }
-
     fun bukaAwalBeranda(lokasiBawaan: LokasiBerkas) {
         scope.launch {
             val beranda = dependensi.ambilBeranda()
-
             _state.update {
                 it.copy(beranda = beranda)
             }
-
             bukaAwal(beranda ?: lokasiBawaan)
         }
     }
-
     fun bukaAwal(lokasi: LokasiBerkas) {
         tumpukanLokasi.clear()
         tumpukanLokasi.addLast(lokasi)
-
         _state.update {
             it.copy(
                 modePilih = false,
@@ -58,19 +48,15 @@ class DaftarBerkasStateHolder(
                 dialogMarkah = false
             )
         }
-
         muatLokasiAktif()
     }
-
     fun selesaiBukaEditor() {
         _state.update {
             it.copy(editorTujuan = null)
         }
     }
-
     override fun kembali() {
         val kondisi = state.value
-
         when {
             kondisi.modePilihTujuan != null -> batalPilihTujuan()
             kondisi.modePilih -> batalkanPilih()
@@ -80,12 +66,9 @@ class DaftarBerkasStateHolder(
             kondisi.dialogGantiNama != null -> tutupDialogGantiNama()
             kondisi.konfirmasiHapusTerpilih -> batalHapus()
             kondisi.dialogMarkah -> tutupDialogMarkah()
-
             else -> {
                 if (tumpukanLokasi.size <= 1) return
-
                 tumpukanLokasi.removeLast()
-
                 _state.update {
                     it.copy(
                         modePilih = false,
@@ -93,15 +76,12 @@ class DaftarBerkasStateHolder(
                         menuUntukItem = null
                     )
                 }
-
                 muatLokasiAktif()
             }
         }
     }
-
     override fun klikItem(item: ItemBerkas) {
         val kondisi = state.value
-
         when {
             kondisi.modePilihTujuan != null -> {
                 if (item.jenis == JenisItem.FOLDER) {
@@ -109,14 +89,11 @@ class DaftarBerkasStateHolder(
                     muatLokasiAktif()
                 }
             }
-
             kondisi.modePilih -> togglePilih(item)
-
             item.jenis == JenisItem.FOLDER -> {
                 tumpukanLokasi.addLast(item.lokasi)
                 muatLokasiAktif()
             }
-
             else -> {
                 if (id.manajerberkas.kode.domain.model.PendeteksiArsip.didukungUntukDibuka(item.nama)) {
                     _state.update { it.copy(tujuanArsip = item.lokasi) }
@@ -130,12 +107,9 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun tekanLama(item: ItemBerkas) {
         if (state.value.modePilihTujuan != null) return
-
         val terpilih = state.value.itemTerpilih + item
-
         _state.update {
             it.copy(
                 modePilih = true,
@@ -144,17 +118,14 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     private fun togglePilih(item: ItemBerkas) {
         val sekarang = state.value.itemTerpilih
         val sudah = sekarang.any { it.lokasi.id == item.lokasi.id }
-
         val baru = if (sudah) {
             sekarang.filterNot { it.lokasi.id == item.lokasi.id }.toSet()
         } else {
             sekarang + item
         }
-
         _state.update {
             it.copy(
                 itemTerpilih = baru,
@@ -162,7 +133,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun pilihSemua() {
         _state.update {
             it.copy(
@@ -171,7 +141,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun batalkanPilih() {
         _state.update {
             it.copy(
@@ -181,7 +150,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun bukaDialogBuatBerkas() {
         _state.update {
             it.copy(
@@ -191,7 +159,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun bukaDialogBuatFolder() {
         _state.update {
             it.copy(
@@ -201,40 +168,30 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun tutupDialogBuatBerkas() {
         _state.update { it.copy(dialogBuatBerkas = false) }
     }
-
     override fun tutupDialogBuatFolder() {
         _state.update { it.copy(dialogBuatFolder = false) }
     }
-
     override fun buatBerkas(nama: String) {
         val induk = lokasiAktif() ?: return
-
         _state.update { it.copy(dialogBuatBerkas = false) }
-
         jalankanOperasi {
             dependensi.buatBerkas(induk, nama)
         }
     }
-
     override fun buatFolder(nama: String) {
         val induk = lokasiAktif() ?: return
-
         _state.update { it.copy(dialogBuatFolder = false) }
-
         jalankanOperasi {
             dependensi.buatFolder(induk, nama)
         }
     }
-
     override fun bukaDialogGantiNama() {
         val item = state.value.satuItemTerpilih
             ?: state.value.menuUntukItem
             ?: return
-
         _state.update {
             it.copy(
                 dialogGantiNama = item,
@@ -242,24 +199,18 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun tutupDialogGantiNama() {
         _state.update { it.copy(dialogGantiNama = null) }
     }
-
     override fun gantiNama(namaBaru: String) {
         val item = state.value.dialogGantiNama ?: return
-
         _state.update { it.copy(dialogGantiNama = null) }
-
         jalankanOperasi {
             dependensi.gantiNama(item.lokasi, namaBaru)
         }
     }
-
     override fun mintaHapusTerpilih() {
         if (state.value.itemTerpilih.isEmpty()) return
-
         _state.update {
             it.copy(
                 konfirmasiHapusTerpilih = true,
@@ -267,16 +218,12 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun batalHapus() {
         _state.update { it.copy(konfirmasiHapusTerpilih = false) }
     }
-
     override fun konfirmasiHapus() {
         val daftarItem = state.value.itemTerpilih.toList()
-
         if (daftarItem.isEmpty()) return
-
         scope.launch {
             _state.update {
                 it.copy(
@@ -285,14 +232,11 @@ class DaftarBerkasStateHolder(
                     pesan = null
                 )
             }
-
             var sukses = 0
             var gagal = 0
             var pesanGagal: String? = null
-
             daftarItem.forEach { item ->
                 val hasil = dependensi.hapusBerkas(item.lokasi)
-
                 if (hasil.sukses) {
                     sukses++
                 } else {
@@ -300,13 +244,11 @@ class DaftarBerkasStateHolder(
                     pesanGagal = hasil.pesan
                 }
             }
-
             val pesanAkhir = when {
                 gagal == 0 -> "$sukses item dihapus."
                 sukses == 0 -> pesanGagal ?: "Gagal menghapus item."
                 else -> "$sukses berhasil, $gagal gagal."
             }
-
             _state.update {
                 it.copy(
                     sedangOperasi = false,
@@ -316,14 +258,11 @@ class DaftarBerkasStateHolder(
                     menuUntukItem = null
                 )
             }
-
             if (sukses > 0) muatLokasiAktif()
         }
     }
-
     override fun mulaiSalin() {
         if (state.value.itemTerpilih.isEmpty()) return
-
         _state.update {
             it.copy(
                 modePilihTujuan = ModePilihTujuan.SALIN,
@@ -331,10 +270,8 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun mulaiPindah() {
         if (state.value.itemTerpilih.isEmpty()) return
-
         _state.update {
             it.copy(
                 modePilihTujuan = ModePilihTujuan.PINDAH,
@@ -342,7 +279,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun batalPilihTujuan() {
         _state.update {
             it.copy(
@@ -351,14 +287,11 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun konfirmasiTujuan() {
         val tujuan = lokasiAktif() ?: return
         val mode = state.value.modePilihTujuan ?: return
         val daftarItem = state.value.itemTerpilih.toList()
-
         if (daftarItem.isEmpty()) return
-
         scope.launch {
             _state.update {
                 it.copy(
@@ -366,17 +299,14 @@ class DaftarBerkasStateHolder(
                     pesan = null
                 )
             }
-
             var sukses = 0
             var gagal = 0
             var pesanGagal: String? = null
-
             daftarItem.forEach { item ->
                 val hasil = when (mode) {
                     ModePilihTujuan.SALIN -> dependensi.salinBerkas(item.lokasi, tujuan)
                     ModePilihTujuan.PINDAH -> dependensi.pindahkanBerkas(item.lokasi, tujuan)
                 }
-
                 if (hasil.sukses) {
                     sukses++
                 } else {
@@ -384,18 +314,15 @@ class DaftarBerkasStateHolder(
                     pesanGagal = hasil.pesan
                 }
             }
-
             val kata = when (mode) {
                 ModePilihTujuan.SALIN -> "disalin"
                 ModePilihTujuan.PINDAH -> "dipindahkan"
             }
-
             val pesanAkhir = when {
                 gagal == 0 -> "$sukses item $kata."
                 sukses == 0 -> pesanGagal ?: "Operasi gagal."
                 else -> "$sukses berhasil, $gagal gagal."
             }
-
             _state.update {
                 it.copy(
                     sedangOperasi = false,
@@ -406,15 +333,12 @@ class DaftarBerkasStateHolder(
                     menuUntukItem = null
                 )
             }
-
             if (sukses > 0) muatLokasiAktif()
         }
     }
-
     override fun tutupMenu() {
         _state.update { it.copy(menuUntukItem = null) }
     }
-
     override fun bukaItemDariMenu(item: ItemBerkas) {
         _state.update {
             it.copy(
@@ -423,46 +347,53 @@ class DaftarBerkasStateHolder(
                 itemTerpilih = emptySet()
             )
         }
-
         if (item.jenis == JenisItem.FOLDER) {
             tumpukanLokasi.addLast(item.lokasi)
             muatLokasiAktif()
         } else {
-            _state.update {
-                it.copy(
-                    editorTujuan = TujuanEditor(lokasi = item.lokasi)
-                )
+            if (id.manajerberkas.kode.domain.model.PendeteksiArsip.didukungUntukDibuka(item.nama)) {
+                _state.update { it.copy(tujuanArsip = item.lokasi) }
+            } else {
+                _state.update {
+                    it.copy(
+                        editorTujuan = TujuanEditor(lokasi = item.lokasi)
+                    )
+                }
             }
         }
     }
 
-    override fun muatMarkah() {
-        scope.launch {
-            val daftar = dependensi.ambilMarkah()
-
-            _state.update {
-                it.copy(daftarMarkah = daftar)
+    override fun bukaMarkah(markah: MarkahLokasi) {
+        _state.update {
+            it.copy(dialogMarkah = false)
+        }
+        if (markah.jenis == JenisMarkah.BERKAS) {
+            if (id.manajerberkas.kode.domain.model.PendeteksiArsip.didukungUntukDibuka(markah.lokasi.namaTampilan)) {
+                _state.update { it.copy(tujuanArsip = markah.lokasi) }
+            } else {
+                _state.update {
+                    it.copy(
+                        editorTujuan = TujuanEditor(lokasi = markah.lokasi)
+                    )
+                }
             }
+        } else {
+            bukaAwal(markah.lokasi)
         }
     }
-
     override fun bukaDialogMarkah() {
         _state.update {
             it.copy(dialogMarkah = true)
         }
-
         muatMarkah()
     }
-
     override fun tutupDialogMarkah() {
         _state.update {
             it.copy(dialogMarkah = false)
         }
     }
-
     override fun tambahMarkahLokasiAktif() {
         val lokasi = lokasiAktif() ?: return
-
         scope.launch {
             dependensi.simpanMarkah(
                 MarkahLokasi(
@@ -470,9 +401,7 @@ class DaftarBerkasStateHolder(
                     jenis = JenisMarkah.FOLDER
                 )
             )
-
             val daftar = dependensi.ambilMarkah()
-
             _state.update {
                 it.copy(
                     daftarMarkah = daftar,
@@ -481,7 +410,6 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun tambahMarkahItem(item: ItemBerkas) {
         scope.launch {
             dependensi.simpanMarkah(
@@ -494,9 +422,7 @@ class DaftarBerkasStateHolder(
                     }
                 )
             )
-
             val daftar = dependensi.ambilMarkah()
-
             _state.update {
                 it.copy(
                     daftarMarkah = daftar,
@@ -508,13 +434,10 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun hapusMarkah(markah: MarkahLokasi) {
         scope.launch {
             dependensi.hapusMarkah(markah.lokasi.id)
-
             val daftar = dependensi.ambilMarkah()
-
             _state.update {
                 it.copy(
                     daftarMarkah = daftar,
@@ -523,12 +446,10 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun bukaMarkah(markah: MarkahLokasi) {
         _state.update {
             it.copy(dialogMarkah = false)
         }
-
         if (markah.jenis == JenisMarkah.BERKAS) {
             _state.update {
                 it.copy(
@@ -539,13 +460,10 @@ class DaftarBerkasStateHolder(
             bukaAwal(markah.lokasi)
         }
     }
-
     override fun jadikanBeranda() {
         val lokasi = lokasiAktif() ?: return
-
         scope.launch {
             dependensi.simpanBeranda(lokasi)
-
             _state.update {
                 it.copy(
                     beranda = lokasi,
@@ -554,11 +472,9 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun hapusBeranda() {
         scope.launch {
             dependensi.hapusBeranda()
-
             _state.update {
                 it.copy(
                     beranda = null,
@@ -567,7 +483,6 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun bukaPencarian() {
         _state.update {
             it.copy(
@@ -578,19 +493,16 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun tutupPencarian() {
         _state.update {
             it.copy(pencarianTerbuka = false)
         }
     }
-
     fun bukaHasilPencarian(item: ItemBerkas) {
         if (item.jenis == JenisItem.FOLDER) {
             _state.update {
                 it.copy(pencarianTerbuka = false)
             }
-
             bukaAwal(item.lokasi)
         } else {
             _state.update {
@@ -600,9 +512,7 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     private fun lokasiAktif(): LokasiBerkas? = tumpukanLokasi.lastOrNull()
-
     private fun jalankanOperasi(
         operasi: suspend () -> HasilOperasi
     ) {
@@ -613,25 +523,19 @@ class DaftarBerkasStateHolder(
                     pesan = null
                 )
             }
-
             val hasil = operasi()
-
             _state.update {
                 it.copy(
                     sedangOperasi = false,
                     pesan = hasil.pesan
                 )
             }
-
             if (hasil.sukses) muatLokasiAktif()
         }
     }
-
     private fun muatLokasiAktif() {
         val lokasi = tumpukanLokasi.lastOrNull() ?: return
-
         pekerjaanMuat?.cancel()
-
         pekerjaanMuat = scope.launch {
             _state.update {
                 it.copy(
@@ -640,10 +544,8 @@ class DaftarBerkasStateHolder(
                     bisaKembali = tumpukanLokasi.size > 1
                 )
             }
-
             val hasilDaftar = dependensi.daftarIsiFolder(lokasi)
             val kemampuan = dependensi.dapatkanKemampuan(lokasi)
-
             _state.update {
                 it.copy(
                     memuat = false,
@@ -654,7 +556,6 @@ class DaftarBerkasStateHolder(
             }
         }
     }
-
     override fun mulaiBandingkan() {
         val terpilih = state.value.itemTerpilih.toList()
         if (terpilih.size != 2) return
@@ -662,7 +563,6 @@ class DaftarBerkasStateHolder(
             _state.update { it.copy(pesan = "Pilih tepat dua file untuk dibandingkan.") }
             return
         }
-        
         _state.update {
             it.copy(
                 tujuanDiff = TujuanDiff(terpilih[0].lokasi, terpilih[1].lokasi),
@@ -672,11 +572,9 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun selesaiBandingkan() {
         _state.update { it.copy(tujuanDiff = null) }
     }
-
     override fun bukaPencarianIsi() {
         _state.update {
             it.copy(
@@ -688,11 +586,9 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun tutupPencarianIsi() {
         _state.update { it.copy(pencarianIsiTerbuka = false) }
     }
-
     fun bukaHasilPencarianIsi(kecocokan: id.manajerberkas.kode.domain.model.KecocokanIsiFile) {
         _state.update {
             it.copy(
@@ -703,7 +599,6 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun mulaiGantiNamaMassal() {
         val terpilih = state.value.itemTerpilih.toList()
         if (terpilih.isEmpty()) return
@@ -717,12 +612,10 @@ class DaftarBerkasStateHolder(
             )
         }
     }
-
     override fun selesaiGantiNamaMassal() {
         _state.update { it.copy(tujuanGantiNamaMassal = null) }
         muatLokasiAktif()
     }
-
     override fun selesaiBukaArsip() {
         _state.update { it.copy(tujuanArsip = null) }
     }

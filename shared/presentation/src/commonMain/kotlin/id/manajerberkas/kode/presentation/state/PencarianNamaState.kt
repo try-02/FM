@@ -1,9 +1,7 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.ItemBerkas
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.model.ModePencarian
-
 data class PencarianNamaState(
     val lokasiPencarian: LokasiBerkas? = null,
     val teks: String = "",

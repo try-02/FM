@@ -1,5 +1,4 @@
 package id.manajerberkas.kode
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -17,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-
 import id.manajerberkas.kode.data.adapter.PabrikLokasiAndroid
 import id.manajerberkas.kode.data.lokal.DatabaseAplikasi
 import id.manajerberkas.kode.data.repositori.RepositoriBerandaSql
@@ -26,12 +24,8 @@ import id.manajerberkas.kode.data.repositori.RepositoriMarkahSql
 import id.manajerberkas.kode.data.repositori.RepositoriPencarianNamaAndroid
 import id.manajerberkas.kode.data.repositori.RepositoriPreferensiEditorSql
 import id.manajerberkas.kode.data.repositori.RepositoriRiwayatPencarianSql
-
-// PERBAIKAN: Import Repository yang hilang
 import id.manajerberkas.kode.data.repositori.RepositoriPencarianIsiAndroid
 import id.manajerberkas.kode.data.repositori.RepositoriArsipAndroid
-
-// PERBAIKAN: Import seluruh UseCase lengkap dari domain
 import id.manajerberkas.kode.domain.usecase.AmbilBerandaUseCase
 import id.manajerberkas.kode.domain.usecase.AmbilMarkahUseCase
 import id.manajerberkas.kode.domain.usecase.AmbilPreferensiEditorUseCase
@@ -61,33 +55,25 @@ import id.manajerberkas.kode.domain.usecase.SimpanMarkahUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanPreferensiEditorUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanRiwayatPencarianUseCase
 import id.manajerberkas.kode.domain.usecase.SimpanTeksUseCase
-
 import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
 import id.manajerberkas.kode.presentation.state.DependensiEditor
 import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
-
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.enableEdgeToEdge(window)
         super.onCreate(savedInstanceState)
-
         setContent {
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
-
             val preferences = remember {
                 context.getSharedPreferences("preferensi_manajer_berkas", Context.MODE_PRIVATE)
             }
-
             val repositoriBerkas = remember {
                 RepositoriBerkasAndroid(context.applicationContext)
             }
-
             val repositoriPencarianNama = remember {
                 RepositoriPencarianNamaAndroid(context.applicationContext)
             }
-
             val driver = remember {
                 AndroidSqliteDriver(
                     schema = DatabaseAplikasi.Schema,
@@ -95,24 +81,19 @@ class MainActivity : ComponentActivity() {
                     name = "manajerberkas.db"
                 )
             }
-
             val database = remember {
                 DatabaseAplikasi(driver)
             }
-
             val repositoriMarkah = remember { RepositoriMarkahSql(database) }
             val repositoriBeranda = remember { RepositoriBerandaSql(database) }
             val repositoriRiwayat = remember { RepositoriRiwayatPencarianSql(database) }
             val repositoriPreferensi = remember { RepositoriPreferensiEditorSql(database) }
-
             val repositoriPencarianIsi = remember {
                 RepositoriPencarianIsiAndroid(context.applicationContext)
             }
-
             val repositoriArsip = remember {
-                RepositoriArsipAndroid(context.applicationContext) // Berubah dari RepositoriArsipZipAndroid
+                RepositoriArsipAndroid(context.applicationContext) 
             }
-
             val dependensiPenjelajah = remember {
                 DependensiPenjelajah(
                     daftarIsiFolder = DaftarIsiFolderUseCase(repositoriBerkas),
@@ -137,7 +118,6 @@ class MainActivity : ComponentActivity() {
                     ekstrakSemuaArsip = EkstrakSemuaArsipUseCase(repositoriArsip)
                 )
             }
-
             val dependensiEditor = remember {
                 DependensiEditor(
                     bacaTeks = BacaTeksUseCase(repositoriBerkas),
@@ -151,14 +131,12 @@ class MainActivity : ComponentActivity() {
                     simpanPreferensi = SimpanPreferensiEditorUseCase(repositoriPreferensi)
                 )
             }
-
             val stateHolder = remember {
                 DaftarBerkasStateHolder(
                     dependensi = dependensiPenjelajah,
                     scope = scope
                 )
             }
-
             val peluncurSaf = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.OpenDocumentTree()
             ) { uri ->
@@ -178,18 +156,15 @@ class MainActivity : ComponentActivity() {
                         } catch (ignored: Exception) {
                         }
                     }
-
                     preferences.edit()
                         .putString("saf_terakhir_uri", uri.toString())
                         .putBoolean("pertama_kali_buka", false)
                         .apply()
-
                     PabrikLokasiAndroid.safRoot(uri)?.let { lokasi ->
                         stateHolder.bukaAwal(lokasi)
                     }
                 }
             }
-
             val peluncurIzinSemuaBerkas = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartActivityForResult()
             ) {
@@ -197,14 +172,11 @@ class MainActivity : ComponentActivity() {
                     stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot())
                 }
             }
-
             LaunchedEffect(Unit) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     if (Environment.isExternalStorageManager()) {
-            // Sudah dapat izin -> langsung buka Penyimpanan Utama (/storage/emulated/0)
                         stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.eksternalRoot())
                     } else {
-            // Belum ada izin -> buka setting izin "Akses Semua Berkas"
                         stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
                         val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
                             data = Uri.fromParts("package", context.packageName, null)
@@ -219,7 +191,6 @@ class MainActivity : ComponentActivity() {
                     stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.eksternalRoot())
                 }
             }
-
             AplikasiUtamaAndroid(
                 stateHolder = stateHolder,
                 dependensiPenjelajah = dependensiPenjelajah,
@@ -230,7 +201,7 @@ class MainActivity : ComponentActivity() {
                 onBukaSaf = {
                     peluncurSaf.launch(null)
                 },
-                onBukaEksternal = { // <-- Tambahkan aksi ini
+                onBukaEksternal = { 
                     stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot())
                 }
             )

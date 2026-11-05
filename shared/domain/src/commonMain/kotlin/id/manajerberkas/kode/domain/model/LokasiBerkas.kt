@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.domain.model
-
 enum class JenisPenyimpanan {
     PRIVAT_APLIKASI,
     SAF_ANDROID,
@@ -8,10 +7,9 @@ enum class JenisPenyimpanan {
     TIDAK_DIKENAL,
     EKSTERNAL
 }
-
 data class LokasiBerkas(
-    val id: String, // Identifier unik lintas platform (URI string / Document ID)
+    val id: String, 
     val namaTampilan: String,
-    val jalurTampilan: String?, // Path POSIX jika tersedia, null untuk URI/Sandbox
+    val jalurTampilan: String?, 
     val jenisPenyimpanan: JenisPenyimpanan
 )

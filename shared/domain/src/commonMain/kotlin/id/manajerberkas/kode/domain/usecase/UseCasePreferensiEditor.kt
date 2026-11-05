@@ -1,7 +1,5 @@
 package id.manajerberkas.kode.domain.usecase
-
 import id.manajerberkas.kode.domain.kontrak.RepositoriPreferensiEditor
-
 class AmbilPreferensiEditorUseCase(
     private val repositori: RepositoriPreferensiEditor
 ) {
@@ -12,7 +10,6 @@ class AmbilPreferensiEditorUseCase(
         return repositori.ambilBoolean(kunci, default)
     }
 }
-
 class SimpanPreferensiEditorUseCase(
     private val repositori: RepositoriPreferensiEditor
 ) {

@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.KecocokanIsiFile
 import id.manajerberkas.kode.domain.model.ModePencarianIsi
 import id.manajerberkas.kode.presentation.state.PencarianIsiState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PencarianIsiLayar(
@@ -83,7 +81,6 @@ fun PencarianIsiLayar(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Teks yang dicari di dalam berkas...") }
                     )
-
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
                             selected = state.mode == ModePencarianIsi.FOLDER_SAAT_INI,
@@ -112,18 +109,15 @@ fun PencarianIsiLayar(
                     }
                 }
             }
-
             if (state.sedangMencari) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
-
             Text(
                 text = if (state.pernahMencari) "Kecocokan: ${state.jumlahKecocokanTotal} di ${state.hasil.size} file" else "Siap mencari isi.",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),

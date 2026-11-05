@@ -1,10 +1,8 @@
 package id.manajerberkas.kode.domain.model
-
 enum class ModePencarianIsi {
     FOLDER_SAAT_INI,
     REKURSIF
 }
-
 data class KueriPencarianIsi(
     val teks: String,
     val mode: ModePencarianIsi = ModePencarianIsi.REKURSIF,
@@ -16,14 +14,12 @@ data class KueriPencarianIsi(
     val ukuranMax: Long? = null,
     val batasUkuranPerFile: Long = 5 * 1024 * 1024
 )
-
 data class KecocokanIsiFile(
     val lokasi: LokasiBerkas,
     val namaFile: String,
     val nomorBaris: Int,
     val potonganTeks: String
 )
-
 data class HasilPencarianIsi(
     val daftar: List<KecocokanIsiFile> = emptyList(),
     val selesai: Boolean = false,

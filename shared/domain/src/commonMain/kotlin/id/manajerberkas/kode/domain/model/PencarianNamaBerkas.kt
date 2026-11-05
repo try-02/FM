@@ -1,10 +1,8 @@
 package id.manajerberkas.kode.domain.model
-
 enum class ModePencarian {
     FOLDER_SAAT_INI,
     REKURSIF
 }
-
 data class KueriPencarianNama(
     val teks: String,
     val mode: ModePencarian = ModePencarian.FOLDER_SAAT_INI,
@@ -14,7 +12,6 @@ data class KueriPencarianNama(
     val ukuranMax: Long? = null,
     val hanyaFolder: Boolean? = null
 )
-
 data class HasilPencarianNama(
     val daftar: List<ItemBerkas> = emptyList(),
     val selesai: Boolean = false,

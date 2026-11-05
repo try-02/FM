@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.JenisMarkah
 import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
 import id.manajerberkas.kode.presentation.state.DaftarBerkasState
-
 @Composable
 fun DialogMarkah(
     state: DaftarBerkasState,
@@ -44,9 +42,7 @@ fun DialogMarkah(
                     Spacer(Modifier.width(6.dp))
                     Text("Tandai Folder Ini")
                 }
-
                 Spacer(Modifier.height(12.dp))
-
                 if (state.daftarMarkah.isEmpty()) {
                     Text(
                         text = "Belum ada folder yang ditandai.",

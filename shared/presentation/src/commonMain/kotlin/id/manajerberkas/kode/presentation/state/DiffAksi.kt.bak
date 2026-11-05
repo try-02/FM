@@ -1,8 +1,0 @@
-package id.manajerberkas.kode.presentation.state
-
-interface DiffAksi {
-    fun bandingkan()
-    fun perubahanBerikutnya()
-    fun perubahanSebelumnya()
-    fun batal()
-}

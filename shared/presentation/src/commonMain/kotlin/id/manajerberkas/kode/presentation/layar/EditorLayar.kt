@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.layar
-
 import androidx.compose.animation.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.JenisAkhirBaris
 import id.manajerberkas.kode.presentation.state.EditorAksi
 import id.manajerberkas.kode.presentation.state.EditorState
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorLayar(
@@ -33,7 +31,6 @@ fun EditorLayar(
 ) {
     var menuTerbuka by remember { mutableStateOf(false) }
     var cariPanelTerbuka by remember { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +69,6 @@ fun EditorLayar(
                     ) {
                         Icon(Icons.Default.Save, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.primary)
                     }
-
                     Box {
                         IconButton(onClick = { menuTerbuka = true }) {
                             Icon(Icons.Default.MoreVert, contentDescription = "Lainnya")
@@ -108,7 +104,6 @@ fun EditorLayar(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Panel Cari & Ganti Expressive
             AnimatedVisibility(visible = cariPanelTerbuka) {
                 Surface(
                     color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -135,7 +130,6 @@ fun EditorLayar(
                                 singleLine = true
                             )
                         }
-
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -167,7 +161,6 @@ fun EditorLayar(
                                 Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Berikutnya")
                             }
                         }
-
                         if (!state.hanyaBaca) {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Button(onClick = aksi::gantiSatu, shape = RoundedCornerShape(10.dp)) { Text("Ganti") }
@@ -177,13 +170,10 @@ fun EditorLayar(
                     }
                 }
             }
-
             if (state.memuat || state.sedangMenyimpan) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
-
             val scrollState = rememberScrollState()
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -226,8 +216,6 @@ fun EditorLayar(
                     }
                 }
             }
-
-            // Info Bar Bawah
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 modifier = Modifier.fillMaxWidth()
@@ -245,8 +233,6 @@ fun EditorLayar(
             }
         }
     }
-
-    // Dialog Konfirmasi & Tools
     if (state.konfirmasiTutup) {
         AlertDialog(
             onDismissRequest = aksi::batalTutup,
@@ -261,7 +247,6 @@ fun EditorLayar(
             }
         )
     }
-
     if (state.panelStatistikTerbuka) {
         AlertDialog(
             onDismissRequest = aksi::tutupPanelStatistik,
@@ -282,7 +267,6 @@ fun EditorLayar(
             }
         )
     }
-
     if (state.dialogNavigasiBaris) {
         var barisInput by remember { mutableStateOf(state.nomorBarisInput) }
         AlertDialog(

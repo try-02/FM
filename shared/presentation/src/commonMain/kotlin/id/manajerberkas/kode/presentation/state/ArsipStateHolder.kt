@@ -1,5 +1,4 @@
 package id.manajerberkas.kode.presentation.state
-
 import id.manajerberkas.kode.domain.model.ItemArsip
 import id.manajerberkas.kode.domain.model.JenisItemArsip
 import id.manajerberkas.kode.domain.model.LokasiBerkas
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 class ArsipStateHolder(
     private val lokasiArsip: LokasiBerkas,
     private val lokasiTujuanEkstrak: LokasiBerkas,
@@ -24,21 +22,16 @@ class ArsipStateHolder(
 ) {
     private val _state = MutableStateFlow(ArsipState(lokasiArsip = lokasiArsip))
     val state: StateFlow<ArsipState> = _state
-
     private var pekerjaanMuat: Job? = null
     private var pekerjaanEkstrak: Job? = null
-
     init {
         muatDaftar()
     }
-
     private fun muatDaftar() {
         pekerjaanMuat?.cancel()
         pekerjaanMuat = scope.launch {
             _state.update { it.copy(memuat = true, pesan = null) }
-
             val hasil = daftarIsiArsip(lokasiArsip)
-
             _state.update {
                 it.copy(
                     memuat = false,
@@ -47,21 +40,17 @@ class ArsipStateHolder(
                     pesan = if (hasil.sukses) null else hasil.pesan
                 )
             }
-
             perbaruiDaftarTampil()
         }
     }
-
     private fun perbaruiDaftarTampil() {
         val kondisi = _state.value
         val jalurAktif = kondisi.jalurAktif
-
         val tampil = kondisi.daftar.filter { item ->
             val parent = item.jalur.substringBeforeLast('/', "")
             val parentPath = if (parent.isEmpty()) "" else "$parent/"
             parentPath == jalurAktif
         }
-
         _state.update {
             it.copy(
                 daftarTampil = tampil.sortedWith(
@@ -72,41 +61,33 @@ class ArsipStateHolder(
             )
         }
     }
-
     fun klikItem(item: ItemArsip) {
         if (item.jenis == JenisItemArsip.FOLDER) {
             _state.update { it.copy(jalurAktif = item.jalur) }
             perbaruiDaftarTampil()
         } else {
-            // Untuk tahap ini, file di dalam arsip belum bisa dibuka langsung
             _state.update { it.copy(pesan = "Pembukaan file dalam arsip belum didukung.") }
         }
     }
-
     fun kembali() {
         val kondisi = _state.value
         if (kondisi.jalurAktif.isEmpty()) {
             onTutup()
             return
         }
-
         val parent = kondisi.jalurAktif.trimEnd('/').substringBeforeLast('/', "")
         val jalurBaru = if (parent.isEmpty()) "" else "$parent/"
-
         _state.update { it.copy(jalurAktif = jalurBaru) }
         perbaruiDaftarTampil()
     }
-
     fun togglePilih(item: ItemArsip) {
         val kondisi = _state.value
         val terpilih = kondisi.itemTerpilih.toMutableSet()
-
         if (terpilih.contains(item.jalur)) {
             terpilih.remove(item.jalur)
         } else {
             terpilih.add(item.jalur)
         }
-
         _state.update {
             it.copy(
                 itemTerpilih = terpilih,
@@ -114,7 +95,6 @@ class ArsipStateHolder(
             )
         }
     }
-
     fun tekanLama(item: ItemArsip) {
         val kondisi = _state.value
         if (!kondisi.modePilih) {
@@ -128,7 +108,6 @@ class ArsipStateHolder(
             togglePilih(item)
         }
     }
-
     fun batalkanPilih() {
         _state.update {
             it.copy(
@@ -137,24 +116,19 @@ class ArsipStateHolder(
             )
         }
     }
-
     fun ekstrakTerpilih() {
         val kondisi = _state.value
         if (kondisi.itemTerpilih.isEmpty()) return
-
         pekerjaanEkstrak?.cancel()
         pekerjaanEkstrak = scope.launch {
             _state.update { it.copy(sedangEkstrak = true, pesan = null) }
-
             var totalBerhasil = 0
             var totalGagal = 0
-
             for (jalur in kondisi.itemTerpilih) {
                 val hasil = ekstrakItemArsip(lokasiArsip, jalur, lokasiTujuanEkstrak)
                 totalBerhasil += hasil.jumlahBerhasil
                 totalGagal += hasil.jumlahGagal
             }
-
             _state.update {
                 it.copy(
                     sedangEkstrak = false,
@@ -165,14 +139,11 @@ class ArsipStateHolder(
             }
         }
     }
-
     fun ekstrakSemua() {
         pekerjaanEkstrak?.cancel()
         pekerjaanEkstrak = scope.launch {
             _state.update { it.copy(sedangEkstrak = true, pesan = null) }
-
             val hasil = ekstrakSemuaArsip(lokasiArsip, lokasiTujuanEkstrak)
-
             _state.update {
                 it.copy(
                     sedangEkstrak = false,
@@ -181,7 +152,6 @@ class ArsipStateHolder(
             }
         }
     }
-
     fun tutup() {
         onTutup()
     }
