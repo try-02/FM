@@ -34,7 +34,8 @@ fun AplikasiUtamaAndroid(
     dependensiPenjelajah: DependensiPenjelajah,
     dependensiEditor: DependensiEditor,
     onBukaPrivat: () -> Unit,
-    onBukaSaf: () -> Unit
+    onBukaSaf: () -> Unit,
+    onBukaEksternal: () -> Unit = {}
 ) {
     val state by stateHolder.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -193,7 +194,8 @@ fun AplikasiUtamaAndroid(
                     state = state,
                     aksi = stateHolder,
                     onBukaPrivat = onBukaPrivat,
-                    onBukaSaf = onBukaSaf
+                    onBukaSaf = onBukaSaf,
+                    onBukaEksternal = onBukaEksternal
                 )
             }
         }

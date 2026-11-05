@@ -7,12 +7,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+// Import Semua Layar
+import id.manajerberkas.kode.presentation.layar.ArsipLayar
 import id.manajerberkas.kode.presentation.layar.DaftarBerkasLayar
+import id.manajerberkas.kode.presentation.layar.GantiNamaMassalLayar
+import id.manajerberkas.kode.presentation.layar.PencarianIsiLayar
 import id.manajerberkas.kode.presentation.layar.PencarianNamaLayar
+
+// Import Semua StateHolder & Dependensi
+import id.manajerberkas.kode.presentation.state.ArsipStateHolder
 import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
 import id.manajerberkas.kode.presentation.state.DependensiEditor
 import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
+import id.manajerberkas.kode.presentation.state.GantiNamaMassalStateHolder
+import id.manajerberkas.kode.presentation.state.PencarianIsiStateHolder
 import id.manajerberkas.kode.presentation.state.PencarianNamaStateHolder
+
+// Import UseCase yang dibutuhkan
+import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
+import id.manajerberkas.kode.domain.usecase.HitungPratinjauGantiNamaUseCase
 
 @Composable
 fun AplikasiUtamaAndroid(
@@ -33,7 +47,6 @@ fun AplikasiUtamaAndroid(
     }
 
     val tujuanEditor = state.editorTujuan
-
     val tujuanDiff = state.tujuanDiff
 
     MaterialTheme {
@@ -146,15 +159,7 @@ fun AplikasiUtamaAndroid(
                 )
             }
 
-            else -> {
-                DaftarBerkasLayar(
-                    state = state,
-                    aksi = stateHolder,
-                    onBukaPrivat = onBukaPrivat,
-                    onBukaSaf = onBukaSaf
-                )
-            }
-
+            // PERBAIKAN: state.tujuanArsip dipindah SEBELUM cabang else
             state.tujuanArsip != null -> {
                 val arsipStateHolder = remember(state.tujuanArsip) {
                     ArsipStateHolder(
@@ -179,6 +184,16 @@ fun AplikasiUtamaAndroid(
                     onEkstrakSemua = arsipStateHolder::ekstrakSemua,
                     onBatalkanPilih = arsipStateHolder::batalkanPilih,
                     onTutup = arsipStateHolder::tutup
+                )
+            }
+
+            // PERBAIKAN: else sekarang berada di urutan TERAKHIR
+            else -> {
+                DaftarBerkasLayar(
+                    state = state,
+                    aksi = stateHolder,
+                    onBukaPrivat = onBukaPrivat,
+                    onBukaSaf = onBukaSaf
                 )
             }
         }

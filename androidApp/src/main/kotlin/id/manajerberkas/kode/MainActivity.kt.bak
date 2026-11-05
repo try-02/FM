@@ -187,34 +187,33 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            LaunchedEffect(Unit) {
-                val pertamaKali = preferences.getBoolean("pertama_kali_buka", true)
-                val uriSafTersimpan = preferences.getString("saf_terakhir_uri", null)
-
-                // Cek apakah izin URI SAF yang disimpan masih sah
-                val izinSafMasihAktif = uriSafTersimpan != null && context.contentResolver.persistedUriPermissions.any {
-                    it.uri.toString() == uriSafTersimpan
+            val peluncurIzinSemuaBerkas = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult()
+            ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+                    stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot())
                 }
+            }
 
-                when {
-                    // Kasus 1: Sudah pernah memilih folder SAF sebelumnya -> langsung buka SAF
-                    izinSafMasihAktif && uriSafTersimpan != null -> {
-                        val lokasi = PabrikLokasiAndroid.safRoot(Uri.parse(uriSafTersimpan))
-                        if (lokasi != null) {
-                            stateHolder.bukaAwalBeranda(lokasi)
-                        } else {
-                            stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+            LaunchedEffect(Unit) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+            // Sudah dapat izin -> langsung buka Penyimpanan Utama (/storage/emulated/0)
+                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.eksternalRoot())
+                    } else {
+            // Belum ada izin -> buka setting izin "Akses Semua Berkas"
+                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        try {
+                            peluncurIzinSemuaBerkas.launch(intent)
+                        } catch (e: Exception) {
+                            peluncurIzinSemuaBerkas.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
                         }
                     }
-                    // Kasus 2: Baru pertama kali instal aplikasi -> otomatis buka pemilih SAF
-                    pertamaKali -> {
-                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
-                        peluncurSaf.launch(null)
-                    }
-                    // Kasus 3: Default biasa
-                    else -> {
-                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
-                    }
+                } else {
+                    stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.eksternalRoot())
                 }
             }
 

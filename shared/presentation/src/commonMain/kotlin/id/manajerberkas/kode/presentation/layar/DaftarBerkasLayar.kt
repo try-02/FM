@@ -31,7 +31,7 @@ import id.manajerberkas.kode.domain.model.JenisItem
 import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
 import id.manajerberkas.kode.presentation.state.DaftarBerkasState
 import id.manajerberkas.kode.presentation.state.ModePilihTujuan
-import id.manajerberkas.kode.data.adapter.PabrikLokasiAndroid
+import id.manajerberkas.kode.domain.model.JenisPenyimpanan
 import java.net.URLDecoder
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -40,7 +40,8 @@ fun DaftarBerkasLayar(
     state: DaftarBerkasState,
     aksi: DaftarBerkasAksi,
     onBukaPrivat: () -> Unit,
-    onBukaSaf: () -> Unit
+    onBukaSaf: () -> Unit,
+    onBukaEksternal: () -> Unit = {}
 ) {
     val idTerpilih = remember(state.itemTerpilih) {
         state.itemTerpilih.map { it.lokasi.id }.toSet()
@@ -283,48 +284,63 @@ fun DaftarBerkasLayar(
         ) {
             // Baris Pemilih Penyimpanan (Hanya ditampilkan jika BUKAN mode pilih)
             if (!state.modePilih && state.modePilihTujuan == null) {
-                val isPrivat = state.lokasiAktif?.id?.contains("privat", ignoreCase = true) == true
+                val jenis = state.lokasiAktif?.jenisPenyimpanan
                 val idAktif = state.lokasiAktif?.id ?: ""
-                val adalahEksternal = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_EKSTERNAL)
-                val adalahPrivat = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_PRIVAT)
-                val adalahSaf = idAktif.startsWith(PabrikLokasiAndroid.SKEMA_SAF)
 
+        // Mengecek jenis penyimpanan aktif secara murni domain tanpa modul data
+                val adalahEksternal = jenis == JenisPenyimpanan.EKSTERNAL || idAktif.startsWith("eksternal:")
+                val adalahPrivat = jenis == JenisPenyimpanan.PRIVAT_APLIKASI || idAktif.startsWith("privat:")
+                val adalahSaf = jenis == JenisPenyimpanan.SAF_ANDROID || idAktif.startsWith("saf:")
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    FilterChip(
-                        selected = adalahEksternal,
-                        onClick = { stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot()) },
-                        label = { Text("Penyimpanan Utama") },
-                        leadingIcon = { Icon(Icons.Default.PhoneAndroid, null, modifier = Modifier.size(16.dp)) },
-                        shape = RoundedCornerShape(14.dp)
-                    )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 1. Chip Penyimpanan Utama (/storage/emulated/0)
+            FilterChip(
+                selected = adalahEksternal,
+                onClick = onBukaEksternal, // <-- Panggil lambda callback
+                label = { Text("Penyimpanan Utama") },
+                leadingIcon = { Icon(Icons.Default.PhoneAndroid, null, modifier = Modifier.size(16.dp)) },
+                shape = RoundedCornerShape(14.dp)
+            )
 
-    // 2. Chip Penyimpanan Privat
-                    FilterChip(
-                       selected = adalahPrivat,
-                       onClick = onBukaPrivat,
-                       label = { Text("Privat") },
-                       leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
-                       shape = RoundedCornerShape(14.dp)
-                    )
+            // 2. Chip Penyimpanan Privat
+            FilterChip(
+                selected = adalahPrivat,
+                onClick = onBukaPrivat,
+                label = { Text("Privat") },
+                leadingIcon = { Icon(Icons.Default.FolderSpecial, null, modifier = Modifier.size(16.dp)) },
+                shape = RoundedCornerShape(14.dp)
+            )
 
-    // 3. Chip SAF (Folder Khusus Eksternal)
-                   FilterChip(
-                      selected = adalahSaf,
-                      onClick = onBukaSaf,
-                      label = { Text("SAF Eksternal") },
-                      leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
-                      shape = RoundedCornerShape(14.dp)
-                   )
-                }
-            }
+            // 3. Chip SAF Eksternal
+            FilterChip(
+                selected = adalahSaf,
+                onClick = {
+                    if (!adalahSaf) onBukaSaf()
+                },
+                label = { Text("SAF Eksternal") },
+                leadingIcon = { Icon(Icons.Default.SdCard, null, modifier = Modifier.size(16.dp)) },
+                shape = RoundedCornerShape(14.dp)
+            )
+
+            // 4. Tombol Cepat Pilih Folder SAF Baru
+            AssistChip(
+                onClick = onBukaSaf,
+                label = { Text("Pilih Folder...") },
+                leadingIcon = {
+                    Icon(Icons.Default.FolderOpen, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
+                },
+                shape = RoundedCornerShape(14.dp)
+            )
+        }
+    }
+
 
             AnimatedVisibility(visible = state.sedangOperasi || state.memuat) {
                 LinearProgressIndicator(
