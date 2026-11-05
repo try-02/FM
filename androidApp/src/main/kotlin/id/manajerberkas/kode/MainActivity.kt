@@ -24,7 +24,7 @@ import id.manajerberkas.kode.data.repositori.RepositoriRiwayatPencarianSql
 
 // PERBAIKAN: Import Repository yang hilang
 import id.manajerberkas.kode.data.repositori.RepositoriPencarianIsiAndroid
-import id.manajerberkas.kode.data.repositori.RepositoriArsipZipAndroid
+import id.manajerberkas.kode.data.repositori.RepositoriArsipAndroid
 
 // PERBAIKAN: Import seluruh UseCase lengkap dari domain
 import id.manajerberkas.kode.domain.usecase.AmbilBerandaUseCase
@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
             }
 
             val repositoriArsip = remember {
-                RepositoriArsipZipAndroid(context.applicationContext)
+                RepositoriArsipAndroid(context.applicationContext) // Berubah dari RepositoriArsipZipAndroid
             }
 
             val dependensiPenjelajah = remember {
