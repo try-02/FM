@@ -18,16 +18,6 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
-        buildTypes {
-            release {
-                ndk {
-                    abiFilters += listOf("arm64-v8a")
-                }
-                optimization {
-                    enable = true
-                }
-            }
-        }
     }
     sourceSets {
         commonMain.dependencies {
