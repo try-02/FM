@@ -1,5 +1,7 @@
 package id.manajerberkas.kode
+
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -9,6 +11,7 @@ import id.manajerberkas.kode.domain.usecase.BacaTeksUseCase
 import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
 import id.manajerberkas.kode.presentation.layar.DiffLayar
 import id.manajerberkas.kode.presentation.state.DiffStateHolder
+
 @Composable
 fun DiffAndroid(
     lokasiA: LokasiBerkas,
@@ -28,6 +31,11 @@ fun DiffAndroid(
         )
     }
     val state by stateHolder.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(lokasiA.id, lokasiB.id) {
+        stateHolder.bandingkan()
+    }
+
     DiffLayar(
         state = state,
         aksi = stateHolder,

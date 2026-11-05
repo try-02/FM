@@ -1,4 +1,5 @@
 package id.manajerberkas.kode.presentation.layar
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import id.manajerberkas.kode.domain.model.JenisOperasiDiff
 import id.manajerberkas.kode.domain.model.ModeDiff
 import id.manajerberkas.kode.presentation.state.DiffAksi
 import id.manajerberkas.kode.presentation.state.DiffState
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiffLayar(
@@ -38,6 +40,7 @@ fun DiffLayar(
         state.indeksBarisAktif?.let { listState.animateScrollToItem(it) }
     }
     DisposableEffect(Unit) { onDispose { aksi.batal() } }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,8 +74,8 @@ fun DiffLayar(
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text("A: ${state.lokasiA?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall)
-                    Text("B: ${state.lokasiB?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall)
+                    Text("Berkas A: ${state.lokasiA?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+                    Text("Berkas B: ${state.lokasiB?.namaTampilan ?: "-"}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -94,13 +97,45 @@ fun DiffLayar(
                     }
                 }
             }
+
             if (state.memuat) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp))
             }
-            state.hasil?.let {
+
+            // Tampilkan Pesan Status / Error
+            state.pesan?.let { pesan ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (state.hasil?.identik == true) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = pesan,
+                        modifier = Modifier.padding(12.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            val hasil = state.hasil
+            if (hasil == null && !state.memuat) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Tidak dapat menampilkan perbandingan.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else if (hasil != null) {
                 LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     if (state.mode == ModeDiff.UNIFIED) {
-                        itemsIndexed(state.hasil.baris) { index, baris ->
+                        itemsIndexed(hasil.baris) { index, baris ->
                             val isActiveBlock = state.blokPerubahan.getOrNull(state.indeksBlokAktif)?.let {
                                 index in it.indeksAwal..it.indeksAkhir
                             } ?: false
@@ -119,6 +154,7 @@ fun DiffLayar(
         }
     }
 }
+
 @Composable
 private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) {
     val bgColor = when {
@@ -134,16 +170,17 @@ private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) 
             .padding(horizontal = 12.dp, vertical = 2.dp)
     ) {
         Text(
-            text = "${baris.nomorBarisA ?: " "}  ${baris.nomorBarisB ?: " "}  ",
+            text = "${(baris.nomorBarisA?.toString() ?: "").padStart(4, ' ')} ${(baris.nomorBarisB?.toString() ?: "").padStart(4, ' ')}  ",
             style = TextStyle(fontFamily = FontFamily.Monospace),
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = baris.isi,
+            text = baris.isi.ifEmpty { " " },
             style = TextStyle(fontFamily = FontFamily.Monospace)
         )
     }
 }
+
 @Composable
 private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, isActiveBlock: Boolean) {
     val bgA = when {
@@ -158,7 +195,7 @@ private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, is
     }
 
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp)) {
-        // Kolom Sisi A (Berkas Asli)
+        // Kolom Sisi A
         Row(
             modifier = Modifier
                 .weight(1f)
@@ -171,7 +208,7 @@ private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, is
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = baris.teksA ?: "",
+                text = (baris.teksA ?: "").ifEmpty { " " },
                 style = TextStyle(fontFamily = FontFamily.Monospace),
                 maxLines = 1
             )
@@ -179,7 +216,7 @@ private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, is
 
         Spacer(modifier = Modifier.width(1.dp).background(MaterialTheme.colorScheme.outlineVariant))
 
-        // Kolom Sisi B (Berkas Modifikasi)
+        // Kolom Sisi B
         Row(
             modifier = Modifier
                 .weight(1f)
@@ -192,7 +229,7 @@ private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, is
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = baris.teksB ?: "",
+                text = (baris.teksB ?: "").ifEmpty { " " },
                 style = TextStyle(fontFamily = FontFamily.Monospace),
                 maxLines = 1
             )

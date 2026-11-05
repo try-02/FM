@@ -1,4 +1,5 @@
 package id.manajerberkas.kode.presentation.state
+
 import id.manajerberkas.kode.domain.model.ItemArsip
 import id.manajerberkas.kode.domain.model.JenisItemArsip
 import id.manajerberkas.kode.domain.model.LokasiBerkas
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 class ArsipStateHolder(
     private val lokasiArsip: LokasiBerkas,
     private val lokasiTujuanEkstrak: LokasiBerkas,
@@ -24,9 +26,11 @@ class ArsipStateHolder(
     val state: StateFlow<ArsipState> = _state
     private var pekerjaanMuat: Job? = null
     private var pekerjaanEkstrak: Job? = null
+
     init {
         muatDaftar()
     }
+
     private fun muatDaftar() {
         pekerjaanMuat?.cancel()
         pekerjaanMuat = scope.launch {
@@ -43,11 +47,14 @@ class ArsipStateHolder(
             perbaruiDaftarTampil()
         }
     }
+
     private fun perbaruiDaftarTampil() {
         val kondisi = _state.value
         val jalurAktif = kondisi.jalurAktif
         val tampil = kondisi.daftar.filter { item ->
-            val parent = item.jalur.substringBeforeLast('/', "")
+            // Bersihkan slash di ujung untuk folder sebelum mencari parent
+            val jalurBersih = item.jalur.trimEnd('/')
+            val parent = jalurBersih.substringBeforeLast('/', "")
             val parentPath = if (parent.isEmpty()) "" else "$parent/"
             parentPath == jalurAktif
         }
@@ -61,25 +68,29 @@ class ArsipStateHolder(
             )
         }
     }
+
     fun klikItem(item: ItemArsip) {
         if (item.jenis == JenisItemArsip.FOLDER) {
             _state.update { it.copy(jalurAktif = item.jalur) }
             perbaruiDaftarTampil()
         } else {
-            _state.update { it.copy(pesan = "Pembukaan file dalam arsip belum didukung.") }
+            _state.update { it.copy(pesan = "Pembukaan berkas di dalam arsip belum didukung. Silakan ekstrak berkas terlebih dahulu.") }
         }
     }
+
     fun kembali() {
         val kondisi = _state.value
         if (kondisi.jalurAktif.isEmpty()) {
             onTutup()
             return
         }
-        val parent = kondisi.jalurAktif.trimEnd('/').substringBeforeLast('/', "")
+        val jalurBersih = kondisi.jalurAktif.trimEnd('/')
+        val parent = jalurBersih.substringBeforeLast('/', "")
         val jalurBaru = if (parent.isEmpty()) "" else "$parent/"
         _state.update { it.copy(jalurAktif = jalurBaru) }
         perbaruiDaftarTampil()
     }
+
     fun togglePilih(item: ItemArsip) {
         val kondisi = _state.value
         val terpilih = kondisi.itemTerpilih.toMutableSet()
@@ -95,6 +106,7 @@ class ArsipStateHolder(
             )
         }
     }
+
     fun tekanLama(item: ItemArsip) {
         val kondisi = _state.value
         if (!kondisi.modePilih) {
@@ -108,6 +120,7 @@ class ArsipStateHolder(
             togglePilih(item)
         }
     }
+
     fun batalkanPilih() {
         _state.update {
             it.copy(
@@ -116,6 +129,7 @@ class ArsipStateHolder(
             )
         }
     }
+
     fun ekstrakTerpilih() {
         val kondisi = _state.value
         if (kondisi.itemTerpilih.isEmpty()) return
@@ -139,6 +153,7 @@ class ArsipStateHolder(
             }
         }
     }
+
     fun ekstrakSemua() {
         pekerjaanEkstrak?.cancel()
         pekerjaanEkstrak = scope.launch {
@@ -152,6 +167,7 @@ class ArsipStateHolder(
             }
         }
     }
+
     fun tutup() {
         onTutup()
     }

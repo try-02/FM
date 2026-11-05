@@ -1,6 +1,0 @@
-e: DaftarBerkasStateHolder.kt:14:1 Class 'DaftarBerkasStateHolder' is not abstract and does not implement abstract member:
-fun muatMarkah(): Unit
-e: DaftarBerkasStateHolder.kt:366:14 Conflicting overloads:
-fun bukaMarkah(markah: MarkahLokasi): Unit
-e: DaftarBerkasStateHolder.kt:449:14 Conflicting overloads:
-fun bukaMarkah(markah: MarkahLokasi): Unit

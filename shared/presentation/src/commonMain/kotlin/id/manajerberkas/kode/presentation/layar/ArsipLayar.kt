@@ -77,7 +77,9 @@ fun ArsipLayar(
         bottomBar = {
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                tonalElevation = 6.dp,
+                modifier = Modifier.navigationBarsPadding() // Mencegah tertutup gesture navigasi Android
             ) {
                 Row(
                     modifier = Modifier
@@ -121,68 +123,91 @@ fun ArsipLayar(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp))
             }
             state.pesan?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
             }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(state.daftarTampil) { item ->
-                    val terpilih = state.itemTerpilih.contains(item.jalur)
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = if (terpilih) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .combinedClickable(
-                                onClick = {
-                                    if (state.modePilih) onTogglePilih(item) else onKlikItem(item)
-                                },
-                                onLongClick = { onTekanLama(item) }
-                            )
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (state.modePilih) {
-                                Checkbox(
-                                    checked = terpilih,
-                                    onCheckedChange = { onTogglePilih(item) },
-                                    modifier = Modifier.padding(end = 8.dp)
+            if (state.daftarTampil.isEmpty() && !state.memuat) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Folder arsip ini kosong",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.daftarTampil) { item ->
+                        val terpilih = state.itemTerpilih.contains(item.jalur)
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = if (terpilih) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerLow,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .combinedClickable(
+                                    onClick = {
+                                        if (state.modePilih) onTogglePilih(item) else onKlikItem(item)
+                                    },
+                                    onLongClick = { onTekanLama(item) }
                                 )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .size(42.dp)
-                                    .clip(RoundedCornerShape(12.dp))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (state.modePilih) {
+                                    Checkbox(
+                                        checked = terpilih,
+                                        onCheckedChange = { onTogglePilih(item) },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .size(42.dp)
+                                        .clip(RoundedCornerShape(12.dp))
                                     .background(
                                         if (item.jenis == JenisItemArsip.FOLDER) MaterialTheme.colorScheme.primaryContainer
                                         else MaterialTheme.colorScheme.surfaceVariant
                                     ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = if (item.jenis == JenisItemArsip.FOLDER) Icons.Default.Folder else Icons.AutoMirrored.Filled.InsertDriveFile,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                            Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
-                                Text(item.nama, fontWeight = FontWeight.Medium)
-                                if (item.jenis == JenisItemArsip.BERKAS) {
-                                    Text(
-                                        formatUkuranArsip(item.ukuran),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = if (item.jenis == JenisItemArsip.FOLDER) Icons.Default.Folder else Icons.AutoMirrored.Filled.InsertDriveFile,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
+                                }
+                                Column(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
+                                    Text(item.nama, fontWeight = FontWeight.Medium)
+                                    if (item.jenis == JenisItemArsip.BERKAS) {
+                                        Text(
+                                            formatUkuranArsip(item.ukuran),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
                                 }
                             }
                         }
