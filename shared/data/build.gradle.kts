@@ -19,6 +19,8 @@ kotlin {
         // 1. minSdk ditulis langsung tanpa defaultConfig
         minSdk = 30
 
+        withHostTest {}
+
         // 2. Pengganti compileOptions/sourceCompatibility di AGP 9 KMP
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)

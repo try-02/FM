@@ -15,6 +15,8 @@ kotlin {
         }
         minSdk = 30
 
+        withHostTest {}
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }

@@ -10,11 +10,9 @@ import id.manajerberkas.kode.domain.model.JenisItemArsip
 import id.manajerberkas.kode.domain.model.KemampuanFormatArsip
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import java.io.File
-import java.io.InputStream
 import java.util.zip.ZipFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
@@ -52,20 +50,19 @@ class RepositoriArsipAndroid(
                         prosesEntryZip(entry.name, entry.isDirectory, entry.size, entry.compressedSize, entry.time, items, folderTerlihat)
                     }
                 }
-            } else if (adalahTar || adalahGzipTunggal) {
-                bukaStreamTar(file, adalahGzipTunggal).use { stream ->
-                    if (adalahGzipTunggal && !adalahTar) {
-                        // GZIP tunggal hanya berisi 1 file (nama tanpa .gz)
-                        val namaAsli = file.nameWithoutExtension
-                        items.add(ItemArsip(namaAsli, namaAsli, JenisItemArsip.BERKAS, file.length(), null, null))
-                    } else {
-                        var entry = stream.nextEntry as? TarArchiveEntry
-                        while (entry != null) {
-                            prosesEntryTar(entry.name, entry.isDirectory, entry.size, entry.lastModifiedDate?.time, items, folderTerlihat)
-                            entry = stream.nextEntry as? TarArchiveEntry
-                        }
+            } else if (adalahTar) {
+                // Membaca isi arsip TAR / TAR.GZ
+                bukaTarStream(file).use { stream ->
+                    var entry = stream.nextTarEntry
+                    while (entry != null) {
+                        prosesEntryTar(entry.name, entry.isDirectory, entry.size, entry.lastModifiedDate?.time, items, folderTerlihat)
+                        entry = stream.nextTarEntry
                     }
                 }
+            } else if (adalahGzipTunggal) {
+                // GZIP tunggal hanya berisi 1 berkas (nama asli tanpa ekstensi .gz)
+                val namaAsli = file.nameWithoutExtension
+                items.add(ItemArsip(namaAsli, namaAsli, JenisItemArsip.BERKAS, file.length(), null, null))
             } else {
                 return@withContext HasilDaftarArsip(false, "Format tidak didukung.")
             }
@@ -106,41 +103,44 @@ class RepositoriArsipAndroid(
                     val target = File(folderTujuan, entry.name)
                     if (!validasiPathTraversal(target, folderTujuan)) return@withContext HasilEkstraksi(false, "Path traversal terdeteksi.")
                     
-                    if (entry.isDirectory) target.mkdirs()
-                    else {
+                    if (entry.isDirectory) {
+                        target.mkdirs()
+                    } else {
                         target.parentFile?.mkdirs()
                         zip.getInputStream(entry).use { input -> target.outputStream().use { output -> input.copyTo(output) } }
                     }
                     return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
                 }
-            } else if (adalahTar || adalahGzipTunggal) {
-                bukaStreamTar(fileArsip, adalahGzipTunggal).use { stream ->
-                    if (adalahGzipTunggal && !adalahTar) {
-                        val namaAsli = fileArsip.nameWithoutExtension
-                        if (jalurItem != namaAsli) return@withContext HasilEkstraksi(false, "Item tidak ditemukan.")
-                        val target = File(folderTujuan, namaAsli)
-                        if (!validasiPathTraversal(target, folderTujuan)) return@withContext HasilEkstraksi(false, "Path traversal terdeteksi.")
-                        target.parentFile?.mkdirs()
-                        stream.use { input -> target.outputStream().use { output -> input.copyTo(output) } }
-                        return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
-                    } else {
-                        var entry = stream.nextEntry as? TarArchiveEntry
-                        while (entry != null) {
-                            if (entry.name == jalurItem) {
-                                val target = File(folderTujuan, entry.name)
-                                if (!validasiPathTraversal(target, folderTujuan)) return@withContext HasilEkstraksi(false, "Path traversal terdeteksi.")
-                                if (entry.isDirectory) target.mkdirs()
-                                else {
-                                    target.parentFile?.mkdirs()
-                                    target.outputStream().use { output -> stream.copyTo(output) }
-                                }
-                                return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
+            } else if (adalahTar) {
+                bukaTarStream(fileArsip).use { stream ->
+                    var entry = stream.nextTarEntry
+                    while (entry != null) {
+                        val entryPath = entry.name.trimStart('/')
+                        if (entryPath == jalurItem.trimStart('/') || entry.name == jalurItem) {
+                            val target = File(folderTujuan, entryPath)
+                            if (!validasiPathTraversal(target, folderTujuan)) return@withContext HasilEkstraksi(false, "Path traversal terdeteksi.")
+                            if (entry.isDirectory) {
+                                target.mkdirs()
+                            } else {
+                                target.parentFile?.mkdirs()
+                                target.outputStream().use { output -> stream.copyTo(output) }
                             }
-                            entry = stream.nextEntry as? TarArchiveEntry
+                            return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
                         }
-                        return@withContext HasilEkstraksi(false, "Item tidak ditemukan dalam arsip.")
+                        entry = stream.nextTarEntry
                     }
+                    return@withContext HasilEkstraksi(false, "Item tidak ditemukan dalam arsip.")
                 }
+            } else if (adalahGzipTunggal) {
+                val namaAsli = fileArsip.nameWithoutExtension
+                if (jalurItem != namaAsli) return@withContext HasilEkstraksi(false, "Item tidak ditemukan.")
+                val target = File(folderTujuan, namaAsli)
+                if (!validasiPathTraversal(target, folderTujuan)) return@withContext HasilEkstraksi(false, "Path traversal terdeteksi.")
+                target.parentFile?.mkdirs()
+                GzipCompressorInputStream(fileArsip.inputStream()).use { input -> 
+                    target.outputStream().use { output -> input.copyTo(output) } 
+                }
+                return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
             }
             return@withContext HasilEkstraksi(false, "Format tidak didukung.")
         } catch (e: Exception) {
@@ -158,7 +158,8 @@ class RepositoriArsipAndroid(
         val adalahTar = namaLower.endsWith(".tar") || namaLower.endsWith(".tgz") || namaLower.endsWith(".tar.gz")
         val adalahGzipTunggal = namaLower.endsWith(".gz") && !adalahTar
 
-        var berhasil = 0; var gagal = 0
+        var berhasil = 0
+        var gagal = 0
 
         try {
             if (adalahZip) {
@@ -169,8 +170,9 @@ class RepositoriArsipAndroid(
                         val target = File(folderTujuan, entry.name)
                         if (!validasiPathTraversal(target, folderTujuan)) { gagal++; continue }
                         try {
-                            if (entry.isDirectory) target.mkdirs()
-                            else {
+                            if (entry.isDirectory) {
+                                target.mkdirs()
+                            } else {
                                 target.parentFile?.mkdirs()
                                 zip.getInputStream(entry).use { input -> target.outputStream().use { output -> input.copyTo(output) } }
                             }
@@ -178,32 +180,42 @@ class RepositoriArsipAndroid(
                         } catch (e: Exception) { gagal++ }
                     }
                 }
-            } else if (adalahTar || adalahGzipTunggal) {
-                bukaStreamTar(fileArsip, adalahGzipTunggal).use { stream ->
-                    if (adalahGzipTunggal && !adalahTar) {
-                        val namaAsli = fileArsip.nameWithoutExtension
-                        val target = File(folderTujuan, namaAsli)
-                        if (validasiPathTraversal(target, folderTujuan)) {
-                            target.parentFile?.mkdirs()
-                            stream.use { input -> target.outputStream().use { output -> input.copyTo(output) } }
-                            berhasil++
-                        } else gagal++
-                    } else {
-                        var entry = stream.nextEntry as? TarArchiveEntry
-                        while (entry != null) {
-                            val target = File(folderTujuan, entry.name)
-                            if (!validasiPathTraversal(target, folderTujuan)) { gagal++; entry = stream.nextEntry as? TarArchiveEntry; continue }
-                            try {
-                                if (entry.isDirectory) target.mkdirs()
-                                else {
-                                    target.parentFile?.mkdirs()
-                                    target.outputStream().use { output -> stream.copyTo(output) }
-                                }
-                                berhasil++
-                            } catch (e: Exception) { gagal++ }
-                            entry = stream.nextEntry as? TarArchiveEntry
+            } else if (adalahTar) {
+                bukaTarStream(fileArsip).use { stream ->
+                    var entry = stream.nextTarEntry
+                    while (entry != null) {
+                        val entryPath = entry.name.trimStart('/')
+                        val target = File(folderTujuan, entryPath)
+                        if (!validasiPathTraversal(target, folderTujuan)) { 
+                            gagal++
+                            entry = stream.nextTarEntry
+                            continue 
                         }
+                        try {
+                            if (entry.isDirectory) {
+                                target.mkdirs()
+                            } else {
+                                target.parentFile?.mkdirs()
+                                target.outputStream().use { output -> stream.copyTo(output) }
+                            }
+                            berhasil++
+                        } catch (e: Exception) { gagal++ }
+                        entry = stream.nextTarEntry
                     }
+                }
+            } else if (adalahGzipTunggal) {
+                val namaAsli = fileArsip.nameWithoutExtension
+                val target = File(folderTujuan, namaAsli)
+                if (validasiPathTraversal(target, folderTujuan)) {
+                    try {
+                        target.parentFile?.mkdirs()
+                        GzipCompressorInputStream(fileArsip.inputStream()).use { input -> 
+                            target.outputStream().use { output -> input.copyTo(output) } 
+                        }
+                        berhasil++
+                    } catch (e: Exception) { gagal++ }
+                } else {
+                    gagal++
                 }
             } else {
                 return@withContext HasilEkstraksi(false, "Format tidak didukung.")
@@ -215,10 +227,11 @@ class RepositoriArsipAndroid(
         }
     }
 
-    private fun bukaStreamTar(file: File, adalahGzipTunggal: Boolean): InputStream {
+    // Mengembalikan TarArchiveInputStream secara spesifik
+    private fun bukaTarStream(file: File): TarArchiveInputStream {
         val fis = file.inputStream()
         val namaLower = file.name.lowercase()
-        val perluGzip = namaLower.endsWith(".tgz") || namaLower.endsWith(".tar.gz") || adalahGzipTunggal
+        val perluGzip = namaLower.endsWith(".tgz") || namaLower.endsWith(".tar.gz")
         
         return if (perluGzip) {
             TarArchiveInputStream(GzipCompressorInputStream(fis))

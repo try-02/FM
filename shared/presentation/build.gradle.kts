@@ -18,6 +18,8 @@ kotlin {
         }
         minSdk = 30
 
+        withHostTest {}
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
@@ -32,19 +34,19 @@ kotlin {
             api(project(":shared:domain"))
 
             // Dependensi Compose Multiplatform
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.material3)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.material3)
 
             // 1. Wajib untuk transisi ekspresif (AnimatedVisibility, expand/shrink, dsb)
-            implementation(compose.animation)
+            implementation(libs.compose.animation)
 
             // 2. Wajib untuk ikon berkas lengkap (FolderZip, Code, AudioFile, VideoFile, SdCard, dsb)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.material.icons.extended)
 
             // 3. Resource KMP (string, drawable, font multiplatform)
-            implementation(compose.components.resources)
+            implementation(libs.compose.components.resources)
 
             // Coroutines & Lifecycle State Collection
             implementation(libs.kotlinx.coroutines.core)
