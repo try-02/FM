@@ -65,7 +65,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.compose.material3)
 
     implementation(libs.sqldelight.android)
 
