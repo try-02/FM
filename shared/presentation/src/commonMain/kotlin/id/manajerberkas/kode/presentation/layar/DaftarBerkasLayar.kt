@@ -51,11 +51,18 @@ fun DaftarBerkasLayar(
                 state.modePilihTujuan != null -> {
                     TopAppBar(
                         title = {
-                            Text(
-                                if (state.modePilihTujuan == ModePilihTujuan.SALIN) "Pilih Folder Salin" else "Pilih Folder Pindah",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Column {
+                                Text(
+                                    if (state.modePilihTujuan == ModePilihTujuan.SALIN) "Pilih Folder Salin" else "Pilih Folder Pindah",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = rapihkanJalur(state.lokasiAktif?.jalurTampilan ?: "/"),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         },
                         navigationIcon = {
                             IconButton(onClick = aksi::batalPilihTujuan) {
@@ -63,6 +70,11 @@ fun DaftarBerkasLayar(
                             }
                         },
                         actions = {
+                            if (state.bisaKembali) {
+                                IconButton(onClick = aksi::kembali) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Naik Satu Folder")
+                                }
+                            }
                             Button(
                                 onClick = aksi::konfirmasiTujuan,
                                 shape = RoundedCornerShape(14.dp),

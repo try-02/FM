@@ -68,7 +68,15 @@ class DaftarBerkasStateHolder(
     override fun kembali() {
         val kondisi = state.value
         when {
-            kondisi.modePilihTujuan != null -> batalPilihTujuan()
+            // Bila berada di mode tujuan dan sudah masuk ke dalam subfolder, navigasikan naik satu folder
+            kondisi.modePilihTujuan != null -> {
+                if (tumpukanLokasi.size > 1) {
+                    tumpukanLokasi.removeLast()
+                    muatLokasiAktif()
+                } else {
+                    batalPilihTujuan()
+                }
+            }
             kondisi.modePilih -> batalkanPilih()
             kondisi.menuUntukItem != null -> tutupMenu()
             kondisi.dialogBuatBerkas -> tutupDialogBuatBerkas()
@@ -574,7 +582,7 @@ class DaftarBerkasStateHolder(
         }
     }
 
-    private fun muatLokasiAktif() {
+    private fun muatLokasiAktif(resetPesan: Boolean = false) {
         val lokasi = tumpukanLokasi.lastOrNull() ?: return
         pekerjaanMuat?.cancel()
         pekerjaanMuat = scope.launch {
@@ -582,7 +590,8 @@ class DaftarBerkasStateHolder(
                 it.copy(
                     memuat = true,
                     lokasiAktif = lokasi,
-                    bisaKembali = tumpukanLokasi.size > 1
+                    bisaKembali = tumpukanLokasi.size > 1,
+                    pesan = if (resetPesan) null else it.pesan
                 )
             }
             val hasilDaftar = dependensi.daftarIsiFolder(lokasi)
@@ -591,7 +600,8 @@ class DaftarBerkasStateHolder(
                 it.copy(
                     memuat = false,
                     daftar = hasilDaftar.daftar,
-                    pesan = if (hasilDaftar.sukses) null else hasilDaftar.pesan,
+                    // Pertahankan pesan operasi bila hasilDaftar sukses
+                    pesan = if (!hasilDaftar.sukses) hasilDaftar.pesan else it.pesan,
                     kemampuan = kemampuan
                 )
             }

@@ -1,4 +1,5 @@
 package id.manajerberkas.kode.presentation.layar
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -8,8 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,11 +21,13 @@ import androidx.compose.ui.unit.dp
 import id.manajerberkas.kode.domain.model.ItemArsip
 import id.manajerberkas.kode.domain.model.JenisItemArsip
 import id.manajerberkas.kode.presentation.state.ArsipState
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ArsipLayar(
     state: ArsipState,
     onKlikItem: (ItemArsip) -> Unit,
+    onTogglePilih: (ItemArsip) -> Unit,
     onTekanLama: (ItemArsip) -> Unit,
     onKembali: () -> Unit,
     onEkstrakTerpilih: () -> Unit,
@@ -139,7 +142,9 @@ fun ArsipLayar(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(16.dp))
                             .combinedClickable(
-                                onClick = { onKlikItem(item) },
+                                onClick = {
+                                    if (state.modePilih) onTogglePilih(item) else onKlikItem(item)
+                                },
                                 onLongClick = { onTekanLama(item) }
                             )
                     ) {
@@ -150,7 +155,7 @@ fun ArsipLayar(
                             if (state.modePilih) {
                                 Checkbox(
                                     checked = terpilih,
-                                    onCheckedChange = { onKlikItem(item) },
+                                    onCheckedChange = { onTogglePilih(item) },
                                     modifier = Modifier.padding(end = 8.dp)
                                 )
                             }
@@ -187,6 +192,7 @@ fun ArsipLayar(
         }
     }
 }
+
 private fun formatUkuranArsip(byte: Long): String {
     if (byte < 1024) return "$byte B"
     val kb = byte / 1024

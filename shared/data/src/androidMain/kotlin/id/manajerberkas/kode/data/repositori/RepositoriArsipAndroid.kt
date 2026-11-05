@@ -1,5 +1,7 @@
 package id.manajerberkas.kode.data.repositori
+
 import android.content.Context
+import android.os.Environment
 import id.manajerberkas.kode.data.adapter.PabrikLokasiAndroid
 import id.manajerberkas.kode.domain.kontrak.RepositoriArsip
 import id.manajerberkas.kode.domain.model.HasilDaftarArsip
@@ -14,10 +16,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+
 class RepositoriArsipAndroid(
     private val context: Context
 ) : RepositoriArsip {
     private val akarPrivat = context.filesDir
+    private val akarEksternal: File
+        get() = Environment.getExternalStorageDirectory()
+
     override suspend fun daftarIsi(lokasiArsip: LokasiBerkas): HasilDaftarArsip = withContext(Dispatchers.IO) {
         val file = berkasDariLokasi(lokasiArsip) 
             ?: return@withContext HasilDaftarArsip(false, "File arsip tidak ditemukan.")
@@ -74,6 +80,7 @@ class RepositoriArsipAndroid(
             HasilDaftarArsip(false, "Gagal membaca arsip: ${e.message}")
         }
     }
+
     override suspend fun ekstrakItem(lokasiArsip: LokasiBerkas, jalurItem: String, lokasiTujuan: LokasiBerkas): HasilEkstraksi = withContext(Dispatchers.IO) {
         val fileArsip = berkasDariLokasi(lokasiArsip) ?: return@withContext HasilEkstraksi(false, "File arsip tidak ditemukan.")
         val folderTujuan = berkasDariLokasi(lokasiTujuan) ?: return@withContext HasilEkstraksi(false, "Folder tujuan tidak ditemukan.")
@@ -132,6 +139,7 @@ class RepositoriArsipAndroid(
             HasilEkstraksi(false, "Gagal mengekstrak: ${e.message}")
         }
     }
+
     override suspend fun ekstrakSemua(lokasiArsip: LokasiBerkas, lokasiTujuan: LokasiBerkas): HasilEkstraksi = withContext(Dispatchers.IO) {
         val fileArsip = berkasDariLokasi(lokasiArsip) ?: return@withContext HasilEkstraksi(false, "File arsip tidak ditemukan.")
         val folderTujuan = berkasDariLokasi(lokasiTujuan) ?: return@withContext HasilEkstraksi(false, "Folder tujuan tidak ditemukan.")
@@ -206,6 +214,7 @@ class RepositoriArsipAndroid(
             HasilEkstraksi(false, "Gagal mengekstrak arsip: ${e.message}")
         }
     }
+
     private fun bukaTarStream(file: File): TarArchiveInputStream {
         val fis = file.inputStream()
         val namaLower = file.name.lowercase()
@@ -216,6 +225,7 @@ class RepositoriArsipAndroid(
             TarArchiveInputStream(fis)
         }
     }
+
     private fun prosesEntryZip(jalur: String, isDir: Boolean, size: Long, compSize: Long, time: Long, items: MutableList<ItemArsip>, folderTerlihat: MutableSet<String>) {
         val bagian = jalur.split("/")
         for (i in 1 until bagian.size) {
@@ -228,6 +238,7 @@ class RepositoriArsipAndroid(
             items.add(ItemArsip(jalur, jalur.substringAfterLast('/'), JenisItemArsip.BERKAS, size, compSize, time))
         }
     }
+
     private fun prosesEntryTar(jalur: String, isDir: Boolean, size: Long, time: Long?, items: MutableList<ItemArsip>, folderTerlihat: MutableSet<String>) {
         val jalurBersih = jalur.trimStart('/')
         val bagian = jalurBersih.split("/")
@@ -241,16 +252,22 @@ class RepositoriArsipAndroid(
             items.add(ItemArsip(jalurBersih, jalurBersih.substringAfterLast('/'), JenisItemArsip.BERKAS, size, null, time))
         }
     }
+
     private fun validasiPathTraversal(target: File, direktoriTujuan: File): Boolean {
         val canonicalTarget = target.canonicalPath
         val canonicalDir = direktoriTujuan.canonicalPath + File.separator
         return canonicalTarget.startsWith(canonicalDir) || canonicalTarget == direktoriTujuan.canonicalPath
     }
+
     private fun berkasDariLokasi(lokasi: LokasiBerkas): File? {
-        if (!lokasi.id.startsWith(PabrikLokasiAndroid.SKEMA_PRIVAT)) return null
-        val jalur = lokasi.id.removePrefix(PabrikLokasiAndroid.SKEMA_PRIVAT).trim('/')
-        val file = if (jalur.isBlank()) akarPrivat else File(akarPrivat, jalur)
-        val akarKanonik = akarPrivat.canonicalPath
+        val (akar, skema) = when {
+            lokasi.id.startsWith(PabrikLokasiAndroid.SKEMA_PRIVAT) -> akarPrivat to PabrikLokasiAndroid.SKEMA_PRIVAT
+            lokasi.id.startsWith(PabrikLokasiAndroid.SKEMA_EKSTERNAL) -> akarEksternal to PabrikLokasiAndroid.SKEMA_EKSTERNAL
+            else -> return null
+        }
+        val jalur = lokasi.id.removePrefix(skema).trim('/')
+        val file = if (jalur.isBlank()) akar else File(akar, jalur)
+        val akarKanonik = akar.canonicalPath
         val fileKanonik = file.canonicalPath
         return if (fileKanonik == akarKanonik || fileKanonik.startsWith(akarKanonik + File.separator)) file else null
     }

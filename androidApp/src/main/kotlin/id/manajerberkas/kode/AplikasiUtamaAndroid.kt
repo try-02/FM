@@ -186,6 +186,7 @@ fun AplikasiUtamaAndroid(
                 ArsipLayar(
                     state = stateArsip,
                     onKlikItem = arsipStateHolder::klikItem,
+                    onTogglePilih = arsipStateHolder::togglePilih,
                     onTekanLama = arsipStateHolder::tekanLama,
                     onKembali = arsipStateHolder::kembali,
                     onEkstrakTerpilih = arsipStateHolder::ekstrakTerpilih,

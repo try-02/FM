@@ -146,16 +146,56 @@ private fun BarisDiffUnifiedItemExpressive(baris: BarisDiff, isActive: Boolean) 
 }
 @Composable
 private fun BarisDiffBerdampinganItemExpressive(baris: BarisDiffBerdampingan, isActiveBlock: Boolean) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = baris.teksA ?: "",
-            style = TextStyle(fontFamily = FontFamily.Monospace),
-            modifier = Modifier.weight(1f).padding(4.dp)
-        )
-        Text(
-            text = baris.teksB ?: "",
-            style = TextStyle(fontFamily = FontFamily.Monospace),
-            modifier = Modifier.weight(1f).padding(4.dp)
-        )
+    val bgA = when {
+        isActiveBlock -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)
+        baris.jenisA == JenisOperasiDiff.HAPUS -> MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f)
+        else -> Color.Transparent
+    }
+    val bgB = when {
+        isActiveBlock -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)
+        baris.jenisB == JenisOperasiDiff.TAMBAH -> Color(0xFF2E7D32).copy(alpha = 0.25f)
+        else -> Color.Transparent
+    }
+
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp)) {
+        // Kolom Sisi A (Berkas Asli)
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .background(bgA)
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = (baris.nomorA?.toString() ?: "").padStart(4, ' ') + " ",
+                style = TextStyle(fontFamily = FontFamily.Monospace),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = baris.teksA ?: "",
+                style = TextStyle(fontFamily = FontFamily.Monospace),
+                maxLines = 1
+            )
+        }
+
+        Spacer(modifier = Modifier.width(1.dp).background(MaterialTheme.colorScheme.outlineVariant))
+
+        // Kolom Sisi B (Berkas Modifikasi)
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .background(bgB)
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = (baris.nomorB?.toString() ?: "").padStart(4, ' ') + " ",
+                style = TextStyle(fontFamily = FontFamily.Monospace),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = baris.teksB ?: "",
+                style = TextStyle(fontFamily = FontFamily.Monospace),
+                maxLines = 1
+            )
+        }
     }
 }
