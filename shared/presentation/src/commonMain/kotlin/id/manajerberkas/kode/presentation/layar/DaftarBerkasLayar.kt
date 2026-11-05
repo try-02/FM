@@ -31,7 +31,6 @@ import id.manajerberkas.kode.presentation.state.DaftarBerkasAksi
 import id.manajerberkas.kode.presentation.state.DaftarBerkasState
 import id.manajerberkas.kode.presentation.state.ModePilihTujuan
 import id.manajerberkas.kode.domain.model.JenisPenyimpanan
-import java.net.URLDecoder
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DaftarBerkasLayar(
@@ -488,8 +487,13 @@ private fun ItemBerkasCardExpressive(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                val subtitleTeks = if (isFolder) {
+                    "Folder"
+                } else {
+                    formatUkuranItem(item.ukuranByte)
+                }
                 Text(
-                    text = rapihkanJalur(item.lokasi.jalurTampilan ?: item.lokasi.id),
+                    text = subtitleTeks,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -499,24 +503,42 @@ private fun ItemBerkasCardExpressive(
         }
     }
 }
+
+private fun formatUkuranItem(byte: Long?): String {
+    if (byte == null) return "Berkas"
+    if (byte < 1024) return "$byte B"
+    val kb = byte / 1024.0
+    if (kb < 1024) return "${(kb * 10).toLong() / 10.0} KiB"
+    val mb = kb / 1024.0
+    if (mb < 1024) return "${(mb * 10).toLong() / 10.0} MiB"
+    val gb = mb / 1024.0
+    return "${(gb * 10).toLong() / 10.0} GiB"
+}
+
 private fun rapihkanJalur(jalurMentah: String): String {
     return try {
-        val decoded = URLDecoder.decode(jalurMentah, "UTF-8")
+        val aman = jalurMentah.replace("%20", " ")
+            .replace("%2F", "/")
+            .replace("%3A", ":")
         when {
-            decoded.contains("primary:") -> {
-                val sub = decoded.substringAfter("primary:")
-                if (sub.isBlank()) "Penyimpanan Internal" else "Internal > ${sub.replace('/', '>')}"
+            aman.contains("primary:") -> {
+                val sub = aman.substringAfter("primary:")
+                if (sub.isBlank()) "Penyimpanan Utama" else "Utama > ${sub.replace('/', '>')}"
             }
-            decoded.contains("tree/") -> {
-                val sub = decoded.substringAfter("tree/")
+            aman.contains("tree/") -> {
+                val sub = aman.substringAfter("tree/")
                 "SAF > ${sub.substringAfterLast(':').replace('/', '>')}"
             }
-            decoded.startsWith("privat:") -> {
-                "Privat ${decoded.removePrefix("privat:")}"
+            aman.startsWith("privat:") -> {
+                "Privat /${aman.removePrefix("privat:").trim('/')}"
             }
-            else -> decoded
+            aman.startsWith("eksternal:") -> {
+                val sub = aman.removePrefix("eksternal:").trim('/')
+                if (sub.isBlank()) "Penyimpanan Utama" else "Utama > ${sub.replace('/', '>')}"
+            }
+            else -> aman
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         jalurMentah
     }
 }

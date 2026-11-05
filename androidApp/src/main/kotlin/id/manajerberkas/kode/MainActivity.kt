@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
                 stateHolder = viewModel.stateHolder,
                 dependensiPenjelajah = viewModel.dependensiPenjelajah,
                 dependensiEditor = viewModel.dependensiEditor,
+                pencarianIsiStateHolder = viewModel.pencarianIsiStateHolder, // Diteruskan dari ViewModel ke sini
                 dapatkanEditorHolder = viewModel::dapatkanEditorStateHolder,
                 onBukaPrivat = {
                     viewModel.stateHolder.bukaAwal(PabrikLokasiAndroid.privatRoot())

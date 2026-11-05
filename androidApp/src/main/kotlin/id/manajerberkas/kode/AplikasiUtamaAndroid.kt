@@ -30,6 +30,7 @@ fun AplikasiUtamaAndroid(
     stateHolder: DaftarBerkasStateHolder,
     dependensiPenjelajah: DependensiPenjelajah,
     dependensiEditor: DependensiEditor,
+    pencarianIsiStateHolder: PencarianIsiStateHolder, // Parameter baru yang diterima dari MainActivity
     dapatkanEditorHolder: (LokasiBerkas, Int?) -> EditorStateHolder,
     onBukaPrivat: () -> Unit,
     onBukaSaf: () -> Unit,
@@ -68,7 +69,10 @@ fun AplikasiUtamaAndroid(
                 pencarianStateHolder.batal()
                 stateHolder.tutupPencarian()
             }
-            state.pencarianIsiTerbuka -> stateHolder.tutupPencarianIsi()
+            state.pencarianIsiTerbuka -> {
+                pencarianIsiStateHolder.batal()
+                stateHolder.tutupPencarianIsi()
+            }
             state.tujuanGantiNamaMassal != null -> stateHolder.selesaiGantiNamaMassal()
             state.tujuanArsip != null -> stateHolder.selesaiBukaArsip()
             else -> stateHolder.kembali()
@@ -121,12 +125,6 @@ fun AplikasiUtamaAndroid(
                 )
             }
             state.pencarianIsiTerbuka -> {
-                val pencarianIsiStateHolder = remember {
-                    PencarianIsiStateHolder(
-                        cariIsiBerkas = dependensiPenjelajah.cariIsiBerkas,
-                        scope = scope
-                    )
-                }
                 LaunchedEffect(state.lokasiAktif?.id) {
                     pencarianIsiStateHolder.tetapkanLokasi(state.lokasiAktif)
                 }

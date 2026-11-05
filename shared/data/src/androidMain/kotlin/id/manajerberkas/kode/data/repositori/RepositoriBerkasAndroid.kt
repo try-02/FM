@@ -538,6 +538,33 @@ class RepositoriBerkasAndroid(
     }
 
     private fun decodeKonten(bytes: ByteArray): KontenTeks {
-        return KontenTeks(teks = bytes.decodeToString(), encoding = "UTF-8")
+        if (bytes.isEmpty()) return KontenTeks(teks = "", encoding = "UTF-8")
+
+        // 1. Deteksi Byte Order Mark (BOM)
+        if (bytes.size >= 3 && bytes[0] == 0xEF.toByte() && bytes[1] == 0xBB.toByte() && bytes[2] == 0xBF.toByte()) {
+            val teks = String(bytes, 3, bytes.size - 3, Charsets.UTF_8)
+            return KontenTeks(teks = teks, encoding = "UTF-8")
+        }
+        if (bytes.size >= 2 && bytes[0] == 0xFF.toByte() && bytes[1] == 0xFE.toByte()) {
+            val teks = String(bytes, 2, bytes.size - 2, Charsets.UTF_16LE)
+            return KontenTeks(teks = teks, encoding = "UTF-16LE")
+        }
+        if (bytes.size >= 2 && bytes[0] == 0xFE.toByte() && bytes[1] == 0xFF.toByte()) {
+            val teks = String(bytes, 2, bytes.size - 2, Charsets.UTF_16BE)
+            return KontenTeks(teks = teks, encoding = "UTF-16BE")
+        }
+
+        // 2. Uji parsing sebagai UTF-8 yang valid
+        val decoder = Charsets.UTF_8.newDecoder()
+            .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+            .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+        return try {
+            val charBuffer = decoder.decode(java.nio.ByteBuffer.wrap(bytes))
+            KontenTeks(teks = charBuffer.toString(), encoding = "UTF-8")
+        } catch (_: Exception) {
+            // 3. Fallback jika bukan valid UTF-8: gunakan ISO-8859-1 (Latin-1) agar byte biner/latin tidak rusak
+            val teks = String(bytes, Charsets.ISO_8859_1)
+            KontenTeks(teks = teks, encoding = "ISO-8859-1")
+        }
     }
 }

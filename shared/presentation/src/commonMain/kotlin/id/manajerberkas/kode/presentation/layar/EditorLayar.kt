@@ -1,4 +1,5 @@
 package id.manajerberkas.kode.presentation.layar
+
 import androidx.compose.animation.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -8,21 +9,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Redo
 import androidx.compose.material.icons.automirrored.filled.Undo
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.WrapText
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import id.manajerberkas.kode.domain.model.JenisAkhirBaris
 import id.manajerberkas.kode.presentation.state.EditorAksi
 import id.manajerberkas.kode.presentation.state.EditorState
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorLayar(
@@ -31,6 +32,7 @@ fun EditorLayar(
 ) {
     var menuTerbuka by remember { mutableStateOf(false) }
     var cariPanelTerbuka by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,6 +105,7 @@ fun EditorLayar(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .imePadding() // Mencegah area editor tertutup oleh keyboard virtual
         ) {
             AnimatedVisibility(visible = cariPanelTerbuka) {
                 Surface(
@@ -170,9 +173,11 @@ fun EditorLayar(
                     }
                 }
             }
+
             if (state.memuat || state.sedangMenyimpan) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
+
             val scrollState = rememberScrollState()
             Box(
                 modifier = Modifier
@@ -216,16 +221,18 @@ fun EditorLayar(
                     }
                 }
             }
+
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Baris ${if (state.barisAktif > 0) state.barisAktif else "-"}, Kolom ${if (state.kolomAktif > 0) state.kolomAktif else "-"}",
+                        text = "Baris ${if (state.barisAktif > 0) state.barisAktif else "-"}, Kolom ${if (state.kolomAktif > 0) state.kolomAktif else "-"}  •  ${state.encoding ?: "UTF-8"}",
                         style = MaterialTheme.typography.bodySmall
                     )
                     state.pesan?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary) }
@@ -233,6 +240,7 @@ fun EditorLayar(
             }
         }
     }
+
     if (state.konfirmasiTutup) {
         AlertDialog(
             onDismissRequest = aksi::batalTutup,
@@ -247,6 +255,7 @@ fun EditorLayar(
             }
         )
     }
+
     if (state.panelStatistikTerbuka) {
         AlertDialog(
             onDismissRequest = aksi::tutupPanelStatistik,
@@ -259,6 +268,7 @@ fun EditorLayar(
                         Text("Kata: ${stat.jumlahKata}")
                         Text("Karakter: ${stat.jumlahKarakter}")
                         Text("Akhir Baris: ${stat.akhirBaris}")
+                        Text("Encoding: ${stat.encoding ?: state.encoding ?: "UTF-8"}")
                     }
                 }
             },
@@ -267,6 +277,7 @@ fun EditorLayar(
             }
         )
     }
+
     if (state.dialogNavigasiBaris) {
         var barisInput by remember { mutableStateOf(state.nomorBarisInput) }
         AlertDialog(

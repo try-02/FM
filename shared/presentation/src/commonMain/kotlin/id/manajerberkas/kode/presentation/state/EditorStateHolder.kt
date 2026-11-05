@@ -109,9 +109,14 @@ class EditorStateHolder(
         }
     }
     override fun ubahTeks(medan: TextFieldValue) {
-        _state.update { it.copy(medan = medan) }
-        perbaruiPosisiKursor(medan)
-        if (medan.text.length > BATAS_UNDO) {
+        val panjang = medan.text.length
+        val (baris, kolom) = if (panjang > BATAS_POSISI_KURSOR) {
+            0 to 0
+        } else {
+            hitungPosisiKursor(medan.text, medan.selection.end)
+        }
+
+        if (panjang > BATAS_UNDO) {
             if (riwayatAktifInternal) {
                 riwayatAktifInternal = false
                 undoStack.clear()
@@ -121,14 +126,35 @@ class EditorStateHolder(
                 baselineTeks = medan.text
                 _state.update {
                     it.copy(
+                        medan = medan,
+                        barisAktif = baris,
+                        kolomAktif = kolom,
                         riwayatAktif = false,
+                        bisaUndo = false,
+                        bisaRedo = false,
                         pesan = "Riwayat undo/redo dinonaktifkan untuk teks besar."
                     )
                 }
-                perbaruiBisaUndoRedo()
+            } else {
+                _state.update {
+                    it.copy(
+                        medan = medan,
+                        barisAktif = baris,
+                        kolomAktif = kolom
+                    )
+                }
             }
             return
         }
+
+        _state.update {
+            it.copy(
+                medan = medan,
+                barisAktif = baris,
+                kolomAktif = kolom
+            )
+        }
+
         if (riwayatAktifInternal) {
             perbaruiBisaUndoRedo()
             jadwalkanKomitRiwayat()
