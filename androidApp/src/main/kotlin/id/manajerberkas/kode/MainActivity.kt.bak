@@ -226,6 +226,9 @@ class MainActivity : ComponentActivity() {
                 },
                 onBukaSaf = {
                     peluncurSaf.launch(null)
+                },
+                onBukaEksternal = { // <-- Tambahkan aksi ini
+                    stateHolder.bukaAwal(PabrikLokasiAndroid.eksternalRoot())
                 }
             )
         }
