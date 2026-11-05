@@ -81,6 +81,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         scope = viewModelScope
     )
 
+    val pencarianIsiStateHolder = PencarianIsiStateHolder(
+        cariIsiBerkas = dependensiPenjelajah.cariIsiBerkas,
+        scope = viewModelScope
+    )
+
     // Cache state editor aktif agar tidak hilang saat rotasi layar / recreate Activity
     private var editorStateHolderAktif: EditorStateHolder? = null
 

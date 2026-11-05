@@ -14,10 +14,7 @@ import id.manajerberkas.kode.data.lokal.DatabaseAplikasi
 import id.manajerberkas.kode.data.repositori.*
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.usecase.*
-import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
-import id.manajerberkas.kode.presentation.state.DependensiEditor
-import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
-import id.manajerberkas.kode.presentation.state.EditorStateHolder
+import id.manajerberkas.kode.presentation.state.*
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -113,7 +110,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun inisialisasiAwalJikaPerlu(mintaIzinSemuaBerkas: () -> Unit) {
-        // Hanya buka beranda jika belum ada lokasi aktif (fresh start, bukan saat rotasi layar)
         if (stateHolder.state.value.lokasiAktif != null) return
 
         viewModelScope.launch {
@@ -121,7 +117,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 if (Environment.isExternalStorageManager()) {
                     stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.eksternalRoot())
                 } else {
-                    // Coba periksa apakah sebelumnya sudah ada SAF yang disimpan
                     val safUriString = preferences.getString("saf_terakhir_uri", null)
                     val safUri = safUriString?.let { Uri.parse(it) }
                     val lokasiSaf = safUri?.let { PabrikLokasiAndroid.safRoot(it) }
