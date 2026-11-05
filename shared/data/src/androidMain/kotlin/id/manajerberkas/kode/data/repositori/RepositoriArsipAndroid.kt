@@ -51,16 +51,15 @@ class RepositoriArsipAndroid(
                     }
                 }
             } else if (adalahTar) {
-                // Membaca isi arsip TAR / TAR.GZ
                 bukaTarStream(file).use { stream ->
-                    var entry = stream.nextTarEntry
+                    // Menggunakan nextEntry (bukan nextTarEntry)
+                    var entry = stream.nextEntry
                     while (entry != null) {
                         prosesEntryTar(entry.name, entry.isDirectory, entry.size, entry.lastModifiedDate?.time, items, folderTerlihat)
-                        entry = stream.nextTarEntry
+                        entry = stream.nextEntry
                     }
                 }
             } else if (adalahGzipTunggal) {
-                // GZIP tunggal hanya berisi 1 berkas (nama asli tanpa ekstensi .gz)
                 val namaAsli = file.nameWithoutExtension
                 items.add(ItemArsip(namaAsli, namaAsli, JenisItemArsip.BERKAS, file.length(), null, null))
             } else {
@@ -113,7 +112,7 @@ class RepositoriArsipAndroid(
                 }
             } else if (adalahTar) {
                 bukaTarStream(fileArsip).use { stream ->
-                    var entry = stream.nextTarEntry
+                    var entry = stream.nextEntry
                     while (entry != null) {
                         val entryPath = entry.name.trimStart('/')
                         if (entryPath == jalurItem.trimStart('/') || entry.name == jalurItem) {
@@ -127,7 +126,7 @@ class RepositoriArsipAndroid(
                             }
                             return@withContext HasilEkstraksi(true, "Berhasil.", 1, 0)
                         }
-                        entry = stream.nextTarEntry
+                        entry = stream.nextEntry
                     }
                     return@withContext HasilEkstraksi(false, "Item tidak ditemukan dalam arsip.")
                 }
@@ -182,13 +181,13 @@ class RepositoriArsipAndroid(
                 }
             } else if (adalahTar) {
                 bukaTarStream(fileArsip).use { stream ->
-                    var entry = stream.nextTarEntry
+                    var entry = stream.nextEntry
                     while (entry != null) {
                         val entryPath = entry.name.trimStart('/')
                         val target = File(folderTujuan, entryPath)
                         if (!validasiPathTraversal(target, folderTujuan)) { 
                             gagal++
-                            entry = stream.nextTarEntry
+                            entry = stream.nextEntry
                             continue 
                         }
                         try {
@@ -200,7 +199,7 @@ class RepositoriArsipAndroid(
                             }
                             berhasil++
                         } catch (e: Exception) { gagal++ }
-                        entry = stream.nextTarEntry
+                        entry = stream.nextEntry
                     }
                 }
             } else if (adalahGzipTunggal) {
@@ -227,7 +226,6 @@ class RepositoriArsipAndroid(
         }
     }
 
-    // Mengembalikan TarArchiveInputStream secara spesifik
     private fun bukaTarStream(file: File): TarArchiveInputStream {
         val fis = file.inputStream()
         val namaLower = file.name.lowercase()
