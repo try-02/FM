@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.usecase.BandingkanIsiBerkasUseCase
 import id.manajerberkas.kode.domain.usecase.HitungPratinjauGantiNamaUseCase
 import id.manajerberkas.kode.presentation.layar.ArsipLayar
@@ -19,6 +20,7 @@ import id.manajerberkas.kode.presentation.state.ArsipStateHolder
 import id.manajerberkas.kode.presentation.state.DaftarBerkasStateHolder
 import id.manajerberkas.kode.presentation.state.DependensiEditor
 import id.manajerberkas.kode.presentation.state.DependensiPenjelajah
+import id.manajerberkas.kode.presentation.state.EditorStateHolder
 import id.manajerberkas.kode.presentation.state.GantiNamaMassalStateHolder
 import id.manajerberkas.kode.presentation.state.PencarianIsiStateHolder
 import id.manajerberkas.kode.presentation.state.PencarianNamaStateHolder
@@ -28,6 +30,7 @@ fun AplikasiUtamaAndroid(
     stateHolder: DaftarBerkasStateHolder,
     dependensiPenjelajah: DependensiPenjelajah,
     dependensiEditor: DependensiEditor,
+    dapatkanEditorHolder: (LokasiBerkas, Int?) -> EditorStateHolder,
     onBukaPrivat: () -> Unit,
     onBukaSaf: () -> Unit,
     onBukaEksternal: () -> Unit = {}
@@ -43,7 +46,6 @@ fun AplikasiUtamaAndroid(
     val tujuanEditor = state.editorTujuan
     val tujuanDiff = state.tujuanDiff
 
-    // Penanganan Back tombol/gesture sistem Android
     val penangananBackAktif = tujuanDiff != null ||
         state.pencarianTerbuka ||
         state.pencarianIsiTerbuka ||
@@ -86,11 +88,11 @@ fun AplikasiUtamaAndroid(
                 )
             }
             tujuanEditor != null -> {
+                val editorHolder = remember(tujuanEditor.lokasi.id, tujuanEditor.nomorBaris) {
+                    dapatkanEditorHolder(tujuanEditor.lokasi, tujuanEditor.nomorBaris)
+                }
                 EditorAndroid(
-                    lokasi = tujuanEditor.lokasi,
-                    dependensi = dependensiEditor,
-                    barisAwal = tujuanEditor.nomorBaris,
-                    onTutup = { stateHolder.selesaiBukaEditor() }
+                    stateHolder = editorHolder
                 )
             }
             state.pencarianTerbuka -> {
