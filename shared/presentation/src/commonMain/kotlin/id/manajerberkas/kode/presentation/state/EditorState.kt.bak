@@ -1,7 +1,9 @@
 package id.manajerberkas.kode.presentation.state
+
 import androidx.compose.ui.text.input.TextFieldValue
 import id.manajerberkas.kode.domain.model.LokasiBerkas
 import id.manajerberkas.kode.domain.model.StatistikTeks
+
 data class EditorState(
     val memuat: Boolean = false,
     val lokasi: LokasiBerkas? = null,
@@ -33,5 +35,9 @@ data class EditorState(
     val konfirmasiKonflikEksternal: Boolean = false
 ) {
     val adaPerubahan: Boolean
-        get() = medan.text != teksAwal
+        get() {
+            val teksSekarang = medan.text
+            if (teksSekarang.length != teksAwal.length) return true
+            return teksSekarang != teksAwal
+        }
 }

@@ -1,5 +1,7 @@
 package id.manajerberkas.kode.presentation.state
+
 import androidx.compose.ui.text.input.TextFieldValue
+
 interface EditorAksi {
     fun ubahTeks(medan: TextFieldValue)
     fun simpan()
@@ -33,4 +35,5 @@ interface EditorAksi {
     fun timpaKonflikEksternal()
     fun muatUlangKonflikEksternal()
     fun batalKonflikEksternal()
+    fun toggleModePenampilBesar()
 }

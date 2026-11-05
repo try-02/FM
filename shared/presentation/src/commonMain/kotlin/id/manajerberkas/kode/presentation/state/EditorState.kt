@@ -32,7 +32,11 @@ data class EditorState(
     val bisaRedo: Boolean = false,
     val riwayatCari: List<String> = emptyList(),
     val dialogRiwayatCari: Boolean = false,
-    val konfirmasiKonflikEksternal: Boolean = false
+    val konfirmasiKonflikEksternal: Boolean = false,
+    // Penanganan performa berkas besar (> 100 KB)
+    val modePenampilBesar: Boolean = false,
+    val daftarBaris: List<String> = emptyList(),
+    val indeksBarisDitemukan: Int? = null
 ) {
     val adaPerubahan: Boolean
         get() {
@@ -40,4 +44,7 @@ data class EditorState(
             if (teksSekarang.length != teksAwal.length) return true
             return teksSekarang != teksAwal
         }
+
+    val adalahBerkasBesar: Boolean
+        get() = teksAwal.length > 100_000
 }
