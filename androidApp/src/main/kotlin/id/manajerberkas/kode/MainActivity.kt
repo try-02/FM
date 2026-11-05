@@ -1,6 +1,8 @@
 package id.manajerberkas.kode
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -70,6 +72,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
+
+            val preferences = remember {
+                context.getSharedPreferences("preferensi_manajer_berkas", Context.MODE_PRIVATE)
+            }
 
             val repositoriBerkas = remember {
                 RepositoriBerkasAndroid(context.applicationContext)
@@ -170,6 +176,11 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    preferences.edit()
+                        .putString("saf_terakhir_uri", uri.toString())
+                        .putBoolean("pertama_kali_buka", false)
+                        .apply()
+
                     PabrikLokasiAndroid.safRoot(uri)?.let { lokasi ->
                         stateHolder.bukaAwal(lokasi)
                     }
@@ -177,7 +188,34 @@ class MainActivity : ComponentActivity() {
             }
 
             LaunchedEffect(Unit) {
-                stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+                val pertamaKali = preferences.getBoolean("pertama_kali_buka", true)
+                val uriSafTersimpan = preferences.getString("saf_terakhir_uri", null)
+
+                // Cek apakah izin URI SAF yang disimpan masih sah
+                val izinSafMasihAktif = uriSafTersimpan != null && context.contentResolver.persistedUriPermissions.any {
+                    it.uri.toString() == uriSafTersimpan
+                }
+
+                when {
+                    // Kasus 1: Sudah pernah memilih folder SAF sebelumnya -> langsung buka SAF
+                    izinSafMasihAktif && uriSafTersimpan != null -> {
+                        val lokasi = PabrikLokasiAndroid.safRoot(Uri.parse(uriSafTersimpan))
+                        if (lokasi != null) {
+                            stateHolder.bukaAwalBeranda(lokasi)
+                        } else {
+                            stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+                        }
+                    }
+                    // Kasus 2: Baru pertama kali instal aplikasi -> otomatis buka pemilih SAF
+                    pertamaKali -> {
+                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+                        peluncurSaf.launch(null)
+                    }
+                    // Kasus 3: Default biasa
+                    else -> {
+                        stateHolder.bukaAwalBeranda(PabrikLokasiAndroid.privatRoot())
+                    }
+                }
             }
 
             AplikasiUtamaAndroid(

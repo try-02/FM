@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -197,7 +198,7 @@ fun DaftarBerkasLayar(
                             enabled = state.kemampuan?.bisaPindah == true,
                             shape = RoundedCornerShape(14.dp)
                         ) {
-                            Icon(Icons.Default.DriveFileMove, null, modifier = Modifier.size(18.dp))
+                            Icon(Icons.AutoMirrored.Filled.DriveFileMove, null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
                             Text("Pindah")
                         }
