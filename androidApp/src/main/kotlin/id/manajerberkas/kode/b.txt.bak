@@ -1,0 +1,471 @@
+﻿##[group]Run chmod +x ./gradlew
+[36;1mchmod +x ./gradlew[0m
+[36;1m./gradlew :shared:domain:allTests[0m
+[36;1m[0m
+[36;1m# Hapus 'clean' agar build cache & configuration cache optimal[0m
+[36;1m./gradlew assembleRelease \[0m
+[36;1m  --no-daemon \[0m
+[36;1m  --non-interactive \[0m
+[36;1m  --stacktrace \[0m
+[36;1m  --console=plain[0m
+shell: /usr/bin/bash -e {0}
+env:
+  JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+  JAVA_HOME_21_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.13-9/x64
+  MAVEN_ARGS: -ntp
+  GRADLE_ACTION_ID: gradle/actions/setup-gradle
+  GRADLE_USER_HOME: /home/runner/.gradle
+  GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+  GRADLE_ENCRYPTION_KEY: ***
+  DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+  DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+  GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+  NO_COLOR: 1
+  ORG_GRADLE_PROJECT_android_native_build_output_ignore_errors: true
+##[endgroup]
+Starting a Gradle Daemon (subsequent builds will be faster)
+Parallel Configuration Cache is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: :shared:domain:allTests
+> Task :shared:domain:androidPreBuild UP-TO-DATE
+> Task :shared:domain:preAndroidHostTestBuild UP-TO-DATE
+> Task :shared:domain:preAndroidMainBuild UP-TO-DATE
+> Task :shared:domain:compressAndroidHostTestJavaRes NO-SOURCE
+> Task :shared:domain:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:domain:extractAndroidHostTestJavaRes
+> Task :shared:domain:androidJar
+> Task :shared:domain:compileAndroidMain FROM-CACHE
+> Task :shared:domain:compressAndroidMainJavaRes FROM-CACHE
+> Task :shared:domain:bundleAndroidMainClassesToRuntimeJar
+> Task :shared:domain:bundleAndroidMainClassesToCompileJar
+> Task :shared:domain:compileAndroidHostTest FROM-CACHE
+> Task :shared:domain:testAndroidHostTest FROM-CACHE
+> Task :shared:domain:allTests
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793963092121.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/***/***/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 17s
+10 actionable tasks: 6 executed, 4 from cache
+Configuration cache entry stored.
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Parallel Configuration Cache is an incubating feature.
+Calculating task graph as no cached configuration is available for tasks: assembleRelease
+> Task :androidApp:preBuild UP-TO-DATE
+> Task :shared:data:androidPreBuild UP-TO-DATE
+> Task :shared:presentation:androidPreBuild UP-TO-DATE
+> Task :shared:domain:androidPreBuild UP-TO-DATE
+> Task :shared:data:preAndroidMainBuild UP-TO-DATE
+> Task :shared:presentation:preAndroidMainBuild UP-TO-DATE
+> Task :shared:domain:preAndroidMainBuild UP-TO-DATE
+> Task :androidApp:preReleaseBuild UP-TO-DATE
+> Task :shared:data:mergeAndroidMainJniLibFolders
+> Task :shared:domain:mergeAndroidMainJniLibFolders
+> Task :shared:presentation:mergeAndroidMainJniLibFolders
+> Task :androidApp:mergeReleaseJniLibFolders
+> Task :shared:data:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:data:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:domain:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:presentation:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:data:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:data:copyAndroidMainJniLibsProjectOnly
+> Task :shared:presentation:copyAndroidMainJniLibsProjectOnly
+> Task :shared:domain:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:domain:copyAndroidMainJniLibsProjectOnly
+> Task :shared:presentation:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:presentation:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:presentation:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:presentation:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:presentation:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:presentation:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:presentation:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:presentation:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:presentation:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :shared:presentation:generateResourceAccessorsForCommonMain NO-SOURCE
+> Task :shared:data:generateCommonMainDatabaseAplikasiInterface FROM-CACHE
+> Task :shared:presentation:generateActualResourceCollectorsForAndroidMain
+> Task :shared:presentation:generateComposeResClass
+> Task :shared:presentation:generateExpectResourceCollectorsForCommonMain
+> Task :androidApp:generateReleaseResources FROM-CACHE
+> Task :androidApp:packageReleaseResources FROM-CACHE
+> Task :shared:data:generateAndroidMainEmptyResourceFiles
+> Task :shared:domain:generateAndroidMainEmptyResourceFiles
+> Task :shared:presentation:generateAndroidMainEmptyResourceFiles
+> Task :shared:domain:compileAndroidMain UP-TO-DATE
+> Task :shared:domain:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :shared:data:compileAndroidMain FROM-CACHE
+> Task :shared:data:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:data:exportAndroidMainConsumerProguardFiles
+> Task :androidApp:processReleaseNavigationResources FROM-CACHE
+> Task :shared:domain:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:domain:exportAndroidMainConsumerProguardFiles
+> Task :androidApp:mergeReleaseNativeLibs
+> Task :androidApp:parseReleaseLocalResources FROM-CACHE
+> Task :androidApp:generateReleaseRFile FROM-CACHE
+> Task :androidApp:checkReleaseDuplicateClasses
+> Task :androidApp:javaPreCompileRelease FROM-CACHE
+> Task :shared:data:prepareAndroidMainArtProfile
+> Task :shared:domain:prepareAndroidMainArtProfile
+> Task :shared:presentation:prepareAndroidMainArtProfile
+> Task :shared:data:bundleAndroidMainClassesToCompileJar
+
+> Task :androidApp:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :shared:data:writeAndroidMainAarMetadata
+> Task :androidApp:extractReleaseNativeSymbolTables FROM-CACHE
+> Task :androidApp:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :shared:domain:writeAndroidMainAarMetadata
+> Task :androidApp:mergeReleaseArtProfile
+> Task :shared:presentation:writeAndroidMainAarMetadata
+> Task :androidApp:mapReleaseSourceSetPaths
+> Task :androidApp:compileReleaseNavigationResources FROM-CACHE
+> Task :androidApp:createReleaseCompatibleScreenManifests
+> Task :androidApp:extractDeepLinksRelease FROM-CACHE
+> Task :shared:data:processAndroidMainManifest FROM-CACHE
+> Task :shared:domain:processAndroidMainManifest FROM-CACHE
+> Task :shared:presentation:processAndroidMainManifest FROM-CACHE
+> Task :androidApp:checkReleaseAarMetadata
+> Task :androidApp:processReleaseMainManifest FROM-CACHE
+> Task :androidApp:mergeReleaseResources FROM-CACHE
+> Task :shared:data:bundleAndroidMainClassesToRuntimeJar
+> Task :androidApp:processReleaseManifest FROM-CACHE
+> Task :shared:domain:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :androidApp:processReleaseManifestForPackage FROM-CACHE
+> Task :shared:data:compressAndroidMainJavaRes FROM-CACHE
+> Task :shared:domain:compressAndroidMainJavaRes UP-TO-DATE
+> Task :androidApp:mergeReleaseStartupProfile
+> Task :androidApp:generateReleaseAssets UP-TO-DATE
+> Task :androidApp:extractProguardFiles
+> Task :androidApp:mergeReleaseAssets
+> Task :androidApp:compressReleaseAssets FROM-CACHE
+> Task :shared:data:createFullJarAndroidMain
+> Task :androidApp:extractReleaseVersionControlInfo
+> Task :shared:domain:createFullJarAndroidMain
+> Task :shared:data:prepareLintJarForPublish
+> Task :shared:domain:prepareLintJarForPublish
+> Task :shared:presentation:prepareLintJarForPublish
+> Task :androidApp:processReleaseResources FROM-CACHE
+> Task :shared:data:checkAndroidMainAarMetadata
+> Task :shared:presentation:checkAndroidMainAarMetadata
+> Task :shared:data:mergeAndroidMainJavaResource
+> Task :shared:domain:checkAndroidMainAarMetadata
+> Task :shared:domain:extractAndroidMainAnnotations FROM-CACHE
+> Task :shared:domain:mergeAndroidMainJavaResource
+> Task :shared:domain:syncAndroidMainLibJars FROM-CACHE
+> Task :shared:domain:bundleAndroidMainLocalLintAar
+> Task :shared:presentation:extractAndroidMainAnnotations FROM-CACHE
+> Task :androidApp:writeReleaseAppMetadata
+> Task :shared:data:extractAndroidMainAnnotations FROM-CACHE
+> Task :shared:data:syncAndroidMainLibJars FROM-CACHE
+> Task :androidApp:writeReleaseSigningConfigVersions
+> Task :shared:data:bundleAndroidMainLocalLintAar
+> Task :androidApp:collectReleaseDependencies
+> Task :androidApp:sdkReleaseDependencyData
+
+> Task :shared:presentation:compileAndroidMain
+w: file:///home/runner/work/***/***/shared/presentation/src/commonMain/kotlin/id/manajerberkas/kode/presentation/layar/EditorLayar.kt:79:114 'val Icons.Filled.MenuBook: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.MenuBook.
+
+> Task :shared:presentation:compressAndroidMainJavaRes FROM-CACHE
+> Task :shared:presentation:mergeAndroidMainGeneratedProguardFiles
+> Task :shared:presentation:exportAndroidMainConsumerProguardFiles
+> Task :shared:presentation:mergeAndroidMainJavaResource
+> Task :shared:presentation:bundleAndroidMainClassesToRuntimeJar
+> Task :shared:presentation:bundleAndroidMainClassesToCompileJar
+> Task :shared:presentation:createFullJarAndroidMain
+> Task :shared:presentation:syncAndroidMainLibJars
+> Task :shared:presentation:bundleAndroidMainLocalLintAar
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:13:17 Unresolved reference 'appcompat'.
+
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:68:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:68:50 Unresolved reference 'AppCompatEditText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:68:70 Null cannot be a value of a non-null type 'uninferred T (of fun <T> mutableStateOf)'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:74:58 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:76:20 Unresolved reference 'setSelection'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:77:52 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:78:50 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:85:9 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:88:115 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:88:115 Candidate 'fun <T> T.apply(block: T.() -> Unit): T' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:88:121 Cannot infer type for type parameter 'T'. Specify it explicitly.
+> Task :androidApp:compileReleaseKotlin
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:89:21 Unresolved reference 'setText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:90:54 Unresolved reference 'text'.
+
+> Task :androidApp:compileReleaseKotlin FAILED
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:91:25 Unresolved reference 'setSelection'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:98:35 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:101:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:102:26 Unresolved reference 'setTextColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:103:26 Unresolved reference 'setHighlightColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:104:26 Unresolved reference 'isFocusable'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:105:26 Unresolved reference 'isFocusableInTouchMode'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:108:55 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:111:30 Unresolved reference 'setText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:112:44 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:113:34 Unresolved reference 'setSelection'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:121:13 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:126:120 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:126:120 Candidate 'fun <T> T.apply(block: T.() -> Unit): T' is inapplicable because of a receiver type mismatch.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:126:126 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:127:25 Unresolved reference 'setText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:128:58 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:129:29 Unresolved reference 'setSelection'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:136:39 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:139:28 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:140:30 Unresolved reference 'setTextColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:141:30 Unresolved reference 'setHighlightColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:142:30 Unresolved reference 'isFocusable'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:143:30 Unresolved reference 'isFocusableInTouchMode'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:145:59 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:148:34 Unresolved reference 'setText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:149:48 Unresolved reference 'text'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:150:38 Unresolved reference 'setSelection'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:165:4 Unresolved reference 'AppCompatEditText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:166:12 Unresolved reference 'AppCompatEditText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:166:39 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:166:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:167:9 Unresolved reference 'layoutParams'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:171:9 Unresolved reference 'typeface'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:172:9 Unresolved reference 'setTextSize'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:173:9 Unresolved reference 'gravity'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:174:9 Unresolved reference 'background'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:175:9 Unresolved reference 'includeFontPadding'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:176:9 Unresolved reference 'setPadding'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:177:9 Unresolved reference 'setTextColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:178:9 Unresolved reference 'setHighlightColor'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:179:9 Unresolved reference 'isFocusable'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:180:9 Unresolved reference 'isFocusableInTouchMode'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:181:9 Unresolved reference 'isCursorVisible'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:182:9 Unresolved reference 'inputType'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:185:9 Unresolved reference 'imeOptions'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:187:9 Unresolved reference 'setHorizontallyScrolling'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:188:9 Unresolved reference 'isVerticalScrollBarEnabled'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:189:9 Unresolved reference 'isHorizontalScrollBarEnabled'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:193:13 Unresolved reference 'AppCompatEditText'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:196:5 Unresolved reference 'addTextChangedListener'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:201:25 Unresolved reference 'selectionStart'.
+e: file:///home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:202:23 Unresolved reference 'selectionEnd'.
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1793963109186.json
+
+
+[Incubating] Problems report is available at: file:///home/runner/work/***/***/build/reports/problems/problems-report.html
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':androidApp:compileReleaseKotlin' (registered by plugin 'com.android.internal.application').
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Kotlin compiler: UNRESOLVED_IMPORT
+       Kotlin compiler error
+         Unresolved reference 'appcompat'.
+         Location: /home/runner/work/***/***/androidApp/src/main/kotlin/id/manajerberkas/kode/EditorAndroid.kt:13
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':androidApp:compileReleaseKotlin' (registered by plugin 'com.android.internal.application').
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.lambda$doExecute$1(DefaultTaskNodeExecutor.java:367)
+
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:365)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeTrackingTaskIdentity(DefaultTaskNodeExecutor.java:332)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeFinalizingProperties(DefaultTaskNodeExecutor.java:318)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingWithNoActions(DefaultTaskNodeExecutor.java:289)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeSkippingOnlyIf(DefaultTaskNodeExecutor.java:272)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeCatchingFailures(DefaultTaskNodeExecutor.java:228)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithFallbackOperationId(DefaultTaskNodeExecutor.java:197)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.executeWithLifecycle(DefaultTaskNodeExecutor.java:171)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.access$000(DefaultTaskNodeExecutor.java:67)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor$1.run(DefaultTaskNodeExecutor.java:136)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.execute(DefaultTaskNodeExecutor.java:133)
+	at org.gradle.execution.plan.LocalTaskNode.execute(LocalTaskNode.java:229)
+	at org.gradle.execution.DefaultBuildWorkExecutor.lambda$executePlan$0(DefaultBuildWorkExecutor.java:153)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.lambda$execute$0(DefaultPlanExecutor.java:476)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:475)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:392)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:273)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:132)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocksBlocking$0(DefaultWorkerLeaseService.java:406)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocksBlocking(DefaultWorkerLeaseService.java:401)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:261)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.blocking(DefaultWorkerLeaseService.java:243)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$1(DefaultAsyncWorkTracker.java:128)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.resources.AbstractResourceLockRegistry.whileDisallowingLockChanges(AbstractResourceLockRegistry.java:51)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.whileDisallowingProjectLockChanges(DefaultWorkerLeaseService.java:266)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:127)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:93)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:79)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:67)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:276)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:253)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:236)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:219)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:185)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:145)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$3(BuildCacheStep.java:104)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$1(BuildCacheStep.java:104)
+	at org.gradle.internal.Try$Success.map(Try.java:170)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:88)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Left.fold(Either.java:116)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.java:32)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:105)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBeforeExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecutionStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.java:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:90)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.java:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:314)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at org.gradle.api.internal.tasks.execution.DefaultTaskNodeExecutor.doExecute(DefaultTaskNodeExecutor.java:364)
+	... 25 more
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Unresolved reference 'appcompat'.
+	at org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultCompilerDiagnosticsProblemsReporter.reportCompilerMessage(CompilerDiagnosticsProblemsReporter.kt:63)
+	at org.jetbrains.kotlin.compilerRunner.btapi.ProblemsApiCompilerMessageRenderer.replayTo(ProblemsApiCompilerMessageRenderer.kt:88)
+	at org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork.execute(BuildToolsApiCompilationWork.kt:251)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:103)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$1(DefaultWorkerExecutor.java:169)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:191)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$600(DefaultConditionalExecutionQueue.java:112)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:168)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:296)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:294)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:290)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:282)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:138)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:163)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:125)
+	... 2 more
+
+
+BUILD FAILED in 43s
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+96 actionable tasks: 65 executed, 27 from cache, 4 up-to-date
+Configuration cache entry stored.
+##[error]Process completed with exit code 1.
