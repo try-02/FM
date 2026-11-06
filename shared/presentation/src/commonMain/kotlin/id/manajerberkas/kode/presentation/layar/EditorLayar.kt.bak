@@ -1,8 +1,13 @@
 package id.manajerberkas.kode.presentation.layar
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +26,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import id.manajerberkas.kode.presentation.state.EditorAksi
 import id.manajerberkas.kode.presentation.state.EditorState
 
@@ -32,6 +38,13 @@ fun EditorLayar(
 ) {
     var menuTerbuka by remember { mutableStateOf(false) }
     var cariPanelTerbuka by remember { mutableStateOf(false) }
+    val listStatePenampil = rememberLazyListState()
+
+    LaunchedEffect(state.indeksBarisDitemukan) {
+        state.indeksBarisDitemukan?.let {
+            listStatePenampil.animateScrollToItem(it)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -44,7 +57,7 @@ fun EditorLayar(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = if (state.hanyaBaca) "Hanya Baca" else if (state.adaPerubahan) "Belum Disimpan" else "Tersimpan",
+                            text = if (state.modePenampilBesar) "Mode Pembaca Cepat" else if (state.hanyaBaca) "Hanya Baca" else if (state.adaPerubahan) "Belum Disimpan" else "Tersimpan",
                             style = MaterialTheme.typography.bodySmall,
                             color = if (state.adaPerubahan) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                         )
@@ -56,21 +69,40 @@ fun EditorLayar(
                     }
                 },
                 actions = {
-                    IconButton(onClick = aksi::undo, enabled = state.bisaUndo) {
-                        Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo")
+                    if (state.adalahBerkasBesar) {
+                        FilledTonalIconButton(
+                            onClick = aksi::toggleModePenampilBesar,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = if (state.modePenampilBesar) Icons.Default.Edit else Icons.Default.MenuBook,
+                                contentDescription = if (state.modePenampilBesar) "Mode Edit" else "Mode Pembaca"
+                            )
+                        }
                     }
-                    IconButton(onClick = aksi::redo, enabled = state.bisaRedo) {
-                        Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo")
+
+                    if (!state.modePenampilBesar) {
+                        IconButton(onClick = aksi::undo, enabled = state.bisaUndo) {
+                            Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo")
+                        }
+                        IconButton(onClick = aksi::redo, enabled = state.bisaRedo) {
+                            Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo")
+                        }
                     }
+
                     IconButton(onClick = { cariPanelTerbuka = !cariPanelTerbuka }) {
                         Icon(Icons.Default.Search, contentDescription = "Cari / Ganti")
                     }
-                    IconButton(
-                        onClick = aksi::simpan,
-                        enabled = !state.hanyaBaca && state.adaPerubahan && !state.sedangMenyimpan
-                    ) {
-                        Icon(Icons.Default.Save, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.primary)
+
+                    if (!state.modePenampilBesar) {
+                        IconButton(
+                            onClick = aksi::simpan,
+                            enabled = !state.hanyaBaca && state.adaPerubahan && !state.sedangMenyimpan
+                        ) {
+                            Icon(Icons.Default.Save, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.primary)
+                        }
                     }
+
                     Box {
                         IconButton(onClick = { menuTerbuka = true }) {
                             Icon(Icons.Default.MoreVert, contentDescription = "Lainnya")
@@ -90,11 +122,13 @@ fun EditorLayar(
                                 leadingIcon = { Icon(Icons.Default.BarChart, null) },
                                 onClick = { menuTerbuka = false; aksi.bukaPanelStatistik() }
                             )
-                            DropdownMenuItem(
-                                text = { Text(if (state.bungkusKata) "Bungkus Kata: ON" else "Bungkus Kata: OFF") },
-                                leadingIcon = { Icon(Icons.AutoMirrored.Filled.WrapText, null) },
-                                onClick = { menuTerbuka = false; aksi.toggleBungkusKata() }
-                            )
+                            if (!state.modePenampilBesar) {
+                                DropdownMenuItem(
+                                    text = { Text(if (state.bungkusKata) "Bungkus Kata: ON" else "Bungkus Kata: OFF") },
+                                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.WrapText, null) },
+                                    onClick = { menuTerbuka = false; aksi.toggleBungkusKata() }
+                                )
+                            }
                         }
                     }
                 }
@@ -105,7 +139,7 @@ fun EditorLayar(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .imePadding() // Mencegah area editor tertutup oleh keyboard virtual
+                .imePadding()
         ) {
             AnimatedVisibility(visible = cariPanelTerbuka) {
                 Surface(
@@ -123,15 +157,17 @@ fun EditorLayar(
                                 modifier = Modifier.weight(1f),
                                 singleLine = true
                             )
-                            OutlinedTextField(
-                                value = state.ganti,
-                                onValueChange = aksi::ubahGanti,
-                                placeholder = { Text("Ganti dengan") },
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(1f),
-                                enabled = !state.hanyaBaca,
-                                singleLine = true
-                            )
+                            if (!state.modePenampilBesar) {
+                                OutlinedTextField(
+                                    value = state.ganti,
+                                    onValueChange = aksi::ubahGanti,
+                                    placeholder = { Text("Ganti dengan") },
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f),
+                                    enabled = !state.hanyaBaca,
+                                    singleLine = true
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -164,7 +200,7 @@ fun EditorLayar(
                                 Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Berikutnya")
                             }
                         }
-                        if (!state.hanyaBaca) {
+                        if (!state.hanyaBaca && !state.modePenampilBesar) {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Button(onClick = aksi::gantiSatu, shape = RoundedCornerShape(10.dp)) { Text("Ganti") }
                                 OutlinedButton(onClick = aksi::gantiSemua, shape = RoundedCornerShape(10.dp)) { Text("Ganti Semua") }
@@ -178,46 +214,61 @@ fun EditorLayar(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
 
-            val scrollState = rememberScrollState()
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                if (state.bungkusKata) {
-                    TextField(
-                        value = state.medan,
-                        onValueChange = aksi::ubahTeks,
-                        readOnly = state.hanyaBaca,
-                        modifier = Modifier.fillMaxSize(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        textStyle = TextStyle(fontFamily = FontFamily.Monospace)
+                if (state.modePenampilBesar) {
+                    // Mode virtualized LazyColumn (0ms lag untuk berkas 300 KB - 1 MB)
+                    PenampilBerkasBesarVirtual(
+                        daftarBaris = state.daftarBaris,
+                        listState = listStatePenampil,
+                        barisAktif = state.barisAktif
                     )
                 } else {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .horizontalScroll(scrollState)
-                    ) {
+                    val scrollState = rememberScrollState()
+                    if (state.bungkusKata) {
                         TextField(
                             value = state.medan,
                             onValueChange = aksi::ubahTeks,
                             readOnly = state.hanyaBaca,
-                            modifier = Modifier.fillMaxHeight().widthIn(min = 800.dp),
+                            modifier = Modifier.fillMaxSize(),
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
                             ),
-                            textStyle = TextStyle(fontFamily = FontFamily.Monospace)
+                            textStyle = TextStyle(
+                                fontFamily = FontFamily.Monospace,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         )
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .horizontalScroll(scrollState)
+                        ) {
+                            TextField(
+                                value = state.medan,
+                                onValueChange = aksi::ubahTeks,
+                                readOnly = state.hanyaBaca,
+                                modifier = Modifier.fillMaxHeight().widthIn(min = 1200.dp),
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+                                textStyle = TextStyle(
+                                    fontFamily = FontFamily.Monospace,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -300,5 +351,78 @@ fun EditorLayar(
                 TextButton(onClick = aksi::tutupDialogNavigasiBaris) { Text("Batal") }
             }
         )
+    }
+}
+
+@Composable
+private fun PenampilBerkasBesarVirtual(
+    daftarBaris: List<String>,
+    listState: LazyListState,
+    barisAktif: Int
+) {
+    val totalBaris = daftarBaris.size
+    val lebarNomorBaris = totalBaris.toString().length.coerceAtLeast(3)
+
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        itemsIndexed(daftarBaris) { index, barisTeks ->
+            val nomorBaris = index + 1
+            val adalahBarisAktif = nomorBaris == barisAktif
+            val bgBaris = if (adalahBarisAktif) {
+                MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)
+            } else {
+                Color.Transparent
+            }
+
+            val scrollHorisontal = rememberScrollState()
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(bgBaris)
+                    .padding(vertical = 1.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Kolom nomor baris
+                Text(
+                    text = nomorBaris.toString().padStart(lebarNomorBaris, ' '),
+                    style = TextStyle(
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 13.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .widthIn(min = 36.dp)
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .height(18.dp)
+                        .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                )
+
+                // Kolom isi teks
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .horizontalScroll(scrollHorisontal)
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = barisTeks.ifEmpty { " " },
+                        style = TextStyle(
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 13.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        softWrap = false
+                    )
+                }
+            }
+        }
     }
 }

@@ -85,7 +85,7 @@ fun AplikasiUtamaAndroid(
         }
     }
 
-    // Mengikuti tema sistem (Gelap / Terang) secara reaktif
+    // Mengikuti tema Gelap / Terang sistem secara reaktif
     val isDark = isSystemInDarkTheme()
     val colorScheme = if (isDark) darkColorScheme() else lightColorScheme()
 
