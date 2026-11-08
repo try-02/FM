@@ -63,14 +63,21 @@ private fun EditorTeksAndroidNative(
     val textColor = colorScheme.onSurface.toArgb()
     val selectionColor = colorScheme.primary.copy(alpha = 0.35f).toArgb()
 
-    var isUpdatingInternally by remember { mutableStateOf(false) }
+    // Bukan snapshot state: tulis ke flag ini tiap ketikan tidak boleh
+    // menjadwalkan rekomposisi (sebelumnya 2 rekomposisi per ketikan).
+    val isUpdatingInternally = remember { booleanArrayOf(false) }
+    // Referensi String terakhir yang dikirim ke holder. String yang sama
+    // berarti teks berasal dari ketikan pengguna sendiri, jadi update()
+    // tidak perlu menyalin+membandingkan seluruh teks (O(n)) per ketikan.
+    val teksTerakhirDikirim = remember { arrayOf<String?>(null) }
     var editTextRef by remember { mutableStateOf<EditText?>(null) }
 
     // Memperbarui posisi kursor saat ada aksi navigasi/lompat baris/cari dari luar
     LaunchedEffect(state.medan.selection) {
         val et = editTextRef ?: return@LaunchedEffect
         val targetSel = state.medan.selection
-        if (!isUpdatingInternally && targetSel.end <= et.text.length) {
+        if (!isUpdatingInternally[0] && targetSel.end <= et.text.length &&
+            (et.selectionStart != targetSel.start || et.selectionEnd != targetSel.end)) {
             try {
                 et.setSelection(
                     targetSel.start.coerceIn(0, et.text.length),
@@ -86,13 +93,15 @@ private fun EditorTeksAndroidNative(
             factory = { context ->
                 buatEditText(context, textColor, selectionColor, hanyaBaca = state.hanyaBaca, bungkusKata = true).apply {
                     setText(state.medan.text)
+                    teksTerakhirDikirim[0] = state.medan.text
                     if (state.medan.selection.end <= text.length) {
                         setSelection(state.medan.selection.start, state.medan.selection.end)
                     }
                     pasangTextWatcher { newText, sel ->
-                        isUpdatingInternally = true
+                        isUpdatingInternally[0] = true
+                        teksTerakhirDikirim[0] = newText
                         aksi.ubahTeks(TextFieldValue(newText, sel))
-                        isUpdatingInternally = false
+                        isUpdatingInternally[0] = false
                     }
                     editTextRef = this
                 }
@@ -103,8 +112,10 @@ private fun EditorTeksAndroidNative(
                 editText.isFocusable = !state.hanyaBaca
                 editText.isFocusableInTouchMode = !state.hanyaBaca
 
-                // Hanya sinkronkan teks bila diubah oleh operasi luar (Undo, Redo, Ganti Semua)
-                if (!isUpdatingInternally && editText.text.toString() != state.medan.text) {
+                // Hanya sinkronkan bila diubah operasi luar (Undo/Redo/Ganti):
+                // referensi berbeda dari teks terakhir yang dikirim saat mengetik.
+                if (!isUpdatingInternally[0] && state.medan.text !== teksTerakhirDikirim[0]) {
+                    teksTerakhirDikirim[0] = state.medan.text
                     val selStart = state.medan.selection.start.coerceIn(0, state.medan.text.length)
                     val selEnd = state.medan.selection.end.coerceIn(0, state.medan.text.length)
                     editText.setText(state.medan.text)
@@ -124,13 +135,15 @@ private fun EditorTeksAndroidNative(
                 factory = { context ->
                     buatEditText(context, textColor, selectionColor, hanyaBaca = state.hanyaBaca, bungkusKata = false).apply {
                         setText(state.medan.text)
+                        teksTerakhirDikirim[0] = state.medan.text
                         if (state.medan.selection.end <= text.length) {
                             setSelection(state.medan.selection.start, state.medan.selection.end)
                         }
                         pasangTextWatcher { newText, sel ->
-                            isUpdatingInternally = true
+                            isUpdatingInternally[0] = true
+                            teksTerakhirDikirim[0] = newText
                             aksi.ubahTeks(TextFieldValue(newText, sel))
-                            isUpdatingInternally = false
+                            isUpdatingInternally[0] = false
                         }
                         editTextRef = this
                     }
@@ -141,7 +154,8 @@ private fun EditorTeksAndroidNative(
                     editText.isFocusable = !state.hanyaBaca
                     editText.isFocusableInTouchMode = !state.hanyaBaca
 
-                    if (!isUpdatingInternally && editText.text.toString() != state.medan.text) {
+                    if (!isUpdatingInternally[0] && state.medan.text !== teksTerakhirDikirim[0]) {
+                        teksTerakhirDikirim[0] = state.medan.text
                         val selStart = state.medan.selection.start.coerceIn(0, state.medan.text.length)
                         val selEnd = state.medan.selection.end.coerceIn(0, state.medan.text.length)
                         editText.setText(state.medan.text)

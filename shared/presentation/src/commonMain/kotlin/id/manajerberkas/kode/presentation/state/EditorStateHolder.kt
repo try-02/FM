@@ -42,6 +42,8 @@ class EditorStateHolder(
     private var baselineTeks = ""
     private var riwayatAktifInternal = true
     private var pekerjaanRiwayat: Job? = null
+    private var pekerjaanPosisi: Job? = null
+    private var adaPerubahanBaseline = false
     private var metadataAwal: MetadataBerkas? = null
     private var tutupSetelahKonflikSelesai: Boolean = false
 
@@ -83,6 +85,7 @@ class EditorStateHolder(
                     }
                 }
                 baselineTeks = teks
+                adaPerubahanBaseline = false
                 riwayatAktifInternal = teks.length <= BATAS_UNDO
                 undoStack.clear()
                 redoStack.clear()
@@ -152,13 +155,29 @@ class EditorStateHolder(
 
     override fun ubahTeks(medan: TextFieldValue) {
         val panjang = medan.text.length
-        val (baris, kolom) = if (panjang > BATAS_POSISI_KURSOR) {
-            0 to 0
+        // Posisi kursor (baris/kolom) dihitung di background: scan O(n) dari awal
+        // teks di main thread per ketikan adalah penyebab utama lag pada berkas besar.
+        // Hasilnya hanya dipublikasikan bila teks/seleksi masih sama (belum ada
+        // ketikan berikutnya), jadi ketikan cepat tidak tertahan scan ini.
+        pekerjaanPosisi?.cancel()
+        if (panjang > BATAS_POSISI_KURSOR) {
+            pekerjaanPosisi = scope.launch {
+                _state.update { it.copy(barisAktif = 0, kolomAktif = 0) }
+            }
         } else {
-            hitungPosisiKursor(medan.text, medan.selection.end)
+            val teks = medan.text
+            val offset = medan.selection.end
+            pekerjaanPosisi = scope.launch(Dispatchers.Default) {
+                val (baris, kolom) = hitungPosisiKursor(teks, offset)
+                val kini = state.value.medan
+                if (kini.text === teks && kini.selection.end == offset) {
+                    _state.update { it.copy(barisAktif = baris, kolomAktif = kolom) }
+                }
+            }
         }
 
         if (panjang > BATAS_UNDO) {
+            adaPerubahanBaseline = false
             if (riwayatAktifInternal) {
                 riwayatAktifInternal = false
                 undoStack.clear()
@@ -169,8 +188,6 @@ class EditorStateHolder(
                 _state.update {
                     it.copy(
                         medan = medan,
-                        barisAktif = baris,
-                        kolomAktif = kolom,
                         riwayatAktif = false,
                         bisaUndo = false,
                         bisaRedo = false,
@@ -178,27 +195,26 @@ class EditorStateHolder(
                     )
                 }
             } else {
-                _state.update {
-                    it.copy(
-                        medan = medan,
-                        barisAktif = baris,
-                        kolomAktif = kolom
-                    )
-                }
+                _state.update { it.copy(medan = medan) }
             }
             return
         }
 
+        // Satu update per ketikan (sebelumnya: update teks + perbaruiBisaUndoRedo
+        // = 2 emisi StateFlow & 2 rekomposisi). Bisa-undo dihitung dari flag,
+        // bukan perbandingan string O(n) terhadap baselineTeks.
+        adaPerubahanBaseline = true
+        val bisaUndo = riwayatAktifInternal && (undoStack.isNotEmpty() || adaPerubahanBaseline)
+        val bisaRedo = riwayatAktifInternal && redoStack.isNotEmpty()
         _state.update {
             it.copy(
                 medan = medan,
-                barisAktif = baris,
-                kolomAktif = kolom
+                bisaUndo = bisaUndo,
+                bisaRedo = bisaRedo
             )
         }
 
         if (riwayatAktifInternal) {
-            perbaruiBisaUndoRedo()
             jadwalkanKomitRiwayat()
         }
     }
@@ -214,10 +230,17 @@ class EditorStateHolder(
     private fun komitRiwayat() {
         if (!riwayatAktifInternal) return
         val teksSekarang = state.value.medan.text
-        if (teksSekarang == baselineTeks) return
+        if (teksSekarang == baselineTeks) {
+            if (adaPerubahanBaseline) {
+                adaPerubahanBaseline = false
+                perbaruiBisaUndoRedo()
+            }
+            return
+        }
         tambahKeUndo(baselineTeks)
         redoStack.clear()
         baselineTeks = teksSekarang
+        adaPerubahanBaseline = false
         perbaruiBisaUndoRedo()
     }
 
@@ -241,6 +264,8 @@ class EditorStateHolder(
             totalUndoKarakter = 0L
             pekerjaanRiwayat?.cancel()
             baselineTeks = teksBaru
+        adaPerubahanBaseline = false
+            adaPerubahanBaseline = false
             _state.update {
                 it.copy(
                     medan = TextFieldValue(text = teksBaru, selection = seleksi),
@@ -253,6 +278,8 @@ class EditorStateHolder(
         }
         if (!riwayatAktifInternal) {
             baselineTeks = teksBaru
+        adaPerubahanBaseline = false
+            adaPerubahanBaseline = false
             _state.update { it.copy(medan = TextFieldValue(text = teksBaru, selection = seleksi)) }
             return
         }
@@ -264,6 +291,7 @@ class EditorStateHolder(
         }
         _state.update { it.copy(medan = TextFieldValue(text = teksBaru, selection = seleksi)) }
         baselineTeks = teksBaru
+        adaPerubahanBaseline = false
         perbaruiBisaUndoRedo()
     }
 
@@ -290,8 +318,9 @@ class EditorStateHolder(
     }
 
     private fun perbaruiBisaUndoRedo() {
-        val kondisi = state.value
-        val bisaUndo = riwayatAktifInternal && (undoStack.isNotEmpty() || kondisi.medan.text != baselineTeks)
+        // Tanpa perbandingan string O(n): adaPerubahanBaseline dilacak saat
+        // ubahTeks/komit/undo/redo.
+        val bisaUndo = riwayatAktifInternal && (undoStack.isNotEmpty() || adaPerubahanBaseline)
         val bisaRedo = riwayatAktifInternal && redoStack.isNotEmpty()
         _state.update { it.copy(riwayatAktif = riwayatAktifInternal, bisaUndo = bisaUndo, bisaRedo = bisaRedo) }
     }
@@ -304,6 +333,7 @@ class EditorStateHolder(
         tambahKeRedo(teksSekarang)
         _state.update { it.copy(medan = TextFieldValue(text = target, selection = TextRange(target.length))) }
         baselineTeks = target
+        adaPerubahanBaseline = false
         perbaruiBisaUndoRedo()
     }
 
@@ -315,6 +345,7 @@ class EditorStateHolder(
         tambahKeUndo(teksSekarang)
         _state.update { it.copy(medan = TextFieldValue(text = target, selection = TextRange(target.length))) }
         baselineTeks = target
+        adaPerubahanBaseline = false
         perbaruiBisaUndoRedo()
     }
 

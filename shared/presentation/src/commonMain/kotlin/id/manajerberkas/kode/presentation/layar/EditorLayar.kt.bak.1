@@ -34,7 +34,8 @@ import id.manajerberkas.kode.presentation.state.EditorState
 @Composable
 fun EditorLayar(
     state: EditorState,
-    aksi: EditorAksi
+    aksi: EditorAksi,
+    editorArea: (@Composable (Modifier) -> Unit)? = null
 ) {
     var menuTerbuka by remember { mutableStateOf(false) }
     var cariPanelTerbuka by remember { mutableStateOf(false) }
@@ -221,12 +222,14 @@ fun EditorLayar(
                     .padding(8.dp)
             ) {
                 if (state.modePenampilBesar) {
-                    // Mode virtualized LazyColumn (0ms lag untuk berkas 300 KB - 1 MB)
                     PenampilBerkasBesarVirtual(
                         daftarBaris = state.daftarBaris,
                         listState = listStatePenampil,
                         barisAktif = state.barisAktif
                     )
+                } else if (editorArea != null) {
+                    // Gunakan editor area berkinerja tinggi (AndroidView dengan DynamicLayout)
+                    editorArea(Modifier.fillMaxSize())
                 } else {
                     val scrollState = rememberScrollState()
                     if (state.bungkusKata) {
@@ -385,7 +388,6 @@ private fun PenampilBerkasBesarVirtual(
                     .padding(vertical = 1.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Kolom nomor baris
                 Text(
                     text = nomorBaris.toString().padStart(lebarNomorBaris, ' '),
                     style = TextStyle(
@@ -405,7 +407,6 @@ private fun PenampilBerkasBesarVirtual(
                         .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                 )
 
-                // Kolom isi teks
                 Row(
                     modifier = Modifier
                         .weight(1f)

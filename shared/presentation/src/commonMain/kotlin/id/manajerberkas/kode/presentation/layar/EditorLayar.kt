@@ -37,6 +37,9 @@ fun EditorLayar(
     aksi: EditorAksi,
     editorArea: (@Composable (Modifier) -> Unit)? = null
 ) {
+    // Dibaca sekali per komposisi: getter ini membandingkan seluruh teks
+    // dengan teksAwal (O(n)); sebelumnya dievaluasi 3x per rekomposisi.
+    val adaPerubahan = state.adaPerubahan
     var menuTerbuka by remember { mutableStateOf(false) }
     var cariPanelTerbuka by remember { mutableStateOf(false) }
     val listStatePenampil = rememberLazyListState()
@@ -58,9 +61,9 @@ fun EditorLayar(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = if (state.modePenampilBesar) "Mode Pembaca Cepat" else if (state.hanyaBaca) "Hanya Baca" else if (state.adaPerubahan) "Belum Disimpan" else "Tersimpan",
+                            text = if (state.modePenampilBesar) "Mode Pembaca Cepat" else if (state.hanyaBaca) "Hanya Baca" else if (adaPerubahan) "Belum Disimpan" else "Tersimpan",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (state.adaPerubahan) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                            color = if (adaPerubahan) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -98,7 +101,7 @@ fun EditorLayar(
                     if (!state.modePenampilBesar) {
                         IconButton(
                             onClick = aksi::simpan,
-                            enabled = !state.hanyaBaca && state.adaPerubahan && !state.sedangMenyimpan
+                            enabled = !state.hanyaBaca && adaPerubahan && !state.sedangMenyimpan
                         ) {
                             Icon(Icons.Default.Save, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.primary)
                         }
