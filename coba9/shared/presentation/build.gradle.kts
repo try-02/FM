@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.android.library)
+    id("com.android.library") version "8.5.2"
 }
 android {
     namespace = "com.crouton.alpha.presentation"
