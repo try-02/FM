@@ -39,7 +39,6 @@ jobs:
           # Hapus 'clean' agar build cache & configuration cache optimal
           ./gradlew assembleDebug \
             --no-daemon \
-            --non-interactive \
             --stacktrace \
             --console=plain
         env:
