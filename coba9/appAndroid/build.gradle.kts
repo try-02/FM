@@ -18,6 +18,13 @@ android {
         sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
         targetCompatibility = org.gradle.api.JavaVersion.VERSION_17
     }
+    buildTypes {
+        debug {
+            ndk {
+                abiFilters += listOf("arm64-v8a")
+            }
+        }
+    }
 }
 
 kotlin {
