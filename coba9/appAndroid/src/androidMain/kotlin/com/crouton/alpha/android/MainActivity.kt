@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val repositori = RepositoriBerkasAndroid(filesDir)
         val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), scope)
+        buatDataPercontoh()
         val dasar = filesDir.absolutePath
         penyimpan.muatAwal(LokasiBerkas(dasar, "Penyimpanan internal", dasar, true))
 
@@ -41,4 +42,17 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    private fun buatDataPercontoh() {
+        val dokumen = java.io.File(filesDir, "Dokumen")
+        if (!dokumen.exists()) {
+            dokumen.mkdir()
+            java.io.File(dokumen, "contoh.txt").writeText("Selamat datang di Crouton Alpha.")
+        }
+        val proyek = java.io.File(filesDir, "Proyek")
+        if (!proyek.exists()) {
+            proyek.mkdir()
+            java.io.File(proyek, "Main.kt").writeText("fun main() {}")
+        }
+    }
+
 }
