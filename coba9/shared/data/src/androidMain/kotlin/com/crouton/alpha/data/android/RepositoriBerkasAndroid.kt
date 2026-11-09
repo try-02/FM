@@ -13,7 +13,10 @@ import java.io.File
 import java.io.FileInputStream
 
 class RepositoriBerkasAndroid(private val direktoriDasar: File) : RepositoriBerkas {
-    private fun berkasDari(lokasi: LokasiBerkas): File = File(direktoriDasar, lokasi.uriAtauPath)
+    private fun berkasDari(lokasi: LokasiBerkas): File {
+        val path = lokasi.uriAtauPath
+        return if (path.startsWith("/")) File(path) else File(direktoriDasar, path)
+    }
 
     override suspend fun daftarIsi(lokasi: LokasiBerkas): HasilDaftarBerkas {
         val folder = berkasDari(lokasi)

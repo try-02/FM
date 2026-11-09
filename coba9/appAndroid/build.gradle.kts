@@ -32,6 +32,7 @@ kotlin {
             implementation(project(":shared:domain"))
             implementation(project(":shared:data"))
             implementation(compose.ui)
+            implementation(compose.material3)
             implementation(libs.activity.compose)
         }
     }

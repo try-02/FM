@@ -2,7 +2,14 @@ package com.crouton.alpha.presentation
 
 enum class StatusEditor { TERSIMPAN, BERUBAH, HANYA_BACA, MEMUAT, GAGAL }
 
-data class StatusBerkasUi(val nama: String, val ukuranTampil: String, val tersembunyi: Boolean)
+data class StatusBerkasUi(
+    val nama: String,
+    val ukuranTampil: String,
+    val tersembunyi: Boolean,
+    val pengenal: String = "",
+    val uriAtauPath: String = "",
+    val adalahFolder: Boolean = false
+)
 
 data class StateLayarBerkas(
     val sedangMemuat: Boolean = false,
