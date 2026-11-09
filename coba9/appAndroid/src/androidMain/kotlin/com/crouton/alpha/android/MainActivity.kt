@@ -19,6 +19,8 @@ import com.crouton.alpha.domain.usecase.SimpanPerubahanUseCase
 import com.crouton.alpha.presentation.DaftarBerkasLayar
 import com.crouton.alpha.presentation.EditorLayar
 import com.crouton.alpha.presentation.PenyimpanStateBerkas
+import com.crouton.alpha.presentation.DiffLayar
+import com.crouton.alpha.presentation.PenyimpanStateDiff
 import com.crouton.alpha.presentation.PenyimpanStateEditor
 import com.crouton.alpha.presentation.StatusEditor
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
         val simpanUseCase = SimpanPerubahanUseCase(repositori)
         val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), scope, repositori)
         val editorPenyimpan = PenyimpanStateEditor()
+        val diffPenyimpan = PenyimpanStateDiff(repositori, scope)
         buatDataPercontoh()
         val dasar = filesDir.absolutePath
         penyimpan.muatAwal(LokasiBerkas(dasar, "Penyimpanan internal", dasar, true))
@@ -42,6 +45,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val state by penyimpan.state.collectAsState()
             val stateEditor by editorPenyimpan.state.collectAsState()
+            val stateDiff by diffPenyimpan.state.collectAsState()
+            var modeDiffAktif by remember { mutableStateOf(false) }
+            var tampilkanDiff by remember { mutableStateOf(false) }
             var berkasDibuka by remember { mutableStateOf<LokasiBerkas?>(null) }
             var versiDibuka by remember { mutableStateOf(0L) }
 
@@ -69,7 +75,9 @@ class MainActivity : ComponentActivity() {
 
             onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (berkasDibuka != null) {
+                    if (tampilkanDiff) {
+                        tampilkanDiff = false
+                    } else if (berkasDibuka != null) {
                         tutupEditor()
                     } else {
                         penyimpan.kembali()
@@ -78,7 +86,15 @@ class MainActivity : ComponentActivity() {
             })
 
             MaterialTheme {
-                if (berkasDibuka != null) {
+                if (tampilkanDiff) {
+                    DiffLayar(
+                        state = stateDiff,
+                        saatBerikutnya = { diffPenyimpan.perubahanBerikutnya() },
+                        saatSebelumnya = { diffPenyimpan.perubahanSebelumnya() },
+                        saatAlihMode = { diffPenyimpan.alihModeUnified() },
+                        saatKembali = { tampilkanDiff = false }
+                    )
+                } else if (berkasDibuka != null) {
                     EditorLayar(
                         state = stateEditor,
                         saatTeksBerubah = { editorPenyimpan.ubahTeks(it) },
@@ -89,6 +105,7 @@ class MainActivity : ComponentActivity() {
                             berkasDibuka = null
                         },
                         saatBatalTutup = { editorPenyimpan.sembunyikanDialogTutup() },
+                        saatHapus = { penyimpan.mintaHapus() },
                         tampilkanDialogHapus = state.tampilkanDialogHapus,
                         saatKonfirmasiHapus = {
                             scope.launch {
@@ -99,13 +116,20 @@ class MainActivity : ComponentActivity() {
                                 berkasDibuka = null
                             }
                         },
-                        saatBatalHapus = { penyimpan.batalHapus() }
+                        saatBatalHapus = { penyimpan.batalHapus() },
+                        saatCariBerikutnya = { editorPenyimpan.cariBerikutnya(it) },
+                        saatCariSebelumnya = { editorPenyimpan.cariSebelumnya(it) },
+                        saatGantiSatu = { kata, pengganti -> editorPenyimpan.gantiSatu(kata, pengganti) },
+                        saatGantiSemua = { kata, pengganti -> editorPenyimpan.gantiSemua(kata, pengganti) },
+                        saatMenujuBaris = { editorPenyimpan.menujuBaris(it, stateEditor.teks.count { c -> c == '\n' } + 1) }
                     )
                 } else {
                     DaftarBerkasLayar(
                         state = state,
                         saatItemDiklik = { item ->
-                            if (item.adalahFolder) {
+                            if (modeDiffAktif && !item.adalahFolder) {
+                                diffPenyimpan.pilihFile(LokasiBerkas(item.pengenal, item.nama, item.uriAtauPath, false))
+                            } else if (item.adalahFolder) {
                                 penyimpan.bukaItem(item.pengenal, item.nama, item.uriAtauPath, true)
                             } else {
                                 scope.launch {
@@ -119,7 +143,16 @@ class MainActivity : ComponentActivity() {
                         },
                         saatPencarianBerubah = { penyimpan.aturPencarian(it) },
                         saatBuatFolder = { penyimpan.buatFolder("FolderBaru") },
-                        saatBuatBerkas = { penyimpan.buatBerkas("BerkasBaru.txt") }
+                        saatBuatBerkas = { penyimpan.buatBerkas("BerkasBaru.txt") },
+                        modeDiffAktif = modeDiffAktif,
+                        saatModeDiff = {
+                            modeDiffAktif = !modeDiffAktif
+                            if (!modeDiffAktif) diffPenyimpan.bersihkanPilihan()
+                        },
+                        saatBandingkan = {
+                            diffPenyimpan.bandingkan()
+                            tampilkanDiff = true
+                        }
                     )
                 }
             }

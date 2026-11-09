@@ -30,7 +30,9 @@ data class StateEditor(
     val bungkusKata: Boolean = true,
     val hanyaBaca: Boolean = false,
     val riwayatPencarian: List<String> = emptyList(),
-    val tampilkanDialogTutup: Boolean = false
+    val tampilkanDialogTutup: Boolean = false,
+    val pesanStatus: String = "",
+    val posisiPencarian: Int = 0
 )
 
 data class StateDiff(
@@ -38,7 +40,9 @@ data class StateDiff(
     val modeUnified: Boolean = false,
     val jumlahPerubahan: Int = 0,
     val indeksPerubahanAktif: Int = 0,
-    val pesan: String = ""
+    val pesan: String = "",
+    val barisDiff: List<String> = emptyList(),
+    val terpilih: List<String> = emptyList()
 )
 
 data class StateRename(

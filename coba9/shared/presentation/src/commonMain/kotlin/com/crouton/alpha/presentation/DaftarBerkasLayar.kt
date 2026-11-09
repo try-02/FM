@@ -20,7 +20,10 @@ fun DaftarBerkasLayar(
     saatItemDiklik: (StatusBerkasUi) -> Unit,
     saatPencarianBerubah: (String) -> Unit = {},
     saatBuatFolder: () -> Unit = {},
-    saatBuatBerkas: () -> Unit = {}
+    saatBuatBerkas: () -> Unit = {},
+    modeDiffAktif: Boolean = false,
+    saatModeDiff: () -> Unit = {},
+    saatBandingkan: () -> Unit = {}
 ) {
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -60,6 +63,12 @@ fun DaftarBerkasLayar(
             )
             Button(onClick = saatBuatFolder) { Text(text = "Folder Baru") }
             Button(onClick = saatBuatBerkas) { Text(text = "Berkas Baru") }
+            Button(onClick = saatModeDiff) {
+                Text(text = if (modeDiffAktif) "Keluar Mode Diff" else "Mode Diff: ketuk 2 file")
+            }
+            if (modeDiffAktif) {
+                Button(onClick = saatBandingkan) { Text(text = "Bandingkan") }
+            }
             if (state.pesan.isNotEmpty()) {
                 Text(text = state.pesan, style = MaterialTheme.typography.bodyMedium)
             }
