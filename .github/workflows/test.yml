@@ -1,0 +1,60 @@
+name: Test & Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    # Mengatur default folder jika gradlew berada di subfolder 'coba9'
+    defaults:
+      run:
+        working-directory: coba9
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      # Setup Gradle dengan build-root-directory mengarah ke coba9
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          build-root-directory: coba9
+          cache-encryption-key: ${{ secrets.GRADLE_CACHE_ENCRYPTION_KEY }}
+          cache-read-only: false 
+          add-job-summary: 'always'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # 1. (Opsional) Sinkronisasi eksplisit dependensi
+      - name: Gradle Sync & Dependencies
+        run: ./gradlew help --dry-run
+
+      # 2. Menjalankan commonTest
+      # Pilih salah satu task sesuai konfigurasi KMP Anda:
+      # - 'allTests' untuk semua target KMP
+      # - 'jvmTest' khusus target JVM
+      # - 'testDebugUnitTest' khusus target Android
+      - name: Run Unit Tests (commonTest)
+        run: ./gradlew allTests
+
+      # 3. Build APK
+      # - name: Build Release APK
+      #  run: ./gradlew assembleRelease
+
+      # 4. Upload laporan test jika terjadi kegagalan (opsional tapi disarankan)
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: coba9/**/build/reports/tests/

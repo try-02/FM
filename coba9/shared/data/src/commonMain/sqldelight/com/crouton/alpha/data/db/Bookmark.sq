@@ -1,0 +1,26 @@
+CREATE TABLE Bookmark (
+    pengenal TEXT NOT NULL PRIMARY KEY,
+    nama TEXT NOT NULL,
+    lokasi TEXT NOT NULL,
+    adalahFolder INTEGER NOT NULL
+);
+
+simpanBookmark:
+INSERT OR REPLACE INTO Bookmark (pengenal, nama, lokasi, adalahFolder) VALUES (?, ?, ?, ?);
+
+ambilSemuaBookmark:
+SELECT * FROM Bookmark;
+
+hapusBookmark:
+DELETE FROM Bookmark WHERE pengenal = ?;
+
+CREATE TABLE Pengaturan (
+    kunci TEXT NOT NULL PRIMARY KEY,
+    nilai TEXT NOT NULL
+);
+
+simpanPengaturan:
+INSERT OR REPLACE INTO Pengaturan (kunci, nilai) VALUES (?, ?);
+
+ambilPengaturan:
+SELECT * FROM Pengaturan WHERE kunci = ?;

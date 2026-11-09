@@ -31,7 +31,6 @@ jobs:
       - name: Build APK (Optimized)
         run: |
           chmod +x ./gradlew
-          ./gradlew :shared:domain:allTests
 
           # Hapus 'clean' agar build cache & configuration cache optimal
           ./gradlew assembleRelease \
