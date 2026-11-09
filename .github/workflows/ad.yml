@@ -51,7 +51,7 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
         with:
-          releaseDirectory: androidApp/build/outputs/apk/debug
+          releaseDirectory: appAndroid/build/outputs/apk/debug
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -60,7 +60,7 @@ jobs:
       - name: Sanitize Compose Compiler Report filenames
         shell: bash
         run: |
-          for dir in androidApp/build/compose_compiler shared/build/compose_compiler; do
+          for dir in appAndroid/build/compose_compiler shared/build/compose_compiler; do
             if [ -d "$dir" ]; then
               find "$dir" -depth -type f -name '*:*' -print0 |
               while IFS= read -r -d '' file; do
@@ -77,9 +77,9 @@ jobs:
           path: |
             ${{ steps.sign_app.outputs.signedReleaseFile }}
             shared/schemas/**/*.json
-            androidApp/build/reports/
-            androidApp/build/stability/
-            androidApp/build/compose_compiler/
+            appAndroid/build/reports/
+            appAndroid/build/stability/
+            appAndroid/build/compose_compiler/
             shared/build/reports/
             shared/build/compose_compiler/
           retention-days: 1
