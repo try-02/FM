@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val repositori = RepositoriBerkasAndroid(filesDir)
         val simpanUseCase = SimpanPerubahanUseCase(repositori)
-        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), scope)
+        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), scope, repositori)
         val editorPenyimpan = PenyimpanStateEditor()
         buatDataPercontoh()
         val dasar = filesDir.absolutePath
@@ -88,22 +88,39 @@ class MainActivity : ComponentActivity() {
                             editorPenyimpan.sembunyikanDialogTutup()
                             berkasDibuka = null
                         },
-                        saatBatalTutup = { editorPenyimpan.sembunyikanDialogTutup() }
+                        saatBatalTutup = { editorPenyimpan.sembunyikanDialogTutup() },
+                        tampilkanDialogHapus = state.tampilkanDialogHapus,
+                        saatKonfirmasiHapus = {
+                            scope.launch {
+                                val berkas = berkasDibuka
+                                if (berkas != null) {
+                                    penyimpan.hapusBerkas(berkas, berkas.namaTampil)
+                                }
+                                berkasDibuka = null
+                            }
+                        },
+                        saatBatalHapus = { penyimpan.batalHapus() }
                     )
                 } else {
-                    DaftarBerkasLayar(state) { item ->
-                        if (item.adalahFolder) {
-                            penyimpan.bukaItem(item.pengenal, item.nama, item.uriAtauPath, true)
-                        } else {
-                            scope.launch {
-                                val lokasi = LokasiBerkas(item.pengenal, item.nama, item.uriAtauPath, false)
-                                val konten = repositori.baca(lokasi)
-                                editorPenyimpan.bukaBerkas(item.nama, konten.teks)
-                                versiDibuka = konten.versiEksternal
-                                berkasDibuka = lokasi
+                    DaftarBerkasLayar(
+                        state = state,
+                        saatItemDiklik = { item ->
+                            if (item.adalahFolder) {
+                                penyimpan.bukaItem(item.pengenal, item.nama, item.uriAtauPath, true)
+                            } else {
+                                scope.launch {
+                                    val lokasi = LokasiBerkas(item.pengenal, item.nama, item.uriAtauPath, false)
+                                    val konten = repositori.baca(lokasi)
+                                    editorPenyimpan.bukaBerkas(item.nama, konten.teks)
+                                    versiDibuka = konten.versiEksternal
+                                    berkasDibuka = lokasi
+                                }
                             }
-                        }
-                    }
+                        },
+                        saatPencarianBerubah = { penyimpan.aturPencarian(it) },
+                        saatBuatFolder = { penyimpan.buatFolder("FolderBaru") },
+                        saatBuatBerkas = { penyimpan.buatBerkas("BerkasBaru.txt") }
+                    )
                 }
             }
         }

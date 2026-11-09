@@ -13,7 +13,11 @@ fun EditorLayar(
     saatSimpan: () -> Unit,
     saatKembali: () -> Unit,
     saatBuangPerubahan: () -> Unit,
-    saatBatalTutup: () -> Unit
+    saatBatalTutup: () -> Unit,
+    saatHapus: () -> Unit = {},
+    tampilkanDialogHapus: Boolean = false,
+    saatKonfirmasiHapus: () -> Unit = {},
+    saatBatalHapus: () -> Unit = {}
 ) {
     Column {
         Text(text = state.namaBerkas + " - " + state.status.name + " - baris " + state.nomorBarisAktif)
@@ -25,6 +29,12 @@ fun EditorLayar(
         )
         Button(onClick = { if (!state.hanyaBaca) saatSimpan() }) { Text(text = "Simpan") }
         Button(onClick = saatKembali) { Text(text = "Kembali") }
+        Button(onClick = saatHapus) { Text(text = "Hapus") }
+        if (tampilkanDialogHapus) {
+            Text(text = "Hapus file ini secara permanen?")
+            Button(onClick = saatKonfirmasiHapus) { Text(text = "Ya, Hapus") }
+            Button(onClick = saatBatalHapus) { Text(text = "Batal") }
+        }
         if (state.tampilkanDialogTutup) {
             Text(text = "Ada perubahan yang belum disimpan. Tutup file?")
             Button(onClick = saatSimpan) { Text(text = "Simpan") }

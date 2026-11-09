@@ -7,13 +7,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DaftarBerkasLayar(state: StateLayarBerkas, saatItemDiklik: (StatusBerkasUi) -> Unit) {
+fun DaftarBerkasLayar(
+    state: StateLayarBerkas,
+    saatItemDiklik: (StatusBerkasUi) -> Unit,
+    saatPencarianBerubah: (String) -> Unit = {},
+    saatBuatFolder: () -> Unit = {},
+    saatBuatBerkas: () -> Unit = {}
+) {
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -45,6 +53,13 @@ fun DaftarBerkasLayar(state: StateLayarBerkas, saatItemDiklik: (StatusBerkasUi) 
                     }
                 }
             }
+            TextField(
+                value = state.kataPencarian,
+                onValueChange = saatPencarianBerubah,
+                label = { Text(text = "Cari nama berkas...") }
+            )
+            Button(onClick = saatBuatFolder) { Text(text = "Folder Baru") }
+            Button(onClick = saatBuatBerkas) { Text(text = "Berkas Baru") }
             if (state.pesan.isNotEmpty()) {
                 Text(text = state.pesan, style = MaterialTheme.typography.bodyMedium)
             }

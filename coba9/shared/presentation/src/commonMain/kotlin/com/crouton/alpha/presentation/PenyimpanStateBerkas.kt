@@ -10,12 +10,56 @@ import kotlinx.coroutines.launch
 
 class PenyimpanStateBerkas(
     private val daftarIsiUseCase: DaftarIsiUseCase,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val repositori: com.crouton.alpha.domain.repository.RepositoriBerkas
 ) {
     private val _state = MutableStateFlow(StateLayarBerkas(sedangMemuat = true))
     val state: StateFlow<StateLayarBerkas> = _state
 
     private val tumpukanLokasi = ArrayDeque<LokasiBerkas>()
+    private var daftarSemua: List<StatusBerkasUi> = emptyList()
+    private var kataPencarianAktif: String = ""
+
+    fun aturPencarian(kata: String) {
+        kataPencarianAktif = kata
+        val terfilter = if (kata.isBlank()) daftarSemua else daftarSemua.filter { it.nama.lowercase().contains(kata.lowercase()) }
+        _state.value = _state.value.copy(kataPencarian = kata, daftar = terfilter)
+    }
+
+    fun buatFolder(nama: String) {
+        val lokasi = tumpukanLokasi.lastOrNull() ?: return
+        scope.launch {
+            val berhasil = repositori.buatFolder(lokasi, nama)
+            _state.value = _state.value.copy(pesan = if (berhasil) "Folder dibuat: $nama" else "Gagal membuat folder")
+            muat(lokasi)
+        }
+    }
+
+    fun buatBerkas(nama: String) {
+        val lokasi = tumpukanLokasi.lastOrNull() ?: return
+        scope.launch {
+            val berhasil = repositori.buatBerkas(lokasi, nama)
+            _state.value = _state.value.copy(pesan = if (berhasil) "Berkas dibuat: $nama" else "Gagal membuat berkas")
+            muat(lokasi)
+        }
+    }
+
+    fun mintaHapus() {
+        _state.value = _state.value.copy(tampilkanDialogHapus = true)
+    }
+
+    fun batalHapus() {
+        _state.value = _state.value.copy(tampilkanDialogHapus = false)
+    }
+
+    suspend fun hapusBerkas(lokasi: LokasiBerkas, namaTampil: String): Boolean {
+        val berhasil = repositori.hapus(lokasi)
+        if (berhasil) {
+            val lokasiAktif = tumpukanLokasi.lastOrNull()
+            if (lokasiAktif != null) muat(lokasiAktif)
+        }
+        return berhasil
+    }
 
     fun muatAwal(lokasiDasar: LokasiBerkas) {
         tumpukanLokasi.clear()
@@ -58,11 +102,13 @@ class PenyimpanStateBerkas(
                         adalahFolder = entri.jenis == JenisEntri.FOLDER
                     )
                 }
+                daftarSemua = daftarUi
+                val terfilter = if (kataPencarianAktif.isBlank()) daftarUi else daftarUi.filter { it.nama.lowercase().contains(kataPencarianAktif.lowercase()) }
                 _state.value = _state.value.copy(
                     sedangMemuat = false,
-                    daftar = daftarUi,
+                    daftar = terfilter,
                     lokasiAktif = lokasi.uriAtauPath,
-                    pesan = if (daftarUi.isEmpty()) "Folder kosong." else ""
+                    pesan = if (terfilter.isEmpty()) "Folder kosong." else ""
                 )
             } catch (e: Exception) {
                 _state.value = _state.value.copy(

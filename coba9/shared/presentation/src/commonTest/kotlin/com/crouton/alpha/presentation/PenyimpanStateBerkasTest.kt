@@ -21,7 +21,7 @@ class PenyimpanStateBerkasTest {
     @Test fun muatAwalMenampilkanDaftar() = runTest {
         val repositori = RepositoriBerkasInMemory()
         repositori.letakkan(dasar, EntriBerkas(LokasiBerkas("f1", "Dokumen", "f1", true), 0, 0, JenisEntri.FOLDER))
-        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), CoroutineScope(UnconfinedTestDispatcher(testScheduler)), repositori)
         penyimpan.muatAwal(dasar)
         val state = penyimpan.state.value
         assertEquals(1, state.daftar.size)
@@ -33,8 +33,19 @@ class PenyimpanStateBerkasTest {
         val repositori = RepositoriBerkasInMemory()
         repositori.letakkan(dasar, EntriBerkas(LokasiBerkas("b", "Berkas", "b", false), 10, 0, JenisEntri.BERKAS))
         repositori.letakkan(dasar, EntriBerkas(LokasiBerkas("a", "Folder", "a", true), 0, 0, JenisEntri.FOLDER))
-        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), CoroutineScope(UnconfinedTestDispatcher(testScheduler)))
+        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), CoroutineScope(UnconfinedTestDispatcher(testScheduler)), repositori)
         penyimpan.muatAwal(dasar)
         assertEquals("Folder", penyimpan.state.value.daftar[0].nama)
+    }
+
+    @Test fun pencarianMemfilterNama() = runTest {
+        val repositori = RepositoriBerkasInMemory()
+        repositori.letakkan(dasar, EntriBerkas(LokasiBerkas("a", "catatan.txt", "a", false), 10, 0, JenisEntri.BERKAS))
+        repositori.letakkan(dasar, EntriBerkas(LokasiBerkas("b", "foto.jpg", "b", false), 10, 0, JenisEntri.BERKAS))
+        val penyimpan = PenyimpanStateBerkas(DaftarIsiUseCase(repositori), CoroutineScope(UnconfinedTestDispatcher(testScheduler)), repositori)
+        penyimpan.muatAwal(dasar)
+        penyimpan.aturPencarian("cat")
+        assertEquals(1, penyimpan.state.value.daftar.size)
+        assertEquals("catatan.txt", penyimpan.state.value.daftar[0].nama)
     }
 }

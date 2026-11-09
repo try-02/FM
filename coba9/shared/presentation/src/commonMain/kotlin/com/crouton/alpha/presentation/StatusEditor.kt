@@ -17,7 +17,9 @@ data class StateLayarBerkas(
     val lokasiAktif: String = "",
     val pesan: String = "",
     val terpilih: Set<String> = emptySet(),
-    val urutan: String = "NAMA"
+    val urutan: String = "NAMA",
+    val kataPencarian: String = "",
+    val tampilkanDialogHapus: Boolean = false
 )
 
 data class StateEditor(
