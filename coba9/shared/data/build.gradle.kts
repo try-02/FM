@@ -1,6 +1,14 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
+}
+android {
+    namespace = "com.crouton.alpha.data"
+    compileSdk = 37
+    defaultConfig {
+        minSdk = 30
+    }
 }
 kotlin {
     androidTarget()
