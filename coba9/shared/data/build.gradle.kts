@@ -5,7 +5,7 @@ plugins {
 }
 android {
     namespace = "com.crouton.alpha.data"
-    compileSdk = 37
+    compileSdk = 34
     defaultConfig {
         minSdk = 30
     }
