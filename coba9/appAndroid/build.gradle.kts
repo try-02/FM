@@ -14,9 +14,18 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+    compileOptions {
+        sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
+        targetCompatibility = org.gradle.api.JavaVersion.VERSION_17
+    }
 }
+
 kotlin {
-    androidTarget()
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     sourceSets {
         androidMain.dependencies {
             implementation(project(":shared:presentation"))
