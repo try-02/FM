@@ -21,6 +21,23 @@ class PenyimpanStateEditor {
         _state.value = _state.value.copy(status = StatusEditor.TERSIMPAN)
     }
 
+    fun bukaBerkas(namaBerkas: String, teks: String, hanyaBaca: Boolean = false) {
+        _state.value = StateEditor(
+            namaBerkas = namaBerkas,
+            teks = teks,
+            status = StatusEditor.TERSIMPAN,
+            hanyaBaca = hanyaBaca
+        )
+    }
+
+    fun tampilkanDialogTutup() {
+        _state.value = _state.value.copy(tampilkanDialogTutup = true)
+    }
+
+    fun sembunyikanDialogTutup() {
+        _state.value = _state.value.copy(tampilkanDialogTutup = false)
+    }
+
     fun tandaiGagal(pesan: String) {
         _state.value = _state.value.copy(status = StatusEditor.GAGAL)
     }

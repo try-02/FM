@@ -27,7 +27,8 @@ data class StateEditor(
     val nomorBarisAktif: Int = 1,
     val bungkusKata: Boolean = true,
     val hanyaBaca: Boolean = false,
-    val riwayatPencarian: List<String> = emptyList()
+    val riwayatPencarian: List<String> = emptyList(),
+    val tampilkanDialogTutup: Boolean = false
 )
 
 data class StateDiff(

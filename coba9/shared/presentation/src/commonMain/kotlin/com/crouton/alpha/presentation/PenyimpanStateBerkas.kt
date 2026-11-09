@@ -76,8 +76,8 @@ class PenyimpanStateBerkas(
     private fun formatUkuran(byte: Long): String {
         return when {
             byte < 1024 -> byte.toString() + " B"
-            byte < 1024 * 1024 -> "%.1f KB".format(byte / 1024.0)
-            else -> "%.1f MB".format(byte / (1024.0 * 1024.0))
+            byte < 1024 * 1024 -> (byte / 1024).toString() + " KB"
+            else -> (byte / (1024 * 1024)).toString() + " MB"
         }
     }
 }
